@@ -1,0 +1,94 @@
+AddType application/font-woff woff
+AddType application/x-httpd-php esp
+ExpiresActive on 
+ExpiresByType image/png "access plus 7 days" 
+ExpiresByType image/gif "access plus 7 days" 
+ExpiresByType image/jpeg "access plus 7 days"
+# woff font type
+ExpiresByType application/font-woff "access plus 7 days" 
+# css may change a bit sometimes 
+ExpiresByType text/css "access plus 7 days" 
+# special MIME type for icons 
+AddType image/vnd.microsoft.icon .ico 
+AddType application/x-shockwave-flash .swf
+# now we have icon MIME type, we can use it 
+# my favicon doesn't change much 
+ExpiresByType image/vnd.microsoft.icon "access plus 1 months"
+# js may change a bit sometimes 
+ExpiresByType text/js "access plus 7 days"
+ExpiresByType application/x-javascript "access plus 7 days"
+ExpiresByType application/x-shockwave-flash "access plus 7 days"
+AddOutputFilterByType DEFLATE application/x-font-woff application/font-woff application/vnd.ms-fontobject application/x-font-ttf image/svg+xml
+
+Options +FollowSymlinks
+
+# Prevent Directoy listing 
+
+Options -Indexes
+
+<FilesMatch "\.(tpl|ini|log|xml|cache|twig|smarty|dwoo|mustache)">
+	Order deny,allow
+	Deny from all
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^([^?]*) index.php?_route_=$1 [L,QSA]
+	#RewriteRule ^([^?]*) /url/url.php?p=$1 [L,QSA]
+
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  Options +FollowSymlinks
+  RewriteEngine On
+
+  # Adaptive-Images -----------------------------------------------------------------------------------
+
+  # Add any directories you wish to omit from the Adaptive-Images process on a new line, as follows:
+  # RewriteCond %{REQUEST_URI} !ignore-this-directory
+  # RewriteCond %{REQUEST_URI} !and-ignore-this-directory-too
+  
+  #RewriteCond %{REQUEST_URI} !assets
+
+  # don't apply the AI behaviour to images inside AI's cache folder:
+  RewriteCond %{REQUEST_URI} !ai-cache
+  # don't apply the AI behaviour to images inside  cache folder:
+  RewriteCond %{REQUEST_URI} !css-cache
+    
+  # Send any GIF, JPG, or PNG request that IS NOT stored inside one of the above directories
+  # to adaptive-images.php so we can select appropriately sized versions
+  
+  RewriteRule \.(?:jpe?g|png)$ index.php?_type_=img [L,QSA]
+
+  # END Adaptive-Images -------------------------------------------------------------------------------
+
+
+  # CSS ---------------------------------------------------------------------------------
+
+  # Add any directories you wish to omit from the Adaptive-Images process on a new line, as follows:
+  # RewriteCond %{REQUEST_URI} !ignore-this-directory
+  # RewriteCond %{REQUEST_URI} !and-ignore-this-directory-too
+  
+  #RewriteCond %{REQUEST_URI} !assets
+
+  # don't apply the AI behaviour to images inside AI's cache folder:
+  RewriteCond %{REQUEST_URI} !ai-cache
+
+  # don't apply the AI behaviour to images inside  cache folder:
+  RewriteCond %{REQUEST_URI} !css-cache
+    
+  # Send any CSS or JS request that IS NOT stored inside one of the above directories
+  # to adaptive-images.php so we can select appropriately sized versions
+  
+  #RewriteRule \.(?:css|js)$ index.php?_type_=script
+
+  # END Adaptive-Images -------------------------------------------------------------------------------
+</IfModule>
+

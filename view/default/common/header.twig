@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>{{title}}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<base href="{{base}}" />
+		{% if description %}
+			<meta name="description" content="{{description}}" />
+		{% endif %}
+		{% if keywords %}
+			<meta name="keywords" content="{{keywords}}" />
+		{% endif %}
+		{% if icon %}
+			<link href="{{icon}}" rel="icon" />
+		{% endif %}
+		{% for link in links %}
+			<link href="{{link.href}}" rel="{{link.rel}}" />
+		{% endfor %}
+		{% for style in styles %}
+			<link rel="{{style.rel}}" type="text/css" href="{{style.href}}" media="{{style.media}}" />
+		{% endfor %}
+		{% for script in scripts %}
+			<script type="text/javascript" src="{{script}}"></script>
+		{% endfor %}
+		{% if google_analytics %}
+			{{google_analytics}}
+		{% endif %}
+	</head>
+	<body>
+
