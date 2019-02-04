@@ -1,14 +1,14 @@
 <?php
 final class Postgre {
 	private $link;
-	public function __construct($hostname, $username, $password, $database, $port = '5432') {
+	public function __construct($hostname, $username, $password, $database, $port = '5432', $charset = 'UTF8') {
 		if (!$this->link = pg_connect('host=' . $hostname . ' port=' . $port .  ' user=' . $username . ' password='	. $password . ' dbname=' . $database)) {
 			throw new \Exception('Error: Could not make a database link using ' . $username . '@' . $hostname);
 		}
 		if (!pg_ping($this->link)) {
 			throw new \Exception('Error: Could not connect to database ' . $database);
 		}
-		pg_query($this->link, "SET CLIENT_ENCODING TO 'UTF8'");
+		pg_query($this->link, "SET CLIENT_ENCODING TO '".$charset."'");
 	}
 	public function query($sql) {
 		$resource = pg_query($this->link, $sql);

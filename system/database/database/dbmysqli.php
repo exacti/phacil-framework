@@ -31,7 +31,7 @@ final class DBMySQLi {
 		}
 	}
 	public function escape($value) {
-		return $this->`->real_escape_string($value);
+		return $this->connection->real_escape_string($value);
 	}
 	
 	public function countAffected() {

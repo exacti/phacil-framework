@@ -248,6 +248,4 @@ $controller->dispatch($action, new Action('error/not_found'));
 // Output
 $response->output();
 
-//var_dump(new ActionSystem('url/seo_url'));
-
 ?>

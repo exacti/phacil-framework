@@ -3,9 +3,9 @@
 final class mPDO {
 	private $connection = null;
 	private $statement = null;
-	public function __construct($hostname, $username, $password, $database, $port = '3306') {
+	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'UTF8') {
 		try {
-			$dsn = "mysql:host={$hostname};port={$port};dbname={$database};charset=UTF8";
+			$dsn = "mysql:host={$hostname};port={$port};dbname={$database};charset={$charset}";
 			$options = array(
 				\PDO::ATTR_PERSISTENT => true,
 				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION);

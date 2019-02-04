@@ -1,23 +1,24 @@
-# phacil-framework
+#  Phacil-framework
 A super easy PHP Framework for web development!
+
 
 ## Requirements
 
- - PHP 5.3+
+ - PHP 5.3+ (PHP 7.0+ recommended)
  - OPCache PHP Extension
- - HTTP Web Server (Apache 2.4+ recomended)
+ - HTTP Web Server (Apache 2.4+ recommended)
 
 ## Structure
 
 | Folder | Description |
 | ------ | ------ |
-| Controller | Contains the structure and files of controllers code |
-| Model | Contais directories and files for the model code |
+| Controller | Contains the structure and files of controller's code |
+| Model | Contains directories and files for the model code |
 | View | Contains the template files |
 | Cache | Full writable default cache storage |
 | public_html | Contains the index.php and .htaccess Apache file. All your access public files stay here, like CSS, JavaScript, etc. |  
-| System | Most important folder of this framework. Contains the libraries, classes and anothers features to improve correct working for the Web App. |
-| Logs | Contais debug and error logs |  
+| System | Most important folder of this framework. Contains the libraries, classes and others features to improve correct working for the Web App. |
+| Logs | Contains debug and error logs |  
 | config.php | File with contains all basic configurations for the Web App, like DB connection, mail config, directory config, etc.|  
 
 ## Get started!
@@ -43,7 +44,7 @@ This is a simple Hello World! for this framework.
  }
  ```
 
-3. Now create a folder insede view called **default** and a subfolder called **common** and a file home.twig.
+3. Now create a folder inside view called **default** and a subfolder called **common** and a file home.twig.
 4. Edit the **view/default/common/home.twig** like this.
     
  ```html
@@ -75,10 +76,8 @@ define('DIR_SYSTEM', DIR_APPLICATION.'system/');
 define('DIR_IMAGE', DIR_APPLICATION.'public_html/imagens/');
 define('DIR_TEMPLATE', DIR_APPLICATION.'view/');
 define('DIR_CACHE', DIR_APPLICATION.'cache/');
-
-
  ```
-6. Access your web app in your favorite browser and enjoy this magnific Hello World!
+6. Access your web app in your favorite browser and enjoy this magnify Hello World!
 
 #### Explanation
 
@@ -93,9 +92,9 @@ All routes are a mapping class with extends the primary Controller class. In a s
 
   Array `$this->data` receives in array format the variables to send to template, in this sample called **variable** with the string *Hello World!*.
 
-  In the last we finish with a simple `$this->out();` to indicate the output and process template file. It's a automated mechanism to link this controller with the respective viewer.
+  In the last we finish with a simple `$this->out();` to indicate the output and process template file. It's an automated mechanism to link this controller with the respective viewer.
 
-  The viewer in this sample is a twig template format ([Twig page](https://twig.symfony.com)).  ExacTI Phacil Framework permits to use varius PHP template engines, like Twig, Mustache, Dwoo and Smarty.
+  The viewer in this sample is a twig template format ([Twig page](https://twig.symfony.com)).  ExacTI Phacil Framework permits to use various PHP template engines, like Twig, Mustache, Dwoo and Smarty.
 
   ## Config file Parameters
 
@@ -107,7 +106,7 @@ All routes are a mapping class with extends the primary Controller class. In a s
   | HTTPS_URL | string | Same this HTTP_URL, but in SSL format | 
   | HTTP_IMAGE | string | The image URL |
   | CDN | string | CDN URL to use for static content |
-  | DB_CONFIG | boolean | Permit to use configurations direct in database. Requires database instalattion. Values: true or false. | Yes |
+  | DB_CONFIG | boolean | Permit to use configurations direct in database. Requires database installation. Values: true or false. | Yes |
   | DEBUG | boolean | Indicate the debug mode. | Yes |
   | `$configs` | array | No-SQL configs |
   | DIR_APPLICATION | string | Absolute path to application folder | Yes |
@@ -117,13 +116,82 @@ All routes are a mapping class with extends the primary Controller class. In a s
   | DIR_IMAGE | string | Directory to store images used by Image library. |
   | DIR_TEMPLATE | string | Directory with templates folder | Yes |
   | DIR_CACHE | string | Directory to storage the generated caches. | Yes |
-  | DB_DRIVER | string | Driver to connect a database source |
+  | DIR_CONFIG | string | Directory with extra configs files |
+  | DB_DRIVER | string | Driver to connect a database source. See below the default's drivers available. |
   | DB_HOSTNAME | string | Database host |
   | DB_USERNAME | string | Username to connect a database |
   | DB_PASSWORD | string | Database password |
   | DB_DATABASE | string | Database name |
   | SQL_CACHE | boolean | Use the SQL Select cache system |
+  | ROUTES | array | Specify manually routes |
 
+  ## Outputs and renders
+
+  Phacil Framework count with three methods for output content: `$this->response->setOutput()`, `$this->render()` and `$this->out()`.
+
+ ### setOutput
+  When you call a `$this->response->setOutput` inside a controller, you specify an output of content to screen without template. It's very useful for JSON, XML or others data contents.
+
+  ##### Sample
+   ```php
+   <?php 
+   class ControllerDemoSample extends Controller {
+     public function index() {
+       $variable = 'value';
+
+       $this->response->setOutput($variable);
+       // prints "value" in screen
+     }
+   }
+   ```
+
+  ### render
+The `$this->render` just render the controller with template but not output this. 
+Needs to specify a `$this->template` to associate with template file.
+It's much used in children's controllers, like headers and footers.
+
+##### Sample
+```php
+   <?php 
+   class ControllerCommonHeader extends Controller {
+     public function index() {
+       $variable = 'value';
+
+       $this->template = 'default\common\header.twig';
+
+       $this->render();
+     }
+   }
+   ```
+### out
+
+The `$this->out` is a smart way to output content to screen and combine the render with an associative template. For sample, if you have a controller in a file called `sample.php` inside the `demo` controller folder and a viewer called `sample.twig` inside `demo` view folder, automatically links with one another and the `$this->template` isn't need (Unless you want to specify another template with a different name).
+If you specify `$this->out(false)` the auto childrens "header" and "footer" are not loaded.
+
+For functions inside the controller that are different from index, for automatic mapping with the template it is necessary to add an underscore (_) after the controller name and add the function name (E.g.: contact_work.twig to link with the route common/contact/work, see *Routes* section for more information).
+
+##### Sample
+ ```php
+ <?php
+ class ControllerCommonContact extends Controller {
+   public function index() {
+     $this->document->setTitle('Contact Us');
+
+     $this->out();
+     // automatically link with common/contact.twig template
+   }
+
+   public function work() {
+     $this->document->setTitle('Work with Us');
+
+     $this->out();
+     // automatically link with common/contact_work.twig template
+   }
+ }
+ ```
+
+
+  
   ## Template Engines Support
 
   This framework supports this PHP templates engines:
@@ -134,11 +202,11 @@ All routes are a mapping class with extends the primary Controller class. In a s
   - [Smarty](https://www.smarty.net).
   
   To use a determined template engine, just create a file with name of engine in extension, for sample, if you like to use a Twig, the template file is **demo.twig**, if desire the Mustache template, use **demo.mustache** extension file.
-  The ExacTI Phacil Framework allows to use varius template engines in the same project.
+  The ExacTI Phacil Framework allows to use various template engines in the same project.
 
   ## Easy made functions
 
-  This framework is very focused in agile, secutiry and reutilizable code in PHP. Contains a very utily functions we see in the next section.
+  This framework is very focused in agile, security and reusable code in PHP. Contains a very utile functions we see in the next section.
 
   ### Database 
 
@@ -147,14 +215,14 @@ All routes are a mapping class with extends the primary Controller class. In a s
    $variable = $this->db->query("SELECT * FROM mundo");
    ```
 
-   Withou SQL Cache (if enabled):
+   Without SQL Cache (if enabled):
    ```php
    $variable = $this->db->query("SELECT * FROM mundo", false);
    ```
 Escape values to more security (no SQL injection issue):
  `$this->db->escape($value)`
 
-To get this rows:
+To get these rows:
  `$variable->rows`;
 
  Get one row: `$variable->row`;
@@ -177,6 +245,22 @@ To get this rows:
 	  }
   }
   ```
+  
+
+  #### Supported databases and drivers
+
+  | Driver | Database Type | Description |
+  | ----- | ----- | ------ |
+  | db_pdo | MariaDB | Optimized PDO connection to work with MariaDB databases with charset utf8mb4. Also works very well with MySQL.|
+  | dbmysqli | MySQL/MariaDB | MySQLi PHP connection |
+  | mssql | MS SQL Server | Use mssql PHP extension for connect to Microsoft SQL Server databases. |
+  | mpdo | MySQL | PDO connection for MySQL databases |
+  | mysql | MySQL | Legacy MySQL extension. Works only in PHP 5.|
+  | oracle | Oracle | Connect to Oracle databases |
+  | postgre | PostgreSQL | Driver for connect to PostgreSQL databases. |
+  | sqlsrv | MS SQL Server | Connect a Microsoft SQL Server database with sqlsrv PHP extension. |
+  | sqlsrvpdo | MS SQL Server | Connect to Microsoft SQL Server using PDO driver. |
+  
 
   ### Document easy made
 
@@ -206,7 +290,7 @@ Page description: `$this->document->setDescription($description)`;
 
 ### Classes and functions
 
-This framework have a lot of utilities and accepts much more in system folder with autoload format.
+This framework has a lot of utilities and accepts much more in system folder with autoload format.
 
 #### To show all classes
 
@@ -217,7 +301,7 @@ Execute a Classes() class in one Controller.
 
 var_dump($cla->classes());
  ```
-#### To show all classes and functions registereds 
+#### To show all classes and functions registered 
 
  Execute a Classes() class and call functions() in one Controller.
 
@@ -232,7 +316,7 @@ var_dump($cla->functions());
 
 ## Loaders
 
-In this framework, loaders is a simple way to get resources to use in your PHP code. Is very intuitive and requirew few steps.
+In this framework, loaders are a simple way to get resources to use in your PHP code. Is very intuitive and require few steps.
 
 For sample, to load a model, is just `$this->load->model('folder/file');` and to use is `$this->model_folder_file->object();`, like this sample:
  ```php
@@ -256,9 +340,30 @@ You can use loaders to:
  - Databases;
  - Languages.
 
+### Load database connection
+
+If you need an extra database connection or a different driver/database access, you can use the `$this->load->database($driver, $hostname, $username, $password, $database);` method (see more about databases functions in the Databases section of this document). 
+
+The name of database is a registered object to access database functions.
+This load is simple and registry to object of origin. 
+
+##### Sample:
+ ```php
+ <?php  
+ class ModelDemoSample extends Model {
+   public function otherData() {
+     $this->load->database('mpdo', 'localhost', 'root', 'imtheking', 'nameDatabase');
+
+     $sql = $this->nameDatabase->query("SELECT * FROM mundo");
+
+     return $sql->rows;
+   }
+ }
+ ```
+
 ## Models
 
-This framework is totally MVC (Model, View and Controller) based. The models is just like the controllers and uses the same structure, with a different folder. 
+This framework is totally MVC (Model, View and Controller) based. The models are just like the controllers and uses the same structure, with a different folder. 
 
 To create a model, put in the models folder a directory and file with the code. 
  ```php
@@ -272,9 +377,23 @@ To create a model, put in the models folder a directory and file with the code.
  
  ```
 
- ## Constructs
+ To use this model in a controller, you can use the `loader`.
 
- In same cases we need to add a __construct in a class to better code practices. To call a constructs in controllers and models, use:
+  ```php
+  <?php
+  class ControllerFolderFile extends Controller {
+    public function index() {
+      $this->load->model('folder/file');
+      echo $this->model_folder_file->SayMyName();
+      // this output is "Heisenberg".
+    }
+  }
+  ```
+
+
+ ## Constructs and Destructs
+
+ In some cases, we need to add a __construct or __destruct in a class to better code practices. To call a constructs in controllers and models, use the `$registry` parent:
   ```php
   public function __construct($registry)
     {
@@ -288,7 +407,7 @@ To create a model, put in the models folder a directory and file with the code.
 
   To use a magic request system, you just need to call a `$this->request` method. For sample, to obtain a POST value, use `$this->request->post['field']` to get the post value with security. 
   For a \$_SERVER predefined variables, use `$this->request->server['VALUE']` and $this->request->get() for \$_GET values. 
-  The advantages to use this requests instead the predefined variables of PHP is more the more security, upgradable and unicode values.
+  The advantages to use this requests instead the predefined variables of PHP are more the more security, upgradable and unicode values.
 
   ### Sessions
 
@@ -298,20 +417,17 @@ To create a model, put in the models folder a directory and file with the code.
 
 | Parameter | Type | Description|
 | ----- | ----- | ----- |
-| `$this->template` | string | Specify manualy the path to template |
-| `$this->twig` | array | Create Twig aditional functions. Eg.: `$this->twig = array('base64' => function($str) { return base64_encode($str); }); `|
-| `$this->children` | array | Load in variable other renders of web app. Th childrens *footer* and *header* is default loaded when uses `$this->out()` output. To load without this defaults childrens, use `$this->out(false)`.|
+| `$this->template` | string | Specify manually the path to template |
+| `$this->twig` | array | Create Twig additional functions. E.g.: `$this->twig = array('base64' => function($str) { return base64_encode($str); }); `|
+| `$this->children` | array | Load in a template variable other renders of web app. Th children's *footer* and *header* is default loaded when uses `$this->out()` output. To load without this defaults childrens, use `$this->out(false)`.|
 | `$this->redirect($url)` | string | Create a header to redirect to another page. |
-
-
-
 
 
 ## Routes 
 
 The ExacTI Phacil Framework is a simple router base to create a simple and consistent web navigation.
 
-Withou SEO URL, we invoke a page with *route* get parameter when contains a scheme folder/file of controller, like this: *http://example.com/index.php?route=folder/file*.
+Without SEO URL, we invoke a page with *route* get parameter when contains a scheme folder/file of controller, like this: *http://example.com/index.php?route=folder/file*.
 
 In a sample case, we have this controller:
  ```php
@@ -329,15 +445,27 @@ In a sample case, we have this controller:
  }
  ```
 
- If we access *index.php?route=folder/file* we see the "Index" message. But, like a tree, if we access *index.php?route=folder/file/another* obtains the another function code, with "other" message. 
+ If we access *index.php?route=folder/file* we see the "Index" message. But, like a tree, if we access *index.php?route=folder/file/another* obtains another function code, with "other" message. 
  
- Multiple Get parameters is simple and we can define normaly, eg.: *index.php?route=folder/file/another&p=2* to print "another" message.
+ Multiple Get parameters is simple and we can define normally, e.g.: *index.php?route=folder/file/another&p=2* to print "another" message.
 
  Private and protected functions is only for internal use, if we tried to access *index.php?route=folder/file/foo*, the framework return 404 HTTP error.
 
  ### SEO URL
 
  If you need a beautiful URL for SEO or other optimizations, you can use the url_alias database table. Is very simple and "translate" the routes in URL.
+
+ Execute this SQL in your database to create a url_alias table:
+  ```SQL
+  CREATE TABLE `url_alias` (
+  `url_alias_id` int(11) NOT NULL AUTO_INCREMENT,
+  `query` varchar(255) COLLATE utf8_bin NOT NULL,
+  `get` longtext COLLATE utf8_bin,
+  `keyword` varchar(255) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`url_alias_id`),
+  UNIQUE KEY `keyword` (`keyword`) 
+) AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  ```
 
  Imagine this SQL table called url_alias:
 
@@ -346,11 +474,21 @@ In a sample case, we have this controller:
  | 1 | contact/contato | | contact|
  | 2 | webservice/sitemap | | sitemap |
 
- With the url_alias, the access to route *http://example.com/index.php?route=contact/contato* and *http://example.com/contact* is the same!(and very prety!).
+ With the url_alias, the access to route *http://example.com/index.php?route=contact/contato* and *http://example.com/contact* is the same!(and very pretty!).
+
+ #### SEO URL without Database
+
+ You can create URL without a SQL Database configuration. For this you just need specify routes in the config file using the ***ROUTES*** constant with array content, like this:
+
+  ```php
+  define('ROUTES', array(
+    'magic' => 'common/home/xml', 
+    'json' => 'common/home/json'));
+  ```
 
  ### Links
 
- We have a function to create a strict and dinamic links automatic: `$this->url->link($route, $args = '', $connection = 'NONSSL')`. Is a simple function to generate internal links with correct URL  encode.
+ We have a function to create a strict and dynamic links automatic: `$this->url->link($route, $args = '', $connection = 'NONSSL')`. Is a simple function to generate internal links with correct URL  encode.
 
  In sample of this table above, if we have this code:
   ```php
@@ -367,19 +505,205 @@ In a sample case, we have this controller:
 
   Return this URL in output: *http://example.com/index.php?route=catalog/products*
 
-  With extra GET paramethers:
+  With extra GET parameters:
   ```php
   $fields = array('foo' => 'bar');
   echo $this->url->link('contact/contato', $fields);
   echo $this->url->link('contact/contato/place', $fields);
   ```
 
-  We get this URL in output with GET paramethers: 
+  We get this URL in output with GET parameters: 
   
   *http://example.com/contact?foo=bar*
 
   *http://example.com/index.php?route=contact/contato/place&foo=bar*
 
+   ***Note:*** *It's necessary specify the config `config_seo_url` for correctly function of this URLs. If you use the SQL url_alias table, you need  specify the `USE_DB_CONFIG` to true in config file.*
+
+  ## JSON, XML and others custom responses
+
+  If you need to output in another format or another response, you can use the Response method `$this->response`.
+
+  For sample, to create a controller when the output is a JSON data:
+
+   ```php
+   <?php
+   class ControllerApiData extends Controller {
+	   public function index() {
+		   $record = array(array("index" => 482, "id" => 221), array("index" => 566, "id" => 328));
+
+		   $json = json_encode($record);
+
+		   $this->response->addHeader('Content-Type: application/json');
+
+		   $this->response->setOutput($json);
+	   }
+   }
+   ```
+
+   The `$this->response->addHeader` is responsible to send a personalized HTTP header to browser, in this case specify the *Content-Type* information. The `$this->response->setOutput()` works for send  output of the content of a variable, function, constant, etc., to the browser.
+
+   We have this output:
+
+ ```json
+ [{"index":482,"id":221},{"index":566,"id":328}]
+ ```
+
+ Another sample, but with XML data:
+
+  ```php
+  <?php
+  class ControllerApiData extends Controller {
+	  public function xml() {
+        $test_array = array (
+            'bla' => 'blub',
+            'foo' => 'bar',
+        );
+        $xml = new SimpleXMLElement('<root/>');
+        array_walk_recursive($test_array, array ($xml, 'addChild'));
+
+        $this->response->addHeader('Content-Type: text/xml');
+
+        $this->response->setOutput( $xml->asXML() );
+    }
+  }
+  ```
+
+  The response is:
+   ```xml
+   <?xml version="1.0"?>
+<root>
+    <blub>bla</blub>
+	 <bar>foo</bar>
+</root>   
+   ```
+
+   ## Set and load configurations
+
+   The config library in Phacil Framework obtains values to use in entire web app of: `$config` array in *config.php* file, the settings table in your configured database or both.
+
+   Is based in key->value mode with options like serialized value.
+
+   To use a configuration value, just call `$this->config->get('nameOfKey')`. 
+   
+   To storage a config value, use a SQL table called settings or an array.
+
+  #### Sample of storage in array method
+
+   ```php
+   $config = array(
+     "title" => "ExacTI Phacil Framework",
+     "config_error_display" => true,
+     "config_error_log" => false,
+     "phones" => array(
+       "BR" => '+55 11 4115-5161',
+       "USA" => '+1 (845) 579-0362')
+   );
+   ```
+   #### Sample of storage in SQL table
+
+   | setting_id | group | key | value | serialized |
+   | ----- | ----- | ----- | ----- | ----- | 
+   | 1 |  | title | ExacTI Phacil Framework | 0 |
+   | 2 | config |  config_error_display | 1 | 0 |
+   | 3 | config | config_error_log | 0 | 0|
+   | 4 |  | phones | a:2:{s:2:"BR";s:16:"+55 11 4115-5161";s:3:"USA";s:17:"+1 (845) 579-0362";} | 1 |
+
+   ### Reserved config keys
+
+   This config keys are reserved to use for framework.
+  
+  *  **config_error_log:** Define if errors, notices and warnings is stored in log file. *(boolean)*
+  *  **config_error_display:** Indicates if PHP show the errors, notices and warnings in screen. *(boolean)*
+  *  **config_template:** Folder template name. *(string)*
+  * **config_error_filename:** Log filename. *(string)*
+  * **config_seo_url:** Indicates if SEO URL routes is enabled. *(boolean)*
+  * **config_mail_protocol:** Define the method of mail library use to send e-mails (mail or smtp values only). *(string)*
+  * **config_compression:** Output gzip compression value [0-9]. *(integer)*
+
+### Recommended settings SQL Query
+
+#### MySQL/MariaDB sample
+ ```SQL
+ CREATE TABLE `settings` (
+  `setting_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group` varchar(32) COLLATE utf8_bin,
+  `key` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `value` mediumtext COLLATE utf8_bin,
+  `serialized` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`setting_id`)
+) AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ ```
+ #### MS SQL Server sample
+```SQL
+ CREATE TABLE settings (
+  [setting_id] int NOT NULL IDENTITY PRIMARY KEY,
+  [group] varchar(32),
+  [key] varchar(64) NOT NULL DEFAULT '',
+  [value] nvarchar(max),
+  [serialized] tinyint DEFAULT '0',
+  UNIQUE ([key])
+);
+ ```
+
+ ## Registrations
+
+ If you need to register a class or other resource to use in your entire application, you can create using the file *registrations.php* in the **system** folder.
+ Use to specify a `$registry->set('name', $function);` with the function, class or method if you need. After this, just use `$this->name` to access this registry inside a controller or model.
+
+ #### Sample to register a simple class
+ Declare in /system/registrations.php
+  ```php
+  <?php
+  // use for register aditionals
+
+  $criptoClass = new CriptoClass('salt');
+  $registry->set('cripto', $criptoClass);
+  ```
+
+  Using in /controler/demo/sample.php
+   ```php
+   <?php 
+   class ControllerDemoSample extends Controller {
+     public function index() {
+       $value = 123;
+       $use = $this->cripto->function($value);
+
+       echo $use;
+     }
+   }
+   ```
+
+   You can make registrations more complex too, for sample, use another database or a load call.
+
+   Declare in /system/registrations.php
+ ```php
+ <?php
+ //use for register aditionals
+
+ class DBne extends Controller {
+   public function __construct($registry) {
+     parent::__construct($registry);
+     $database = "test";
+     $this->load->database($driver, $hostname, $username, $password, $database);
+     //see the load database method above for better comprehension
+    }
+ }
+ new DBne($registry);
+ ```
+
+ Using in /controller/demo/sample.php
+  ```php
+  class ControllerDemoSample extends Controller {
+    public function index() {
+      $this->test->query("SELECT * FROM mundo");
+    }
+  }
+  ```
+
+ ***Pay attention:*** *Use the registrations only for objects that you need to access from the entire application. E.g.: If you need to connect a one more database but you just use for one model, it's better to load just inside the model, for awesome performance.*
+
+
   ## License
 
-  This project is manteined for [ExacTI IT Solutions](https://exacti.com.br) with GPLv3 license.
+  This project is maintained for [ExacTI IT Solutions](https://exacti.com.br) with GPLv3 license.

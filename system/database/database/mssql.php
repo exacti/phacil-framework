@@ -2,7 +2,7 @@
 final class MSSQL {
 	private $connection;
 	
-	public function __construct($hostname, $username, $password, $database) {
+	public function __construct($hostname, $username, $password, $database, $port = '1443', $charset = 'utf8') {
 		if (!$this->connection = mssql_connect($hostname, $username, $password)) {
       		exit('Error: Could not make a database connection using ' . $username . '@' . $hostname);
     	}

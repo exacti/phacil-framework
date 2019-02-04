@@ -1,2 +1,2 @@
 <?php
-// use for registrate aditionals
+// Use to register additional

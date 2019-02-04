@@ -1,5 +1,7 @@
 <?php
 class SystemUrlSeoUrl extends Controller {
+    private $notfound = 'error/not_found';
+
 	public function index() {
 		// Add rewrite to url class
 		if ($this->config->get('config_seo_url')) {
@@ -11,17 +13,13 @@ class SystemUrlSeoUrl extends Controller {
 			//$parts = explode('/', $this->request->get['_route_']);
 			$parts = array($this->request->get['_route_']);
 
-			if($this->db != false) {
-
-            }
 			foreach ($parts as $part) {
-                if($this->db != false) {
-                    $query = $this->db->query("SELECT * FROM url_alias WHERE keyword = '" . $this->db->escape($part) . "'");
-                }
+			    if(defined('USE_DB_CONFIG') && USE_DB_CONFIG == true)
+			        $query = $this->db->query("SELECT * FROM url_alias WHERE keyword = '" . $this->db->escape($part) . "'");
 
-				if ($this->db != false && $query->num_rows === 1) {
+				if (isset($query) && $query != false && $query->num_rows === 1) {
 
-					$url = explode('=', $query->row['query']);
+					//$url = explode('=', $query->row['query']);
 
 					if($query->row['get'] != "") {
 						$a = explode(',', $query->row['get']);
@@ -34,8 +32,16 @@ class SystemUrlSeoUrl extends Controller {
 					//var_dump($query->row['query']);
 					$this->request->get['route'] = $query->row['query'];
 
-				} else {
-					$this->request->get['route'] = 'error/not_found';
+				} elseif (defined('ROUTES') && is_array(ROUTES)) {
+				    $rotas = ROUTES;
+				    if(isset($rotas[$part])){
+                        $this->request->get['route'] = $rotas[$part];
+                    } else {
+                        $this->request->get['route'] = $this->notfound;
+                    }
+
+                } else {
+					$this->request->get['route'] = $this->notfound;
 				}
 			}
 
@@ -55,16 +61,17 @@ class SystemUrlSeoUrl extends Controller {
 			$data = array();
 			
 			parse_str($url_data['query'], $data);
-			
-			//var_dump($data);
-			
+
 			foreach ($data as $key => $value) {
-				//var_dump($value);
+
 				if (isset($data['route'])) {
-					$query = $this->db->query("SELECT * FROM url_alias WHERE `query` = '" . $this->db->escape($value) . "'");
-					if ($query->num_rows) {
+                    if(defined('USE_DB_CONFIG') && USE_DB_CONFIG == true)
+                        $query = $this->db->query("SELECT * FROM url_alias WHERE `query` = '" . $this->db->escape($value) . "'");
+					if (isset($query) && $query->num_rows && $query->num_rows != NULL) {
 						$url .= '/' . $query->row['keyword'];
-					}
+					} elseif (defined('ROUTES') && is_array(ROUTES)) {
+                        $url .= '/' .(array_search($value, ROUTES));
+                    }
 					unset($data[$key]);
 				}
 

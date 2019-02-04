@@ -53,14 +53,14 @@ final class Loader {
 		}
 	}
 	 
-	public function database($driver, $hostname, $username, $password, $database, $prefix = NULL, $charset = 'UTF8') {
-		$file  = DIR_SYSTEM . 'database/' . $driver . '.php';
-		$class = 'Database' . preg_replace('/[^a-zA-Z0-9]/', '', $driver);
+	public function database($driver, $hostname, $username, $password, $database, $port = NULL, $charset = NULL) {
+		$file  = DIR_SYSTEM . 'database/database/' . $driver . '.php';
+		$class = ($driver);
 		
 		if (file_exists($file)) {
 			include_once($file);
 			
-			$this->registry->set(str_replace('/', '_', $driver), new $class());
+			$this->registry->set(str_replace('/', '_', $database), new $class($hostname, $username, $password, $database));
 		} else {
 			trigger_error('Error: Could not load database ' . $driver . '!');
 			exit();				

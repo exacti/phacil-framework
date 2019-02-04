@@ -2,7 +2,7 @@
 final class MySQL {
 	private $connection;
 	
-	public function __construct($hostname, $username, $password, $database, $charset = 'utf8mb4') {
+	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
 		if (!$this->connection = mysql_connect($hostname, $username, $password)) {
       		exit('Error: Could not make a database connection using ' . $username . '@' . $hostname);
     	}

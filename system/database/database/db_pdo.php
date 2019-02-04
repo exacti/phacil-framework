@@ -44,7 +44,7 @@ final class DB_PDO
      * @param string $name The database name
      * @param string $charset Encoding connection
      */
-    public function __construct($host, $user, $pass, $name, $charset = 'utf8mb4')
+    public function __construct($host, $user, $pass, $name, $port = '3306', $charset = 'utf8mb4')
     {
         $this->params = new stdClass;
         # keep connection data
@@ -53,7 +53,7 @@ final class DB_PDO
         $this->params->pass    = $pass;
         $this->params->name    = $name;
         $this->params->charset = $charset;
-        $this->params->connstr = "mysql:host={$host};dbname={$name};charset={$charset}";
+        $this->params->connstr = "mysql:host={$host};port={$port};dbname={$name};charset={$charset}";
         # add the connection parameters
         $this->options['PDO::MYSQL_ATTR_INIT_COMMAND'] = "SET NAMES '{$charset}'";
         $this->connect();
