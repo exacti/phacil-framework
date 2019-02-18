@@ -702,6 +702,23 @@ In a sample case, we have this controller:
   ```
 
  ***Pay attention:*** *Use the registrations only for objects that you need to access from the entire application. E.g.: If you need to connect a one more database but you just use for one model, it's better to load just inside the model, for awesome performance.*
+ 
+ ## Add new modules, libraries and functions
+ 
+ To add new classes or functions, you can put a folder in system directory with a autoload.php file. All autoload.php files are included to framework automatically.
+ 
+ ### Use Composer
+ 
+ Composer is an application-level package manager for the PHP programming language that provides a standard format for managing dependencies of PHP software and required libraries.  
+ To use Composer packages and autoloads, just configure your _composer.json_ with this vendor-dir: system/vendor. 
+ 
+ ```json
+ {
+   "config": {
+     "vendor-dir": "./system/vendor/"
+   }
+ }
+ ```
 
 
   ## License

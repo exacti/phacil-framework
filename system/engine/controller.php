@@ -64,15 +64,17 @@ abstract class Controller {
 
             $this->templateTypes = array("tpl", "twig", "dwoo", "mustache", "smarty");
 
+            $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
+
             foreach($this->templateTypes as $extensionTemplate) {
                 if(isset($pegRout[2])){
-                    if (file_exists(DIR_TEMPLATE . 'default/'.$pegRout[0].'/'.$pegRout[1].'_'.$pegRout[2].'.'.$extensionTemplate) != false) {
-                        $this->template = 'default/'.$pegRout[0].'/'.$pegRout[1].'_'.$pegRout[2].'.'.$extensionTemplate;
+                    if (file_exists(DIR_TEMPLATE . $thema.'/'.$pegRout[0].'/'.$pegRout[1].'_'.$pegRout[2].'.'.$extensionTemplate) != false) {
+                        $this->template = $thema.'/'.$pegRout[0].'/'.$pegRout[1].'_'.$pegRout[2].'.'.$extensionTemplate;
                         break;
                     }
                 } else {
-                    if (file_exists(DIR_TEMPLATE . 'default/'.$pegRout[0].'/'.$pegRout[1].'.'.$extensionTemplate) != false) {
-                        $this->template = 'default/'.$pegRout[0].'/'.$pegRout[1].'.'.$extensionTemplate;
+                    if (file_exists(DIR_TEMPLATE . $thema.'/'.$pegRout[0].'/'.$pegRout[1].'.'.$extensionTemplate) != false) {
+                        $this->template = $thema.'/'.$pegRout[0].'/'.$pegRout[1].'.'.$extensionTemplate;
                         break;
                     }
                 }
@@ -116,6 +118,11 @@ abstract class Controller {
                     $twig->addFilter(new Twig_SimpleFilter('translate', function ($str) {
                         // do something different from the built-in date filter
                         return traduzir($str);
+                    }));
+
+                    $twig->addFilter(new Twig_SimpleFilter('config', function ($str) {
+                        // do something different from the built-in date filter
+                        return $this->config->get($str);
                     }));
 
                     foreach ($this->twig as $key => $item) {
