@@ -124,6 +124,9 @@ All routes are a mapping class with extends the primary Controller class. In a s
   | DB_DATABASE | string | Database name |
   | SQL_CACHE | boolean | Use the SQL Select cache system |
   | ROUTES | array | Specify manually routes |
+  | DEFAULT_ROUTE | string | Define the default route to assume with initial page. Default is *common/home*. |
+  | CUSTOM_DB_CONFIG | string | Custom SQL to load application configs in database. |
+  | NOT_FOUND | string | Custom route to not found page. Default is error/not_found. |
 
   ## Outputs and renders
 
@@ -519,6 +522,38 @@ In a sample case, we have this controller:
   *http://example.com/index.php?route=contact/contato/place&foo=bar*
 
    ***Note:*** *It's necessary specify the config `config_seo_url` for correctly function of this URLs. If you use the SQL url_alias table, you need  specify the `USE_DB_CONFIG` to true in config file.*
+   
+   ### Passing URI Segments to your Functions
+   
+   Use the *'%'* character and its variations (see below) to create a route with wildcard. All contents in the URL will matches with wildcard is passed to your controller function as argument.
+   
+   | Wildcard | Description |
+   | ----- | -----|
+   | %d | Matches any decimal digit equivalent to [0-9].|
+   | %w | Matches any letter, digit or underscore. Equivalent to [a-zA-Z0-9_]. Spaces or others character is not allowed. |
+   | %a | Matches any character in the valid ASCII range. Latin characters like *'ç'* or *'ã'* is not accepted. |
+   | % | Accept any character.| 
+   
+   ##### Sample:
+   ```php
+   define("ROUTES", array(
+        "produto/%d/%/promo" => "feriado/natal/presentes"
+   )
+   ```
+   
+   ```php
+   <?php
+   class ControllerFeriadoNatal extends Controller {
+       public function presentes($id, $name) {
+           echo $id;
+           echo $name;
+       } 
+   }
+   ```
+   
+   In this sample above, imagine the URL *http://yoursite.com/produto/**87**/**alfajor**/promo*, this URL is sending to function *presentes* values for `$id` and `$name` arguments in sequential method, in other words, the value of `$id` is set to `87` and `$name` to `alfajor`. The wildcard *%d* in router relative to `$id` argument define is only accepted number values.
+   
+   In this moment, this resource is only available in constant ROUTES method. SQL routes not support wildcard at this moment.
 
   ## JSON, XML and others custom responses
 
@@ -574,7 +609,7 @@ In a sample case, we have this controller:
    <?xml version="1.0"?>
 <root>
     <blub>bla</blub>
-	 <bar>foo</bar>
+	<bar>foo</bar>
 </root>   
    ```
 

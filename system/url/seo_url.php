@@ -1,12 +1,28 @@
 <?php
 class SystemUrlSeoUrl extends Controller {
     private $notfound = 'error/not_found';
+    private $regType = array(
+        "%d" => '(\\d{1,})',
+        "%w" => '(\\w{1,})',
+        "%a" => '([[:ascii:]]{1,})',
+        "%" => '(.*)');
 
-	public function index() {
+    public function __construct($registry)
+    {
+        parent::__construct($registry);
+
+        if(defined("NOT_FOUND")) {
+            $this->notfound = NOT_FOUND;
+        }
+    }
+
+    public function index() {
 		// Add rewrite to url class
 		if ($this->config->get('config_seo_url')) {
 			$this->url->addRewrite($this);
 		}
+
+		$match = array();
 		
 		// Decode URL
 		if (isset($this->request->get['_route_'])) {
@@ -34,10 +50,34 @@ class SystemUrlSeoUrl extends Controller {
 
 				} elseif (defined('ROUTES') && is_array(ROUTES)) {
 				    $rotas = ROUTES;
+
 				    if(isset($rotas[$part])){
                         $this->request->get['route'] = $rotas[$part];
                     } else {
-                        $this->request->get['route'] = $this->notfound;
+
+                        foreach($rotas as $key => $page) {
+
+                            if(isRegularExpression($key)) {
+
+                                $preg = preg_quote($key, "/");
+
+                                $preg = str_replace(array_keys($this->regType), array_values($this->regType), $preg);
+
+                                if((@preg_match("/". $preg . "/", $parts[0], $match))) {
+                                    unset($match[0]);
+
+                                    $match = $this->request->clean($match);
+
+                                    $pagina = $page;
+                                }
+                            }
+                        }
+
+                        if(isset($pagina)) {
+                            $this->request->get['route'] = $pagina;
+                        } else {
+                            $this->request->get['route'] = $this->notfound;
+                        }
                     }
 
                 } else {
@@ -45,9 +85,9 @@ class SystemUrlSeoUrl extends Controller {
 				}
 			}
 
-			
+
 			if (isset($this->request->get['route'])) {
-				return $this->forward($this->request->get['route']);
+				return $this->forward($this->request->get['route'], $match);
 			}
 		}
 	}
@@ -62,6 +102,8 @@ class SystemUrlSeoUrl extends Controller {
 			
 			parse_str($url_data['query'], $data);
 
+			$joinRegex = implode("|", array_keys($this->regType));
+
 			foreach ($data as $key => $value) {
 
 				if (isset($data['route'])) {
@@ -70,7 +112,27 @@ class SystemUrlSeoUrl extends Controller {
 					if (isset($query) && $query->num_rows && $query->num_rows != NULL) {
 						$url .= '/' . $query->row['keyword'];
 					} elseif (defined('ROUTES') && is_array(ROUTES)) {
-                        $url .= '/' .(array_search($value, ROUTES));
+					    $arV = array_search($value, ROUTES);
+					    if($arV){
+
+					        if(isRegularExpression($arV)){ //check is a valid wildcard
+
+                                unset($data['route']);
+                                $str = $arV;
+
+                                foreach($data as $replace){
+                                    $str = preg_replace('/('.$joinRegex.')/', $replace, $str, 1);
+                                }
+
+                                $url .= '/' .($str);
+
+                                $data = false;
+
+                            } else {
+                                $url .= '/' . (array_search($value, ROUTES));
+                            }
+
+                        }
                     }
 					unset($data[$key]);
 				}
@@ -101,4 +163,8 @@ class SystemUrlSeoUrl extends Controller {
 		}		
 	}	
 }
-?>
+
+function isRegularExpression($string) {
+    return (strpos($string, '%') !== false);
+}
+

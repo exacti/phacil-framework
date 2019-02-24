@@ -225,7 +225,7 @@ $registry->set('mail', $mail);
 $document = new Document();
 $registry->set('document', $document); 	
 
-// Personalized registrations
+// Custom registrations
 include(DIR_SYSTEM."registrations.php");
 
 // Front Controller 
@@ -238,12 +238,14 @@ $controller->addPreAction(new ActionSystem('url/seo_url'));
 if (isset($request->get['route'])) {
 	$action = new Action($request->get['route']);
 } else {
-    $request->get['route'] = "common/home";
-	$action = new Action('common/home');
+    $default = (defined('DEFAULT_ROUTE')) ? DEFAULT_ROUTE : 'common/home';
+    $request->get['route'] = $default;
+	$action = new Action($default);
 }
 
 // Dispatch
-$controller->dispatch($action, new Action('error/not_found'));
+$not_found = (defined('NOT_FOUND')) ? NOT_FOUND : 'error/not_found';
+$controller->dispatch($action, new Action($not_found));
 
 // Output
 $response->output();
