@@ -160,7 +160,7 @@ It's much used in children's controllers, like headers and footers.
      public function index() {
        $variable = 'value';
 
-       $this->template = 'default\common\header.twig';
+       $this->template = 'default/common/header.twig';
 
        $this->render();
      }
@@ -655,6 +655,8 @@ In a sample case, we have this controller:
   * **config_seo_url:** Indicates if SEO URL routes is enabled. *(boolean)*
   * **config_mail_protocol:** Define the method of mail library use to send e-mails (mail or smtp values only). *(string)*
   * **config_compression:** Output gzip compression value [0-9]. *(integer)*
+  * **PatternSiteTitle:** Used to `$this->document->setTitle()` function, replaces %s to this value. *(string)*
+  * **date_timezone:** Define the default timezone to entire application. *(string)* 
 
 ### Recommended settings SQL Query
 

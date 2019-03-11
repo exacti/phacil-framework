@@ -5,6 +5,10 @@ final class Image {
     private $info;
 		
 	public function __construct($file) {
+        if(!extension_loaded('gd')){
+            throw new \Exception("The image function requires GD extension on PHP!");
+        }
+
 		if (file_exists($file)) {
 			$this->file = $file;
 
@@ -180,4 +184,3 @@ final class Image {
 		return array($r, $g, $b);
 	}	
 }
-?>

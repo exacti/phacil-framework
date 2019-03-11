@@ -89,6 +89,29 @@ class startEngineExacTI {
 			}
 		}
 	}
+
+	public function setTimezone($utc) {
+
+	    try {
+            $tzc = @date_default_timezone_set($utc);
+            if (!$tzc){
+                throw new \ErrorException($utc. " not found in PHP Compiler.");
+            }
+        } catch (\ErrorException $e) {
+	        $trace = ($e->getTrace());
+
+            echo PHP_EOL.'Timezone Error: ',  $e->getMessage() ." on ". $trace[0]['file'] ." in line ". $trace[0]['line'].".",  PHP_EOL;
+        }
+
+    }
+
+    public function getTimezone(){
+        return date_default_timezone_get();
+    }
+
+    public function listTimezones() {
+        return DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+    }
 	
 }
 
@@ -131,6 +154,11 @@ if(USE_DB_CONFIG === true) {
 
 $config->set('config_url', HTTP_URL);
 $config->set('config_ssl', HTTPS_URL);
+
+//timezone
+if($config->get('date_timezone')){
+    $engine->setTimezone($config->get('date_timezone'));
+}
 
 // Site Title
 if($config->get('PatternSiteTitle') == true) {

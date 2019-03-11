@@ -7,7 +7,12 @@ class Captcha {
 	protected $numChar = 6;
 	protected $background = 'black';
 
-	function __construct($width = NULL, $height = NULL, $numChar = 6, $background = 'black') { 
+	function __construct($width = NULL, $height = NULL, $numChar = 6, $background = 'black') {
+
+        if(!extension_loaded('gd')){
+            throw new \Exception("The captcha function requires GD extension on PHP!");
+        }
+
 		$this->numChar = $numChar;
 		$this->background = $background;
 		$pos = 'ABCDEFGHJKLMNOPQRSTUWVXZ0123456789abcdefhijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUWVXZ0123456789'; 
@@ -24,6 +29,18 @@ class Captcha {
 		$this->width = ($width != NULL) ? $width : $this->width;
 		$this->height = ($height != NULL) ? $height : $this->height;
 	}
+
+	public function __help() {
+	    $helpTxt =
+            array(
+                "version" => "1.0",
+                "Description" => "Captcha module.",
+                "Use" => 'Declare new Captcha($width, $height, $numChar, $background) on a variable, use $variable->getCode() to obtain a plain text captcha code (prefer pass thos code to a SESSION) and return $variable->showImage(\'format\').',
+                "Formats" => "bmp, jpg, png, wbmp and gif."
+            );
+
+	    var_dump($helpTxt, true);
+    }
 
 	function getCode(){
 		return $this->code;
