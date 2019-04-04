@@ -140,7 +140,7 @@ if(!empty($configs)){
 
 if(USE_DB_CONFIG === true) {
 
-    $query = (defined('CUSTOM_DB_CONFIG')) ? $db->query(CUSTOM_DB_CONFIG) : $db->query("SELECT * FROM settings ORDER BY store_id DESC, setting_id ASC");
+    $query = (defined('CUSTOM_DB_CONFIG')) ? $db->query(CUSTOM_DB_CONFIG) : $db->query("SELECT * FROM settings ORDER BY setting_id ASC");
 
 	foreach ($query->rows as $setting) {
 		if (!$setting['serialized']) {

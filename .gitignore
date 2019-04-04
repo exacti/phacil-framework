@@ -193,8 +193,6 @@ PublishScripts/
 csx/
 *.build.csdef
 
-._*
-
 # Microsoft Azure Emulator
 ecf/
 rcf/
@@ -330,3 +328,9 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+macOS hidden filesystem meta info
+._*
+
+Zip Files
+*.zip

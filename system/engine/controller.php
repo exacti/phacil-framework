@@ -67,19 +67,23 @@ abstract class Controller {
             $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
 
             foreach($this->templateTypes as $extensionTemplate) {
-                if(isset($pegRout[2])){
-                    if (file_exists(DIR_TEMPLATE . $thema.'/'.$pegRout[0].'/'.$pegRout[1].'_'.$pegRout[2].'.'.$extensionTemplate) != false) {
-                        $this->template = $thema.'/'.$pegRout[0].'/'.$pegRout[1].'_'.$pegRout[2].'.'.$extensionTemplate;
-                        break;
-                    }
-                } else {
-                    if (file_exists(DIR_TEMPLATE . $thema.'/'.$pegRout[0].'/'.$pegRout[1].'.'.$extensionTemplate) != false) {
-                        $this->template = $thema.'/'.$pegRout[0].'/'.$pegRout[1].'.'.$extensionTemplate;
-                        break;
-                    }
-                }
-            }
 
+                $structure =  $thema.'/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure_D = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure_W = $pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+
+                if (file_exists(DIR_TEMPLATE .$structure) != false) {
+                    $this->template = $structure;
+                    break;
+                } elseif (file_exists(DIR_TEMPLATE .$structure_D)){
+                    $this->template = $structure_D;
+                    break;
+                } elseif(file_exists(DIR_TEMPLATE .$structure_W)) {
+                    $this->template = $structure_W;
+                    break;
+                }
+
+            }
         }
 
         if (file_exists(DIR_TEMPLATE . $this->template)) {
@@ -238,4 +242,3 @@ abstract class Controller {
         return $this->response->setOutput($this->render());
     }
 }
-?>
