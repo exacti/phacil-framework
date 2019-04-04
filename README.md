@@ -1,4 +1,6 @@
 #  Phacil-framework
+[![GitHub version](https://badge.fury.io/gh/exacti%2Fphacil-framework.svg)](https://badge.fury.io/gh/exacti%2Fphacil-framework) [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://code.exacti.com.br/ExacTI/phacil-framework/src/branch/master/LICENSE)
+
 A super easy PHP Framework for web development!
 
 
