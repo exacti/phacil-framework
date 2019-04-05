@@ -1,4 +1,6 @@
 #  Phacil-framework
+[![GitHub version](https://badge.fury.io/gh/exacti%2Fphacil-framework.svg)](https://badge.fury.io/gh/exacti%2Fphacil-framework) ![GitHub](https://img.shields.io/github/license/exacti/phacil-framework.svg)  ![GitHub top language](https://img.shields.io/github/languages/top/exacti/phacil-framework.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/exacti/phacil-framework.svg) ![GitHub issues](https://img.shields.io/github/issues/exacti/phacil-framework.svg) ![PHP Version](https://img.shields.io/badge/php-%3E%3D5.3.29-blue.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/exacti/phacil-framework.svg) ![GitHub Release Date](https://img.shields.io/github/release-date/exacti/phacil-framework.svg) ![GitHub release](https://img.shields.io/github/release/exacti/phacil-framework.svg)
+
 A super easy PHP Framework for web development!
 
 
@@ -48,7 +50,7 @@ This is a simple Hello World! for this framework.
     ```html
     <h1>{{ variable }}</h1>
     ```
-5. Edit the constants *HTTP_URL* and *DIR_APPLICATION* in file **config.php**. Edit others *DIR_**  constants path if necessary.
+5. Edit the constants *HTTP_URL* and *DIR_APPLICATION* in file **config.php**. Edit others _DIR\_\*_ constants path if necessary.
     ```php
     <?php
 
@@ -61,7 +63,7 @@ This is a simple Hello World! for this framework.
     define('DEBUG', true);
 
     $configs = array(
-        'PatternSiteTitle'=>' - ExacTI phacil',
+                 'PatternSiteTitle'=>' - ExacTI phacil',
 				 'config_mail_protocol'=>'smtp',
 				 'config_error_display' => 1,
 				 'config_template' => "default",
@@ -81,7 +83,7 @@ This is a simple Hello World! for this framework.
 
 #### Explanation
 
-All routes are a mapping class with extends the primary Controller class. In a simple term, the class name in controller is *Controller****Folder****Filename*.
+All routes are a mapping class with extends the primary Controller class. In a simple term, the class name in controller is *Controller*___Folder___*Filename*.
    
    `class ControllerFolderFile extends Controller {
  }`

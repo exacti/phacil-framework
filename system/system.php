@@ -112,6 +112,10 @@ class startEngineExacTI {
     public function listTimezones() {
         return DateTimeZone::listIdentifiers(DateTimeZone::ALL);
     }
+
+    public function version() {
+	    return file_get_contents(DIR_SYSTEM."engine/VERSION");
+    }
 	
 }
 
