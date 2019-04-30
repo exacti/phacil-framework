@@ -109,13 +109,13 @@ class ConfigurationOption extends ArrayObject implements ConfigurationOptionInte
          * Detect unwanted keys and throw an exception.
          * No more kidding now, it's 21th century.
          */
-        if (\array_diff_key($array, \get_object_vars($this))) {
+        /*if (\array_diff_key($array, \get_object_vars($this))) {
             throw new PhpfastcacheInvalidConfigurationException(\sprintf(
                 'Invalid option(s) for the config %s: %s',
                 static::class,
                 \implode(', ', \array_keys(\array_diff_key($array, \get_object_vars($this))))
             ));
-        }
+        }*/
 
         foreach (\get_object_vars($this) as $property => $value) {
 
