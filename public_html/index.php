@@ -1,7 +1,16 @@
 <?php
 
-$baseDir = str_replace('public_html', '', __DIR__);
+/**
+ * Copyright (c) 2019. ExacTI Technology Solutions
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
 
+$baseDir = str_replace('public_html', '', __DIR__); // change this with config.php directory.
+
+
+// start Phacil engine
 require_once($baseDir."config.php");
 
 $tipe = (isset($_GET['_type_']))? $_GET['_type_'] : '';

@@ -1,6 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2019. ExacTI Technology Solutions
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
 
-define('HTTP_URL', 'http://phacil.local:131/');
+define('HTTP_URL', 'http://phacil.local/');
 define('HTTPS_URL', HTTP_URL);
 define('HTTP_IMAGE', HTTP_URL);
 
@@ -9,13 +15,13 @@ define('USE_DB_CONFIG', false);
 define('DEBUG', true);
 
 $configs = array('PatternSiteTitle'=>' - ExacTI phacil',
-				 'config_mail_protocol'=>'smtp',
+				 'config_mail_protocol'=>'mail',
 				 'config_error_display' => 1,
 				 'config_template' => "default",
 				 'config_error_filename'=> 'error.log');
 
 //App folders
-define('DIR_APPLICATION', '/Applications/MAMP/htdocs/phacil/');
+define('DIR_APPLICATION', '/patch/to/app/folder/');
 define('DIR_LOGS', DIR_APPLICATION.'logs/');
 define('DIR_PUBLIC', DIR_APPLICATION.'public_html/');
 define('DIR_SYSTEM', DIR_APPLICATION.'system/');

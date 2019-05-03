@@ -329,8 +329,14 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 
-macOS hidden filesystem meta info
+# macOS hidden filesystem meta info
 ._*
 
-Zip Files
+# Zip Files
 *.zip
+
+config.php
+
+system/registrations.php
+
+*.lst

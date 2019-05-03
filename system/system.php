@@ -1,4 +1,10 @@
 <?php
+/**
+ * Copyright (c) 2019. ExacTI Technology Solutions
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
 
 class startEngineExacTI {
 	public $constants;
@@ -115,6 +121,11 @@ class startEngineExacTI {
 
     public function version() {
 	    return file_get_contents(DIR_SYSTEM."engine/VERSION");
+    }
+
+    public function extraRegistrations() {
+        if(file_exists(DIR_SYSTEM."registrations.php"))
+            include(DIR_SYSTEM."registrations.php");
     }
 	
 }
@@ -258,7 +269,7 @@ $document = new Document();
 $registry->set('document', $document); 	
 
 // Custom registrations
-include(DIR_SYSTEM."registrations.php");
+$engine->extraRegistrations();
 
 // Front Controller 
 $controller = new Front($registry);
@@ -282,4 +293,3 @@ $controller->dispatch($action, new Action($not_found));
 // Output
 $response->output();
 
-?>

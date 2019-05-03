@@ -52,7 +52,7 @@ This is a simple Hello World! for this framework.
     ```html
     <h1>{{ variable }}</h1>
     ```
-5. Edit the constants *HTTP_URL* and *DIR_APPLICATION* in file **config.php**. Edit others _DIR\_\*_ constants path if necessary.
+5. Rename config.dist.php to config.php and edit the constants *HTTP_URL* and *DIR_APPLICATION* in file **config.php**. Edit others _DIR\_\*_ constants path if necessary.
     ```php
     <?php
 
@@ -80,7 +80,7 @@ This is a simple Hello World! for this framework.
     define('DIR_TEMPLATE', DIR_APPLICATION.'view/');
     define('DIR_CACHE', DIR_APPLICATION.'cache/');
     ```
-6. Access your web app in your favorite browser and enjoy this magnify Hello World!
+6. Point your http/php server to public_html folder, access your web app in your favorite browser and enjoy this magnify Hello World!
 
 
 #### Explanation

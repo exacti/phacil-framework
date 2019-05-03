@@ -1,11 +1,18 @@
 <?php
+/**
+ * Copyright (c) 2019. ExacTI Technology Solutions
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
 class ControllerErrorNotfound extends Controller {
 	
 	public function index() {
 		$this->document->setTitle('404 %s');
 		
-		header("HTTP/1.1 404 Not Found"); 
-		header("Status: 404 Not Found");
+		$this->response->addHeader("HTTP/1.1 404 Not Found");
+        $this->response->addHeader("Status: 404 Not Found");
 		
 		$this->children = array(
 			'common/footer',
