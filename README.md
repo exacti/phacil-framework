@@ -1,6 +1,6 @@
 #  Phacil-framework
 
- ![GitHub](https://img.shields.io/github/license/exacti/phacil-framework.svg)  ![GitHub top language](https://img.shields.io/github/languages/top/exacti/phacil-framework.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/exacti/phacil-framework.svg) ![GitHub issues](https://img.shields.io/github/issues/exacti/phacil-framework.svg) ![PHP Version](https://img.shields.io/badge/php-%3E%3D5.3.29-blue.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/exacti/phacil-framework.svg) ![GitHub Release Date](https://img.shields.io/github/release-date/exacti/phacil-framework.svg) ![GitHub release](https://img.shields.io/github/release/exacti/phacil-framework.svg)
+ ![GitHub](https://img.shields.io/github/license/exacti/phacil-framework.svg)  ![GitHub top language](https://img.shields.io/github/languages/top/exacti/phacil-framework.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/exacti/phacil-framework.svg) ![GitHub issues](https://img.shields.io/github/issues/exacti/phacil-framework.svg) ![PHP Version](https://img.shields.io/badge/php-%3E%3D5.4.20-blue.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/exacti/phacil-framework.svg) ![GitHub Release Date](https://img.shields.io/github/release-date/exacti/phacil-framework.svg) ![GitHub release](https://img.shields.io/github/release/exacti/phacil-framework.svg)
 
 
 A super easy PHP Framework for web development!
@@ -8,7 +8,7 @@ A super easy PHP Framework for web development!
 
 ## Requirements
 
- - PHP 5.3+ (PHP 7.0+ recommended with OPCache and igbinary extensions)
+ - PHP 5.4+ (PHP 7.0+ recommended with OPCache and igbinary extensions)
  - HTTP Web Server (Apache 2.4+ recommended with mod_rewrite)
  - Some writable directories (like logs and cache)
 
@@ -121,6 +121,7 @@ All routes are a mapping class with extends the primary Controller class. In a s
 | DIR_TEMPLATE | string | Directory with templates folder | Yes |
 | DIR_CACHE | string | Directory to storage the generated caches. | Yes |
 | CACHE_EXPIRE | timestamp | Time in UNIX timestamp format with seconds for valid cache. Default value is 3600. (1 Hour) |
+| USE_PHPFASTCACHE | boolean | Enable the Phpfastcache library for cache resources. |
 | CACHE_DRIVER | string | Cache method for Phpfastcache. Default is file. | 
 | CACHE_SETTINGS | array | Settings for Phpfastcache (https://www.phpfastcache.com). |
 | DIR_CONFIG | string | Directory with extra configs files |
@@ -274,7 +275,9 @@ To get these rows:
 
 ### Cache
 
-This framework use the PhpFastCache (https://www.phpfastcache.com) library to provide a most efficient cache system with many possibilities, like Mencache, Redis, APC or a simple file cache.
+This framework contains the PhpFastCache (https://www.phpfastcache.com) library to provide a most efficient cache system with many possibilities, like Mencache, Redis, APC or a simple file cache.
+To enable this library, define USE_PHPFASTCACHE constant as true. It works only in PHP 7 or newer.
+If you don't set USE_PHPFASTCACHE or use an older version of PHP, Phacil automatic set to simple internal file cache system.
 
 | Regular drivers | High performances drivers | Development drivers |
 |---------------------------------|------------------------------------|-------------------------------|
@@ -714,7 +717,7 @@ In a sample case, we have this controller:
 ## Registrations
 
  If you need to register a class or other resource to use in your entire application, you can create using the file *registrations.php* in the **system** folder.
- Use to specify a `$registry->set('name', $function);` with the function, class or method if you need. After this, just use `$this->name` to access this registry inside a controller or model.
+ Use to specify a `$this->registry->set('name', $function);` with the function, class or method if you need. After this, just use `$this->name` to access this registry inside a controller or model.
 
 #### Sample to register a simple class
  Declare in /system/registrations.php
@@ -723,7 +726,7 @@ In a sample case, we have this controller:
   // use for register aditionals
 
   $criptoClass = new CriptoClass('salt');
-  $registry->set('cripto', $criptoClass);
+  $this->registry->set('cripto', $criptoClass);
   ```
 
   Using in /controler/demo/sample.php
@@ -754,7 +757,7 @@ In a sample case, we have this controller:
      //see the load database method above for better comprehension
     }
  }
- new DBne($registry);
+ new DBne($this->registry);
  ```
 
  Using in /controller/demo/sample.php

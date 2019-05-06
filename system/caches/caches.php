@@ -102,7 +102,7 @@ final class Caches {
         $file = ($this->dirCache . preg_replace('/[^A-Z0-9\._-]/i', '', $key) . '.cache');
 
         if (file_exists($file)) {
-            var_dump($file);
+            //var_dump($file);
 
             //$time = substr(strrchr(strstr($files[0], '.', true), '/'), 1);
             $time = filemtime($file) + $this->expire;
@@ -111,7 +111,7 @@ final class Caches {
 
             if ($time < time() and $time !== '0') {
 
-                var_dump($file);
+                //var_dump($file);
                 unlink($file);
                 clearstatcache();
                 return false;
@@ -132,7 +132,7 @@ final class Caches {
         if ($files) {
             foreach ($files as $file) {
                 //$time = substr(strrchr($file, '.'), 1);
-                $time = substr(strrchr(strstr($file, '.', true), '/'), 1);
+                //$time = substr(strrchr(strstr($file, '.', true), '/'), 1);
                 //var_dump(substr(strrchr(strstr($file, '.', true), '/'), 1));
 
                 if (file_exists($file)) {
