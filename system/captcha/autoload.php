@@ -221,4 +221,3 @@ class Captcha {
 		imagedestroy($image);		
 	}
 }
-?>

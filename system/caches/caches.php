@@ -6,25 +6,10 @@ final class Caches {
 
     public function __construct() {
         if (!file_exists($this->dirCache)) {
-            mkdir($this->dirCache, 0755, true);
+            mkdir($this->dirCache, 0760, true);
         }
         $this->expire = (defined('CACHE_EXPIRE')) ? CACHE_EXPIRE : 3600;
-        /*$files = glob($this->dirCache . '*.cache');
 
-        if ($files) {
-            foreach ($files as $file) {
-                //$time = substr(strrchr($file, '.'), 1);
-                $time = substr(strrchr(strstr($file, '.', true), '/'), 1);
-                //var_dump(substr(strrchr(strstr($file, '.', true), '/'), 1));
-
-                  if ($time < time() and $time !== '0') {
-                    if (file_exists($file)) {
-                        unlink($file);
-                        clearstatcache();
-                    }
-                  }
-            }
-        }*/
     }
 
     public function verify($key) {
@@ -58,8 +43,6 @@ final class Caches {
     public function set($key, $value, $expire = true) {
         $this->delete($key);
 
-        //$exp = ($expire == true) ? (time() + $this->expire) : 0;
-
         $file = $this->dirCache  . preg_replace('/[^A-Z0-9\._-]/i', '', $key) . '.cache';
 
         return file_put_contents($file, $this->encode($value));
@@ -73,10 +56,12 @@ final class Caches {
             foreach ($files as $file) {
                 if (file_exists($file)) {
                     unlink($file);
-                    clearstatcache();
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 
     private function encode($value){
@@ -102,18 +87,14 @@ final class Caches {
         $file = ($this->dirCache . preg_replace('/[^A-Z0-9\._-]/i', '', $key) . '.cache');
 
         if (file_exists($file)) {
-            //var_dump($file);
 
-            //$time = substr(strrchr(strstr($files[0], '.', true), '/'), 1);
             $time = filemtime($file) + $this->expire;
-            //var_dump(substr(strrchr(strstr($file, '.', true), '/'), 1));
 
 
             if ($time < time() and $time !== '0') {
 
-                //var_dump($file);
                 unlink($file);
-                clearstatcache();
+
                 return false;
 
             } else {
@@ -129,18 +110,9 @@ final class Caches {
     public function deleteAll() {
         $files = glob($this->dirCache . '*.cache');
 
-        if ($files) {
-            foreach ($files as $file) {
-                //$time = substr(strrchr($file, '.'), 1);
-                //$time = substr(strrchr(strstr($file, '.', true), '/'), 1);
-                //var_dump(substr(strrchr(strstr($file, '.', true), '/'), 1));
+        array_map('unlink', $files);
 
-                if (file_exists($file)) {
-                    unlink($file);
-                    clearstatcache();
-                }
-            }
-        }
+        unset($files);
 
         return true;
     }

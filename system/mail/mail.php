@@ -411,4 +411,3 @@ final class Mail {
 		}
 	}
 }
-?>

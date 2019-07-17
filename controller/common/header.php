@@ -3,17 +3,17 @@ class ControllerCommonHeader extends Controller {
 	protected function index() {
 		$this->data['title'] = $this->document->getTitle();
 		
-		$this->document->addScript('https://code.jquery.com/jquery-3.3.1.min.js');
+		$this->document->addScript('https://code.jquery.com/jquery-3.4.1.min.js');
 		$this->document->addScript('https://code.jquery.com/jquery-migrate-3.0.1.min.js');
 		
-		$this->document->addScript('https://use.fontawesome.com/releases/v5.4.1/js/all.js');
-		$this->document->addScript('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js');
-		$this->document->addScript('https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js');
+		$this->document->addScript('https://use.fontawesome.com/releases/v5.9.0/js/all.js');
+		$this->document->addScript('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js');
+		$this->document->addScript('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js');
 		
 		
 		
-		$this->document->addStyle('https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css');
-        $this->document->addStyle('https://use.fontawesome.com/releases/v5.6.0/css/all.css');
+		$this->document->addStyle('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css');
+        $this->document->addStyle('https://use.fontawesome.com/releases/v5.9.0/css/all.css');
         
 		$this->document->addStyle('assets/style.css');
         
