@@ -2,10 +2,14 @@
 
 class Captcha {
 	protected $code;
-	protected $height = 40;
-	protected $width = 180;
-	protected $numChar = 6;
+	public $height = 40;
+    public $width = 220;
+    public $numChar = 8;
+    protected $iscale = 0.9;
+	protected $perturbation = 0.90;
+	protected $noise_level = 1;
 	protected $background = 'black';
+	public $pos = 'ABCDEFGHJKLMNOPQRSTUWVXZ0123456789abcdefhijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWVXZ0123456789';
 
 	function __construct($width = NULL, $height = NULL, $numChar = 6, $background = 'black') {
 
@@ -15,19 +19,20 @@ class Captcha {
 
 		$this->numChar = $numChar;
 		$this->background = $background;
-		$pos = 'ABCDEFGHJKLMNOPQRSTUWVXZ0123456789abcdefhijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUWVXZ0123456789'; 
+
+		$pos = str_split($this->pos);
+
 
 		for($i = 0; $i < $this->numChar; $i++) {
-			$this->code .= substr($pos, mt_rand(0, strlen($pos)-1), 1);
+			$this->code[] = $pos[mt_rand(0, (count($pos) -1))];
 		}
-		/*if (function_exists('token')) {
-			$this->code = substr(token(100), rand(0, 94), $this->numChar);
-		} else {
-			$this->code = substr(sha1(mt_rand()), 17, $this->numChar); 
-		}*/
+
 		
 		$this->width = ($width != NULL) ? $width : $this->width;
 		$this->height = ($height != NULL) ? $height : $this->height;
+
+		$this->ttfFonts = glob(__DIR__."/fonts/*/*.ttf");
+
 	}
 
 	public function __help() {
@@ -43,7 +48,7 @@ class Captcha {
     }
 
 	function getCode(){
-		return $this->code;
+		return implode("", $this->code);
 	}
 
 	function showImage($format = 'png') {
@@ -60,9 +65,9 @@ class Captcha {
 		$orange = imagecolorallocatealpha($image, 255, 136, 0, 50);
 		$yellow = imagecolorallocatealpha($image, 255, 255, 0, 50);
 		$punyWhite = imagecolorallocatealpha($image, 255, 255, 255, 40); 
-		$varYellow = imagecolorallocatealpha($image, 255, 255, 0, rand(30,100));
-		$varBlue = imagecolorallocatealpha($image, 0, 0, 255, rand(30,100));
-		$varBlack = imagecolorallocatealpha($image, 33, 33, 33, rand(85,95));
+		$varYellow = imagecolorallocatealpha($image, 255, 255, 0, mt_rand(30,100));
+		$varBlue = imagecolorallocatealpha($image, 0, 0, 255, mt_rand(30,100));
+		$varBlack = imagecolorallocatealpha($image, 33, 33, 33, mt_rand(85,95));
 		$pureYellow = imagecolorallocate($image, 255, 255, 0); 
 		$pureGreen = imagecolorallocate($image, 0, 255, 0);
 		$softGreen = imagecolorallocate($image, 153, 241, 197);
@@ -74,6 +79,8 @@ class Captcha {
 		$pureorange = imagecolorallocate($image, 255, 135, 0);
 		$strangePurple = imagecolorallocate($image, 0, 80, 90);
 		/*$pureBlue = imagecolorallocate($image, 200, 100, 245);*/
+
+        $this->gdlinecolor = $yellow;
 		
 		switch($this->background) {
 			case 'black':
@@ -87,117 +94,141 @@ class Captcha {
 		}
 		
          
-		if(rand(0,2) == 2) {
-			imagefilledellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $red); 
+		if(mt_rand(0,2) == 2) {
+			imagefilledellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $red);
 		} else {
-			imagefilledrectangle($image, ceil(rand(5, $this->width)), ceil(rand(5, $this->height)), ceil(rand(5, $this->width)), ceil(rand(5, $this->height)), $red); 
+			imagefilledrectangle($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(5, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(5, $this->height)), $red);
 		}
-		if(rand(1,2) == 2) {
-			imagefilledellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $green); 
+		if(mt_rand(1,2) == 2) {
+			imagefilledellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $green);
 		} else {
-			imagefilledrectangle($image, ceil(rand(5, 145)), ceil(rand(0, 35)), ceil(rand(5, 175)), ceil(rand(0, 40)), $green); 
+			imagefilledrectangle($image, ceil(mt_rand(5, 145)), ceil(mt_rand(0, 35)), ceil(mt_rand(5, 175)), ceil(mt_rand(0, 40)), $green);
 		}
-		if(rand(1,2) == 2) {
-			imagefilledellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $varBlue); 
+		if(mt_rand(1,2) == 2) {
+			imagefilledellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $varBlue);
 		} else {
-			imagefilledrectangle($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $varBlue); 
+			imagefilledrectangle($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $varBlue);
 		}
-		if(rand(1,2) == 2) {
-			imagefilledellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $orange); 
+		/*if(mt_rand(1,2) == 2) {
+			imagefilledellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $orange);
 		} else {
-			imagefilledrectangle($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $orange); 
-		}
-		if(rand(1,2) == 2) {
-			imagefilledellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $yellow); 
+			imagefilledrectangle($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $orange);
+		}*/
+		if(mt_rand(1,2) == 2) {
+			imagefilledellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $yellow);
 		} else {
-			imagefilledrectangle($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $yellow); 
+			imagefilledrectangle($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $yellow);
 		}
+
+
+        imagefilledrectangle($image, 0, 0, $width, 0, $black);
+        imagefilledrectangle($image, $width - 1, 0, $width - 1, $height - 1, $black);
+        imagefilledrectangle($image, 0, 0, 0, $height - 1, $black);
+        imagefilledrectangle($image, 0, $height - 1, $width, $height - 1, $black);
 		
 
-        imagefilledrectangle($image, 0, 0, $width, 0, $black); 
-        imagefilledrectangle($image, $width - 1, 0, $width - 1, $height - 1, $black); 
-        imagefilledrectangle($image, 0, 0, 0, $height - 1, $black); 
-        imagefilledrectangle($image, 0, $height - 1, $width, $height - 1, $black); 
-		
-		$qualfonte = __DIR__."/18.gdf";
- 
-		//Carregar uma nova fonte
-		$fonteCaptcha = imageloadfont($qualfonte);
          
-        //imagestring($image, $fonteCaptcha, intval(($width - (strlen($this->code) * 6)) / 16),  intval(($height - 15) / 4), $this->code, $white);
-		
-		$txt = str_split($this->code);
-		$space = ($this->width-10) / $this->numChar;
-				
-		foreach($txt as $key => $character) {
-			$y = ceil(rand(0,  $this->height - ($this->height - ($this->height -30))));
+        $space = ($this->width - 10) / $this->numChar;
+
+		foreach($this->code as $key => $character) {
+            //$qualfonte = __DIR__."/gd_fonts/".mt_rand(0,8).".gdf";
+
+            $qualfonte = mt_rand(0, (count($this->ttfFonts)-1));
+            $fonteCaptcha = $this->ttfFonts[$key];
+
+            $tamanhoFonte = mt_rand(16, 26);
+
+            //Carregar uma nova fonte
+            //$fonteCaptcha = imageloadfont($qualfonte);
+
+			$y = ceil(mt_rand(($tamanhoFonte+5), $this->height-5 ));
 			$divisor = 1;
 			$plus = 10;
 			$incre = 0;
+			//$securityX = (isset($x)) ? $x + 18 : 0;
 			switch ($key) {
 				case "0":
-					$x = ceil(rand(0, $space-$plus)); 
+					$x = ceil(mt_rand(0, $space-$plus));
 					break;
 				case "1":
-					$x = ceil(rand($x+$incre/$divisor+$plus, $space*2)); 
+					$x = ceil(mt_rand($x+$incre/$divisor+$plus, $space*2));
 					break;
 				case "2":
-					$x = ceil(rand($x+$incre/$divisor+$plus, $space*3)); 
+					$x = ceil(mt_rand($x+$incre/$divisor+$plus, $space*3));
 					break;
 				case "3":
-					$x = ceil(rand($x+$incre/$divisor+$plus, $space*4)); 
+					$x = ceil(mt_rand($x+$incre/$divisor+$plus, $space*4));
 					break;
 				case "4":
-					$x = ceil(rand($x+$incre/$divisor+$plus, $space*5));  
+					$x = ceil(mt_rand($x+$incre/$divisor+$plus, $space*5));
 					break;
 				case "5":
-					$x = ceil(rand($x+$incre/$divisor+$plus, $space*5+$space/2)); 
+					$x = ceil(mt_rand($x+$incre/$divisor+$plus, $space*5+$space/2));
 					break;
 				default:
-					$x = ceil(rand($x+$incre/$divisor+$plus, $space*$key+$space/2));
+					$x = ceil(mt_rand($x+$incre/$divisor+$plus, $space*$key+$space/2));
 					break;
 			}
-			
-			imagechar (  $image , $fonteCaptcha , $x , $y, $character , $fontColors[rand(0,count($fontColors)-1)]);
+
+			if(isset($securityX) && $x < $securityX) {
+                $x = $securityX;
+			}
+
+			$rotate = mt_rand(-20, 35);
+
+
+			//imagechar (  $image , $fonteCaptcha , $x , $y, $character , $fontColors[mt_rand(0,count($fontColors)-1)]);
+            $dadosChar = imagettftext ( $image , $tamanhoFonte, $rotate , $x ,  $y ,  $fontColors[mt_rand(0,count($fontColors)-1)], $fonteCaptcha , $character );
+
+            if(mt_rand(0, 5) == 1)
+                $dadosChar = imagettftext ( $image , $tamanhoFonte, $rotate , $x+1 ,  $y+1 ,  $fontColors[mt_rand(0,count($fontColors)-1)], $fonteCaptcha , $character );
+
+			$securityX = max([$dadosChar[2], $dadosChar[4]]);
+
 		}
-		
-		
-		if(rand(1,2) == 2) {
-			imageellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $red); 
+
+
+        $image = $this->drawNoise($image);
+
+		//imagefilter($image, IMG_FILTER_PIXELATE, 2,1);
+
+		//exit;
+		if(mt_rand(1,2) == 2) {
+			imageellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $red);
 		} else {
-			imagerectangle($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $red); 
+			imagerectangle($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $red);
 		}
-		if(rand(1,2) == 2) {
-			imageellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $green); 
+		if(mt_rand(1,2) == 2) {
+			imageellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $green);
 		} else {
-			imageline($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $green); 
+			imageline($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $green);
 		}
-		if(rand(1,2) == 2) {
-			imageellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $blue); 
+		if(mt_rand(1,2) == 2) {
+			imageellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $blue);
 		} else {
-			imagerectangle($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $blue); 
+			imagerectangle($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $blue);
 		}
-		if(rand(1,2) == 2) {
-			imageellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $orange); 
+		if(mt_rand(1,2) == 2) {
+			imageellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $orange);
 		} else {
-			imageline($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $orange); 
+			imageline($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $orange);
 		}
-		if(rand(1,2) == 2) {
-			imageellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $varYellow); 
+		if(mt_rand(1,2) == 2) {
+			imageellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $varYellow);
 		} else {
-			imageline($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $varYellow); 
+			imageline($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $varYellow);
 		}
-		if(rand(1,2) == 2) {
-			imageellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $punyWhite); 
+		if(mt_rand(1,2) == 2) {
+			imageellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $punyWhite);
 		} else {
-			imageline($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $punyWhite); 
+			imageline($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $punyWhite);
 		}
-		if(rand(1,2) == 2) {
-			imagefilledellipse($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), 30, 30, $varBlack); 
+		if(mt_rand(1,2) == 2) {
+			imagefilledellipse($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), 30, 30, $varBlack); 
 		} else {
-			imagefilledrectangle($image, ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), ceil(rand(5, $this->width)), ceil(rand(0, $this->height)), $varBlack); 
+			imagefilledrectangle($image, ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width)), ceil(mt_rand(0, $this->height)), $varBlack); 
 		}
-		//imagearc (  $image , ceil(rand(5, $this->width)) , ceil(rand(0, $this->height)) ,ceil(rand(5, $this->width)) , ceil(rand(0, $this->height)), ceil(rand(5, $this->width))/ceil(rand(5, $this->height)) , ceil(rand(5, $this->height))/ceil(rand(0, $this->width)) , $pureYellow );
+		//imagearc (  $image , ceil(mt_rand(5, $this->width)) , ceil(mt_rand(0, $this->height)) ,ceil(mt_rand(5, $this->width)) , ceil(mt_rand(0, $this->height)), ceil(mt_rand(5, $this->width))/ceil(mt_rand(5, $this->height)) , ceil(mt_rand(5, $this->height))/ceil(mt_rand(0, $this->width)) , $pureYellow );
 			
 		header('Cache-Control: no-cache');
 		
@@ -220,4 +251,106 @@ class Captcha {
 		
 		imagedestroy($image);		
 	}
+
+
+
+    protected function drawNoise($im)
+    {
+        if ($this->noise_level > 10) {
+            $noise_level = 10;
+        } else {
+            $noise_level = $this->noise_level;
+        }
+        $t0 = microtime(true);
+        $noise_level *= M_LOG2E;
+        for ($x = 1; $x < $this->width; $x += 20) {
+            for ($y = 1; $y < $this->height; $y += 20) {
+                for ($i = 0; $i < $noise_level; ++$i) {
+                    $x1 = mt_rand($x, $x + 20);
+                    $y1 = mt_rand($y, $y + 20);
+                    $size = mt_rand(1, 3);
+                    if ($x1 - $size <= 0 && $y1 - $size <= 0) continue; // dont cover 0,0 since it is used by imagedistortedcopy
+                    imagefilledarc($im, $x1, $y1, $size, $size, 0, mt_rand(180,360), $this->gdlinecolor, IMG_ARC_PIE);
+                }
+            }
+        }
+        $t = microtime(true) - $t0;
+
+        return $im;
+        /*
+        // DEBUG
+        imagestring($this->im, 5, 25, 30, "$t", $this->gdnoisecolor);
+        header('content-type: image/png');
+        imagepng($this->im);
+        exit;
+        */
+    }
+
+    protected function distortedCopy($im, $im2)
+    {
+        $this->tmpimg = $im2;
+        $this->im = $im;
+
+        $numpoles = 3;       // distortion factor
+        $px       = array(); // x coordinates of poles
+        $py       = array(); // y coordinates of poles
+        $rad      = array(); // radius of distortion from pole
+        $amp      = array(); // amplitude
+        $x        = ($this->width / 4); // lowest x coordinate of a pole
+        $maxX     = $this->width - $x;  // maximum x coordinate of a pole
+        $dx       = mt_rand($x / 10, $x);     // horizontal distance between poles
+        $y        = mt_rand(20, $this->height - 20);  // random y coord
+        $dy       = mt_rand(20, $this->height * 0.7); // y distance
+        $minY     = 20;                                     // minimum y coordinate
+        $maxY     = $this->height - 20;               // maximum y cooddinate
+        // make array of poles AKA attractor points
+        for ($i = 0; $i < $numpoles; ++ $i) {
+            $px[$i]  = ($x + ($dx * $i)) % $maxX;
+            $py[$i]  = ($y + ($dy * $i)) % $maxY + $minY;
+            $rad[$i] = mt_rand($this->height * 0.4, $this->height * 0.8);
+            $tmp     = ((- $this->frand()) * 0.15) - .15;
+            $amp[$i] = $this->perturbation * $tmp;
+        }
+        $bgCol   = imagecolorat($this->tmpimg, 0, 0);
+        $width2  = $this->iscale * $this->width;
+        $height2 = $this->iscale * $this->height;
+        imagepalettecopy($this->im, $this->tmpimg); // copy palette to final image so text colors come across
+        // loop over $img pixels, take pixels from $tmpimg with distortion field
+        for ($ix = 0; $ix < $this->width; ++ $ix) {
+            for ($iy = 0; $iy < $this->height; ++ $iy) {
+                $x = $ix;
+                $y = $iy;
+                for ($i = 0; $i < $numpoles; ++ $i) {
+                    $dx = $ix - $px[$i];
+                    $dy = $iy - $py[$i];
+                    if ($dx == 0 && $dy == 0) {
+                        continue;
+                    }
+                    $r = sqrt($dx * $dx + $dy * $dy);
+                    if ($r > $rad[$i]) {
+                        continue;
+                    }
+                    $rscale = $amp[$i] * sin(3.14 * $r / $rad[$i]);
+                    $x += $dx * $rscale;
+                    $y += $dy * $rscale;
+                }
+                $c = $bgCol;
+                $x *= $this->iscale;
+                $y *= $this->iscale;
+                if ($x >= 0 && $x < $width2 && $y >= 0 && $y < $height2) {
+                    $c = imagecolorat($this->tmpimg, $x, $y);
+                }
+                if ($c != $bgCol) { // only copy pixels of letters to preserve any background image
+                    imagesetpixel($this->im, $ix, $iy, $c);
+                }
+            }
+        }
+
+        return $this->im;
+    }
+
+    protected function frand()
+    {
+        return 0.0001 * mt_rand(0,9999);
+    }
 }
