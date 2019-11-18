@@ -9,6 +9,7 @@ class Captcha {
 	protected $perturbation = 0.90;
 	protected $noise_level = 1;
 	protected $background = 'black';
+	public $fonts = __DIR__."/fonts/*/*.ttf";
 	public $pos = 'ABCDEFGHJKLMNOPQRSTUWVXZ0123456789abcdefhijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWVXZ0123456789';
 
 	function __construct($width = NULL, $height = NULL, $numChar = 6, $background = 'black') {
@@ -30,8 +31,6 @@ class Captcha {
 		
 		$this->width = ($width != NULL) ? $width : $this->width;
 		$this->height = ($height != NULL) ? $height : $this->height;
-
-		$this->ttfFonts = glob(__DIR__."/fonts/*/*.ttf");
 
 	}
 
@@ -125,8 +124,9 @@ class Captcha {
         imagefilledrectangle($image, $width - 1, 0, $width - 1, $height - 1, $black);
         imagefilledrectangle($image, 0, 0, 0, $height - 1, $black);
         imagefilledrectangle($image, 0, $height - 1, $width, $height - 1, $black);
-		
 
+
+        $this->ttfFonts = glob($this->fonts);
          
         $space = ($this->width - 10) / $this->numChar;
 

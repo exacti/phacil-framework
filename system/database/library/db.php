@@ -59,6 +59,12 @@ final class DB {
         $all_exibe = $this->query($all_exibe_query, $cache);
         $totalRows_exibe = (isset($all_exibe->row['__TOTALdeREG_DB_Pagination'])) ? $all_exibe->row['__TOTALdeREG_DB_Pagination'] : $all_exibe->num_rows;
 
+        if($totalRows_exibe <= 0){
+            $all_exibe_query = $query_exibe;
+            $all_exibe = $this->query($all_exibe_query, $cache);
+            $totalRows_exibe = (isset($all_exibe->row['__TOTALdeREG_DB_Pagination'])) ? $all_exibe->row['__TOTALdeREG_DB_Pagination'] : $all_exibe->num_rows;
+        }
+
         $totalPages_exibe = ceil($totalRows_exibe/$maxRows_exibe);
 
         $exibe->totalPages_exibe = $totalPages_exibe;
