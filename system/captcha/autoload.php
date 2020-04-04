@@ -9,10 +9,12 @@ class Captcha {
 	protected $perturbation = 0.90;
 	protected $noise_level = 1;
 	protected $background = 'black';
-	public $fonts = __DIR__."/fonts/*/*.ttf";
+	public $fonts = "/fonts/*/*.ttf";
 	public $pos = 'ABCDEFGHJKLMNOPQRSTUWVXZ0123456789abcdefhijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWVXZ0123456789';
 
 	function __construct($width = NULL, $height = NULL, $numChar = 6, $background = 'black') {
+
+	    $this->fonts = __DIR__."/fonts/*/*.ttf";
 
         if(!extension_loaded('gd')){
             throw new \Exception("The captcha function requires GD extension on PHP!");

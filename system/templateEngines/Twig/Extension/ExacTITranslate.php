@@ -3,10 +3,12 @@
 define('TWIGtagIni', 't');
 define('TWIGtagClose', 'endt');
 
-class transTokenParser extends \Twig_TokenParser
+
+
+class transTokenParser extends \Twig\TokenParser\AbstractTokenParser
 {
 
-   public function parse(\Twig_Token $token)
+   public function parse(\Twig\Token $token)
    {
       $lineno = $token->getLine();
 
@@ -40,10 +42,10 @@ class transTokenParser extends \Twig_TokenParser
          // if your endtrans can also contains params, you can uncomment this line:
          // $params = array_merge($params, $this->getInlineParams($token));
          // and comment this one:
-         $stream->expect(\Twig_Token::BLOCK_END_TYPE);
+         $stream->expect(\Twig\Token::BLOCK_END_TYPE);
       }
 
-      return new transNode(new \Twig_Node($params), $lineno, $this->getTag());
+      return new transNode(new \Twig\Node($params), $lineno, $this->getTag());
    }
 
    /**
@@ -52,15 +54,15 @@ class transTokenParser extends \Twig_TokenParser
     * @param \Twig_Token $token
     * @return array
     */
-   protected function getInlineParams(\Twig_Token $token)
+   protected function getInlineParams(\Twig\Token $token)
    {
       $stream = $this->parser->getStream();
       $params = array ();
-      while (!$stream->test(\Twig_Token::BLOCK_END_TYPE))
+      while (!$stream->test(\Twig\Token::BLOCK_END_TYPE))
       {
          $params[] = $this->parser->getExpressionParser()->parseExpression();
       }
-      $stream->expect(\Twig_Token::BLOCK_END_TYPE);
+      $stream->expect(\Twig\Token::BLOCK_END_TYPE);
       return $params;
    }
 
@@ -68,10 +70,10 @@ class transTokenParser extends \Twig_TokenParser
     * Callback called at each tag name when subparsing, must return
     * true when the expected end tag is reached.
     *
-    * @param \Twig_Token $token
+    * @param \Twig\Token $token
     * @return bool
     */
-   public function decidetransFork(\Twig_Token $token)
+   public function decidetransFork(\Twig\Token $token)
    {
       return $token->test(array (TWIGtagClose));
    }
@@ -90,7 +92,7 @@ class transTokenParser extends \Twig_TokenParser
 }
 
 
-class transNode extends \Twig_Node
+class transNode extends \Twig\Node\Node
 {
 
    public function __construct($params, $lineno = 0, $tag = null)
@@ -98,7 +100,7 @@ class transNode extends \Twig_Node
       parent::__construct(array ('params' => $params), array (), $lineno, $tag);
    }
 
-   public function compile(\Twig_Compiler $compiler)
+   public function compile(\Twig\Compiler $compiler)
    {
       $count = count($this->getNode('params'));
 
@@ -110,7 +112,7 @@ class transNode extends \Twig_Node
          // argument is not an expression (such as, a \Twig_Node_Textbody)
          // we should trick with output buffering to get a valid argument to pass
          // to the functionToCall() function.
-         if (!($this->getNode('params')->getNode($i) instanceof \Twig_Node_Expression))
+         if (!($this->getNode('params')->getNode($i) instanceof \Twig\Node\Expression\AbstractExpression))
          {
             $compiler
                ->write('ob_start();')
@@ -148,7 +150,7 @@ class transNode extends \Twig_Node
 
 
 
-class transExtension extends \Twig_Extension
+class transExtension extends \Twig\Extension\AbstractExtension
 {
 
    public function getTokenParsers()

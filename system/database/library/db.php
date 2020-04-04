@@ -96,5 +96,9 @@ final class DB {
 			return $this->driver->query($sql);
 		}
 	}
+
+	public function createSubBase($nome, $object) {
+
+        $this->$nome = $object;
+    }
 }
-?>

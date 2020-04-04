@@ -7,17 +7,17 @@
  */
 
 class startEngineExacTI {
-    public $constants;
-    public $userConstants;
+    /*public $constants;
+    public $userConstants;*/
     public $phpversion;
-    protected $includes;
+    //protected $includes;
     protected $dirs;
     public $registry;
 
     public function __construct () {
-        $this->constants = get_defined_constants(true);
-        $this->userConstants = $this->constants['user'];
-        $this->includes = get_included_files();
+        //$this->constants = get_defined_constants(true);
+        //$this->userConstants = $this->constants['user'];
+        //$this->includes = get_included_files();
 
         // Check Version
         $this->phpversion = $this->checkPHPversion();
@@ -78,6 +78,14 @@ class startEngineExacTI {
     }
 
     private function checkConstantsRequired () {
+        $dbConsts = ['DB_DRIVER' => 'nullStatement', 'DB_HOSTNAME' => NULL, 'DB_USERNAME' => NULL, 'DB_PASSWORD' => NULL, 'DB_DATABASE' => NULL];
+
+        foreach ($dbConsts as $constDB => $value) {
+            if (!defined($constDB)) {
+                define($constDB, $value);
+            }
+        }
+
         if (!defined('DIR_APPLICATION') || !defined('DIR_SYSTEM') || !defined('DIR_PUBLIC') || !defined('DIR_TEMPLATE') || !defined('USE_DB_CONFIG')) {
             return(false);
         } else {
@@ -141,6 +149,24 @@ class startEngineExacTI {
             include(DIR_SYSTEM."registrations.php");
     }
 
+    public function constants(){
+        return get_defined_constants(true);
+    }
+
+    public function userConstants() {
+        return $this->constants()['user'];
+    }
+
+    public function constantName($constant, $group = 'user') {
+
+        foreach ($this->constants()[$group] as $name => $value){
+            if($constant === $value)
+                return $name;
+        }
+
+        return $constant;
+    }
+
 }
 
 $engine = new startEngineExacTI();
@@ -157,7 +183,7 @@ $engine->registry->set('load', $loader);
 $config = new Config();
 $engine->registry->set('config', $config);
 
-$engine->registry->set('db', $db);
+$engine->registry->set('db', new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE));
 
 // Settings
 if(!empty($configs)){
@@ -207,8 +233,8 @@ if(!$config->get('config_error_filename')){
 $log = new Log($config->get('config_error_filename'));
 $engine->registry->set('log', $log);
 
-function error_handler($errno, $errstr, $errfile, $errline) {
-    global $log, $config;
+// Error Handler
+set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($log, $config, $engine){
 
     switch ($errno) {
         case E_NOTICE:
@@ -223,8 +249,12 @@ function error_handler($errno, $errstr, $errfile, $errline) {
         case E_USER_ERROR:
             $error = 'Fatal Error';
             break;
+        case E_DEPRECATED:
+        case E_USER_DEPRECATED:
+            $error = 'Deprecated';
+            break;
         default:
-            $error = 'Unknown';
+            $error = $engine->constantName($errno, 'Core');
             break;
     }
 
@@ -233,14 +263,21 @@ function error_handler($errno, $errstr, $errfile, $errline) {
     }
 
     if ($config->get('config_error_log')) {
-        $log->write('PHP ' . $error . ':  ' . $errstr . ' in ' . $errfile . ' on line ' . $errline);
+        $log->write( $error . ':  ' . $errstr . ' in ' . $errfile . ' on line ' . $errline.' | Phacil '.$engine->version(). ' on PHP '.$engine->phpversion);
     }
 
     return true;
-}
+});
 
-// Error Handler
-set_error_handler('error_handler');
+set_exception_handler(function($e) use ($log, $config) {
+    if ($config->get('config_error_display')) {
+        echo '<b>' . get_class($e) . '</b>: ' . $e->getMessage() . ' in <b>' . $e->getFile() . '</b> on line <b>' . $e->getLine() . '</b>';
+    }
+
+    if ($config->get('config_error_log')) {
+        $log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+    }
+});
 
 //Caches
 $caches = new Caches();

@@ -135,6 +135,7 @@ All routes are a mapping class with extends the primary Controller class. In a s
 | DEFAULT_ROUTE | string | Define the default route to assume with initial page. Default is *common/home*. |
 | CUSTOM_DB_CONFIG | string | Custom SQL to load application configs in database. |
 | NOT_FOUND | string | Custom route to not found page. Default is error/not_found. |
+| SESSION_PREFIX | string | Custom session cookie name prefix. Default is SESS. | 
 
 ## Outputs and renders
 
@@ -209,15 +210,15 @@ For functions inside the controller that are different from index, for automatic
   - TPL (basic template with PHP and HTML);
   - [Twig](https://twig.symfony.com);
   - [Mustache](https://mustache.github.io);
-  - [Dwoo](http://dwoo.org);
-  - [Smarty](https://www.smarty.net).
+  - [Smarty](https://www.smarty.net);
+  - [Dwoo](http://dwoo.org) (Deprecated, will be removed soon in further versions).
   
   To use a determined template engine, just create a file with name of engine in extension, for sample, if you like to use a Twig, the template file is **demo.twig**, if desire the Mustache template, use **demo.mustache** extension file.
   The ExacTI Phacil Framework allows to use various template engines in the same project.
 
 ## Easy made functions
 
-  This framework is very focused in agile, security and reusable code in PHP. Contains a very utile functions we see in the next section.
+  This framework is very focused in agile, security and reusable code in PHP. Contains a very utils functions we see in the next section.
 
 ### Database 
 
@@ -271,6 +272,7 @@ To get these rows:
 | postgre | PostgreSQL | Driver for connect to PostgreSQL databases. |
 | sqlsrv | MS SQL Server | Connect a Microsoft SQL Server database with sqlsrv PHP extension. |
 | sqlsrvpdo | MS SQL Server | Connect to Microsoft SQL Server using PDO driver. |
+| sqlite3_db | SQLite 3 | Use the SQLite 3 database | 
 
 
 ### Cache
@@ -388,7 +390,7 @@ This load is simple and registry to object of origin.
    public function otherData() {
      $this->load->database('mpdo', 'localhost', 'root', 'imtheking', 'nameDatabase');
 
-     $sql = $this->nameDatabase->query("SELECT * FROM mundo");
+     $sql = $this->db->nameDatabase->query("SELECT * FROM mundo");
 
      return $sql->rows;
    }
@@ -441,11 +443,14 @@ To create a model, put in the models folder a directory and file with the code.
 
   To use a magic request system, you just need to call a `$this->request` method. For sample, to obtain a POST value, use `$this->request->post['field']` to get the post value with security. 
   For a $_SERVER predefined variables, use `$this->request->server['VALUE']` and `$this->request->get[key]` for $_GET values. 
+  For REST services you can use `$this->request->method` to check if is a POST, GET, PUT, DELETE or other HTTP method. You can use the auxiliary functions to determinate the HTTP method, like `$this->request->isPUT()` to return *true* or *false* for PUT method. Also others methods have your functions, like `$this->request->isPOST()`, `$this->request->isGET()`, `$this->request->isHEAD()`, `$this->request->isCONNECT()`, `$this->request->isOPTIONS()`, `$this->request->isTRACE()`, `$this->request->isPATCH()` or `$this->request->isDELETE()`. All are equivalent to "is" function in request, like this sample: `$this->request->is('PUT')` return true or false for PUT HTTP method.
   The advantages to use this requests instead the predefined variables of PHP are more the more security, upgradable and unicode values.
 
 ### Sessions
 
   Sessions is a little different method, you can define and use with `$this->session->data['name']`.
+  All sessions called with Phacil are secure for HTTPS and IP verify, in other words, we made the session cookie stolen more difficulty, to have less chance of session hijacking.
+  You can define the session prefix name with constant `SESSION_PREFIX` in your config file. For default, the prefix is "SESS".
 
 ## Special controller parameters
 

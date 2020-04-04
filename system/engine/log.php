@@ -2,7 +2,7 @@
 final class Log {
 	private $filename;
 		
-	public function __construct($filename) {
+	public function __construct($filename = "error.log") {
 		$this->filename = fopen(DIR_LOGS . $filename, 'a');
 	}
 	
@@ -14,4 +14,3 @@ final class Log {
 		fclose($this->filename);
 	}
 }
-?>

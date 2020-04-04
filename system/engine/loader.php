@@ -60,11 +60,21 @@ final class Loader {
 	public function database($driver, $hostname, $username, $password, $database, $port = NULL, $charset = NULL) {
 		$file  = DIR_SYSTEM . 'database/database/' . $driver . '.php';
 		$class = ($driver);
+
+		$replace = [
+		    '/' => '_',
+            '.' => '_'
+        ];
+
+        $database_name = str_replace(array_keys($replace), array_values($replace), preg_replace('/[^a-zA-Z0-9]/', '', $database));
+
 		
 		if (file_exists($file)) {
-			include_once($file);
-			
-			$this->registry->set(str_replace('/', '_', $database), new $class($hostname, $username, $password, $database));
+            //include_once($file);
+
+            $this->db->createSubBase($database_name, new DB($driver, $hostname, $username, $password, $database));
+
+			return $database_name;
 		} else {
 			trigger_error('Error: Could not load database ' . $driver . '!');
 			exit();				

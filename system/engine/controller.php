@@ -10,6 +10,7 @@ abstract class Controller {
     protected $twig = array();
     protected $error = array();
     protected $output;
+    public $templateTypes = ["tpl", "twig", "mustache", "smarty", "dwoo"];
 
     public function __construct($registry) {
         $this->registry = $registry;
@@ -62,8 +63,6 @@ abstract class Controller {
         if($this->template === NULL) {
             $pegRout = explode("/", $this->request->get['route']);
 
-            $this->templateTypes = array("tpl", "twig", "dwoo", "mustache", "smarty");
-
             $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
 
             foreach($this->templateTypes as $extensionTemplate) {
@@ -110,27 +109,32 @@ abstract class Controller {
                         'cache'		 => DIR_CACHE."twig/",
                         'debug'      => (defined('DEBUG')) ? DEBUG : false
                     );
-                    $loader = new Twig_Loader_Filesystem(DIR_TEMPLATE);
-                    $twig = new Twig_Environment($loader, $config);
+                    $TwigLoaderFilesystem = constant('TwigLoaderFilesystem');
+                    $Twig_Environment = constant('TwigEnvironment');
+                    $Twig_SimpleFilter = constant('TwigSimpleFilter');
+                    $Twig_Extension_Debug = constant('TwigExtensionDebug');
+
+                    $loader = new $TwigLoaderFilesystem (DIR_TEMPLATE);
+                    $twig = new $Twig_Environment($loader, $config);
 
                     if($config['debug']) {
-                        $twig->addExtension(new Twig_Extension_Debug());
+                        $twig->addExtension(new $Twig_Extension_Debug());
                     }
 
                     $twig->addExtension(new transExtension());
 
-                    $twig->addFilter(new Twig_SimpleFilter('translate', function ($str) {
+                    $twig->addFilter(new $Twig_SimpleFilter('translate', function ($str) {
                         // do something different from the built-in date filter
                         return traduzir($str);
                     }));
 
-                    $twig->addFilter(new Twig_SimpleFilter('config', function ($str) {
+                    $twig->addFilter(new $Twig_SimpleFilter('config', function ($str) {
                         // do something different from the built-in date filter
                         return $this->config->get($str);
                     }));
 
                     foreach ($this->twig as $key => $item) {
-                        $twig->addFilter(new Twig_SimpleFilter($key, $item));
+                        $twig->addFilter(new $Twig_SimpleFilter($key, $item));
                     }
 
                     $template = $twig->load($this->template);
@@ -140,6 +144,8 @@ abstract class Controller {
 
                 case 'dwoo':
                     require_once(DIR_SYSTEM."templateEngines/Dwoo/autoload.php");
+
+                    @trigger_error(sprintf("Dwoo template engine is deprecated since Phacil 1.5.0 and will be removed in further versions. Migration to Smarty (most similarity) or other template engine is recommended."), E_USER_DEPRECATED);
 
                     $dwoo = new Dwoo\Core();
 

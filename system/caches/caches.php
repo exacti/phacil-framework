@@ -2,9 +2,11 @@
 final class Caches {
     private $expire = 3600;
 
-    public $dirCache = DIR_CACHE."caches/";
+    public $dirCache = "caches/";
 
     public function __construct() {
+        $this->dirCache = DIR_CACHE."caches/";
+
         if (!file_exists($this->dirCache)) {
             mkdir($this->dirCache, 0760, true);
         }
