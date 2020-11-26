@@ -1,3 +1,3 @@
 <?php
 
-include __DIR__.'/mail.php';
+include DIR_SYSTEM.'mail/mail.php';

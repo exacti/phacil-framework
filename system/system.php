@@ -13,6 +13,7 @@ class startEngineExacTI {
     //protected $includes;
     protected $dirs;
     public $registry;
+    private $preActions = false;
 
     public function __construct () {
         //$this->constants = get_defined_constants(true);
@@ -165,6 +166,10 @@ class startEngineExacTI {
         }
 
         return $constant;
+    }
+
+    public function controllerPreActions() {
+        return (isset($this->preActions) && is_array($this->preActions)) ? $this->preActions : false;
     }
 
 }
@@ -327,6 +332,13 @@ $controller = new Front($engine->registry);
 // SEO URL's
 $controller->addPreAction(new ActionSystem('url/seo_url'));
 
+//extraPreactions
+if($engine->controllerPreActions()){
+    foreach ($engine->controllerPreActions() as $action){
+        $controller->addPreAction(new Action($action));
+    }
+}
+
 // Router
 if (isset($request->get['route'])) {
     $action = new Action($request->get['route']);
@@ -342,4 +354,3 @@ $controller->dispatch($action, new Action($not_found));
 
 // Output
 $response->output();
-

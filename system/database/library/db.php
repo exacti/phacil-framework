@@ -5,8 +5,8 @@ final class DB {
 	private $cachePrefix = "SQL_";
 	
 	public function __construct($driver, $hostname, $username, $password, $database) {
-		if (file_exists(DIR_DATABASE . $driver . '.php')) {
-			require_once(DIR_DATABASE . $driver . '.php');
+		if (file_exists(DIR_DATABASE .'database/'. $driver . '.php')) {
+			require_once(DIR_DATABASE .'database/'. $driver . '.php');
 		} else {
 			exit('Error: Could not load database file ' . $driver . '!');
 		}

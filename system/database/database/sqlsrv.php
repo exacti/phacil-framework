@@ -29,12 +29,12 @@ final class SQLSRV {
         }
         */
 
-        sqlsrv_query("SET NAMES 'utf8'", $this->link);
-        sqlsrv_query("SET CHARACTER SET utf8", $this->link);
+        sqlsrv_query($this->link,"SET NAMES 'utf8'");
+        sqlsrv_query($this->link, "SET CHARACTER SET utf8");
     }
 
     public function query($sql) {
-        $resource = \sqlsrv_query($sql, $this->link);
+        $resource = \sqlsrv_query($this->link, $sql);
 
         if ($resource) {
             if (is_resource($resource)) {
@@ -80,7 +80,7 @@ final class SQLSRV {
     public function getLastId() {
         $last_id = false;
 
-        $resource = \sqlsrv_query("SELECT @@identity AS id", $this->link);
+        $resource = \sqlsrv_query($this->link, "SELECT @@identity AS id");
 
         if ($row = \sqlsrv_fetch($resource)) {
             $last_id = trim($row[0]);

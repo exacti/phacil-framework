@@ -443,7 +443,9 @@ To create a model, put in the models folder a directory and file with the code.
 
   To use a magic request system, you just need to call a `$this->request` method. For sample, to obtain a POST value, use `$this->request->post['field']` to get the post value with security. 
   For a $_SERVER predefined variables, use `$this->request->server['VALUE']` and `$this->request->get[key]` for $_GET values. 
+  
   For REST services you can use `$this->request->method` to check if is a POST, GET, PUT, DELETE or other HTTP method. You can use the auxiliary functions to determinate the HTTP method, like `$this->request->isPUT()` to return *true* or *false* for PUT method. Also others methods have your functions, like `$this->request->isPOST()`, `$this->request->isGET()`, `$this->request->isHEAD()`, `$this->request->isCONNECT()`, `$this->request->isOPTIONS()`, `$this->request->isTRACE()`, `$this->request->isPATCH()` or `$this->request->isDELETE()`. All are equivalent to "is" function in request, like this sample: `$this->request->is('PUT')` return true or false for PUT HTTP method.
+  
   The advantages to use this requests instead the predefined variables of PHP are more the more security, upgradable and unicode values.
 
 ### Sessions

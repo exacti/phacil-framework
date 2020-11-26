@@ -1,8 +1,9 @@
 <?php
 
-define('DIR_DATABASE', (__DIR__)."/database/");
+if(!defined('DIR_DATABASE'))
+    define('DIR_DATABASE', (__DIR__)."/");
 
-include __DIR__."/library/db.php";
+include DIR_DATABASE."/library/db.php";
 
 if(defined('DB_DRIVER')) {
     global $db;

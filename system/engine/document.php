@@ -90,7 +90,7 @@ class Document {
 				$b[$key] = $value;
 			}
 		}
-		return $b;
+        return (isset($b)) ? $b : [];
 	}
 	
 	public function addFBMeta($property, $content = ''){

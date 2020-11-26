@@ -1,13 +1,13 @@
 <?php
 
-require_once(__DIR__ . '/log.php');
-require_once(__DIR__ . '/action.php'); 
-require_once(__DIR__ . '/controller.php');
-require_once(__DIR__ . '/front.php');
-require_once(__DIR__ . '/loader.php'); 
-require_once(__DIR__ . '/model.php');
-require_once(__DIR__ . '/registry.php');
-require_once(__DIR__ . '/document.php');
-require_once(__DIR__ . '/response.php');
-require_once(__DIR__ . '/classes.php');
-//require_once(__DIR__ . '/caches.php');
+require_once(DIR_SYSTEM . 'engine/log.php');
+require_once(DIR_SYSTEM . 'engine/action.php'); 
+require_once(DIR_SYSTEM . 'engine/controller.php');
+require_once(DIR_SYSTEM . 'engine/front.php');
+require_once(DIR_SYSTEM . 'engine/loader.php'); 
+require_once(DIR_SYSTEM . 'engine/model.php');
+require_once(DIR_SYSTEM . 'engine/registry.php');
+require_once(DIR_SYSTEM . 'engine/document.php');
+require_once(DIR_SYSTEM . 'engine/response.php');
+require_once(DIR_SYSTEM . 'engine/classes.php');
+//require_once(DIR_SYSTEM . 'engine/caches.php');

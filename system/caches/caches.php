@@ -52,18 +52,20 @@ final class Caches {
     }
 
     public function delete($key) {
-        $files = glob($this->dirCache . preg_replace('/[^A-Z0-9\._-]/i', '', $key) . '.cache');
+        $files = glob($this->dirCache . preg_replace('/[^A-Z0-9\.\*_-]/i', '', $key) . '.cache');
 
         if ($files) {
             foreach ($files as $file) {
+                
                 if (file_exists($file)) {
+                    
                     unlink($file);
-                    return true;
+                    
                 }
             }
         }
 
-        return false;
+        return (count($files));
     }
 
     private function encode($value){
