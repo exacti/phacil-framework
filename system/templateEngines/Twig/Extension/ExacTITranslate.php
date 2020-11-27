@@ -45,7 +45,7 @@ class transTokenParser extends \Twig\TokenParser\AbstractTokenParser
          $stream->expect(\Twig\Token::BLOCK_END_TYPE);
       }
 
-      return new transNode(new \Twig\Node($params), $lineno, $this->getTag());
+      return new transNode(new \Twig\Node\Node($params), $lineno, $this->getTag());
    }
 
    /**
