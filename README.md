@@ -607,14 +607,14 @@ In a sample case, we have this controller:
 
 		   $json = json_encode($record);
 
-		   $this->response->addHeader('Content-Type: application/json');
+		   $this->response->isJSON();   //Auto send the 'Content-Type: application/json' header
 
 		   $this->response->setOutput($json);
 	   }
    }
    ```
 
-   The `$this->response->addHeader` is responsible to send a personalized HTTP header to browser, in this case specify the *Content-Type* information. The `$this->response->setOutput()` works for send  output of the content of a variable, function, constant, etc., to the browser.
+   The `$this->response->isJSON` is responsible to send a JSON  Content-Type HTTP header to browser. The `$this->response->setOutput()` works for send  output of the content of a variable, function, constant, etc., to the browser.
 
    We have this output:
 
@@ -642,6 +642,7 @@ In a sample case, we have this controller:
   }
   ```
 
+  The `$this->response->addHeader` have a function to send a personalized HTTP header to browser, in this case specify the *Content-Type* information.
   The response is:
    ```xml
    <?xml version="1.0"?>
@@ -650,6 +651,38 @@ In a sample case, we have this controller:
 	<bar>foo</bar>
 </root>   
    ```
+
+### setOutput utilities
+
+In response we have *setOutput* function with parameters to facility for JSON and REST use.
+
+The parameters are `$this->response->setOutput($output, bool $isJSON, int $HTTPCODE, string $HTTPDESC);` on automatic apply the JSON Content-type header if the second parameter is true and define the HTTP response code in third parameter. A description for HTTP code also can be send, if you need. 
+
+Except for the first parameter, the others are optional.
+
+#### Sample of use for JSON Rest output only with setOutput function
+
+```php
+<?php
+   class ControllerApiData extends Controller {
+	  public function index() {
+        $record = [
+         [
+           "index"  => 482,
+           "id"     => 221
+         ],
+         [
+           "index"  => 566,
+           "id"     => 328
+         ]
+       ];
+       
+       $json = json_encode($record);
+       
+       $this->response->setOutput($json, true, 404);
+	   }
+   }
+```
 
 ## Set and load configurations
 

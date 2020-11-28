@@ -32,6 +32,13 @@ bld/
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
+# ---> VisualStudioCode
+.vscode/*
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*

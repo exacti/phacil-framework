@@ -17,7 +17,14 @@ final class Response {
 		$this->level = $level;
 	}
 		
-	public function setOutput($output) {
+	public function setOutput($output, bool $isJSON = false, int $HTTPCODE = 0, string $HTTPDESC = null) {
+
+		if($isJSON)
+			$this->isJSON();
+
+		if($HTTPCODE !== 0)
+			$this->code($HTTPCODE, $HTTPDESC);
+
 		$this->output = $output;
 	}
 
@@ -68,5 +75,13 @@ final class Response {
 			echo $ouput;
 		}
 	}
+
+	public function isJSON() {
+		$this->addHeader('Content-Type: application/json');
+	}
+
+	public function code(int $code, string $description = null){
+		$this->addHeader("HTTP/1.1 ".$code.(($description) ? " ". $description : ""));
+        $this->addHeader("Status: ".$code."");
+	}
 }
-?>
