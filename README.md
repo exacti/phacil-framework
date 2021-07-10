@@ -1,6 +1,6 @@
 #  Phacil-framework
 
- ![GitHub](https://img.shields.io/github/license/exacti/phacil-framework.svg)  ![GitHub top language](https://img.shields.io/github/languages/top/exacti/phacil-framework.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/exacti/phacil-framework.svg) ![GitHub issues](https://img.shields.io/github/issues/exacti/phacil-framework.svg) ![PHP Version](https://img.shields.io/badge/php-%3E%3D5.4.20-blue.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/exacti/phacil-framework.svg) ![GitHub Release Date](https://img.shields.io/github/release-date/exacti/phacil-framework.svg) ![GitHub release](https://img.shields.io/github/release/exacti/phacil-framework.svg)
+ ![GitHub](https://img.shields.io/github/license/exacti/phacil-framework.svg)  ![GitHub top language](https://img.shields.io/github/languages/top/exacti/phacil-framework.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/exacti/phacil-framework.svg) ![GitHub issues](https://img.shields.io/github/issues/exacti/phacil-framework.svg) ![PHP Version](https://img.shields.io/badge/php-%3E%3D5.4.45-blue.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/exacti/phacil-framework.svg) ![GitHub Release Date](https://img.shields.io/github/release-date/exacti/phacil-framework.svg) ![GitHub release](https://img.shields.io/github/release/exacti/phacil-framework.svg)
 
 
 A super easy PHP Framework for web development!
@@ -37,6 +37,8 @@ This is a simple Hello World! for this framework.
 2. Edit **controller/common/home.php** like that.
     ```php
     <?php
+
+    use Phacil\Framework\Controller;
     
     class ControllerCommonHome extends Controller {
         public function index() {
@@ -165,6 +167,9 @@ It's much used in children's controllers, like headers and footers.
 ##### Sample
 ```php
    <?php 
+
+   use Phacil\Framework\Controller;
+
    class ControllerCommonHeader extends Controller {
      public function index() {
        $variable = 'value';
@@ -211,7 +216,6 @@ For functions inside the controller that are different from index, for automatic
   - [Twig](https://twig.symfony.com);
   - [Mustache](https://mustache.github.io);
   - [Smarty](https://www.smarty.net);
-  - [Dwoo](http://dwoo.org) (Deprecated, will be removed soon in further versions).
   
   To use a determined template engine, just create a file with name of engine in extension, for sample, if you like to use a Twig, the template file is **demo.twig**, if desire the Mustache template, use **demo.mustache** extension file.
   The ExacTI Phacil Framework allows to use various template engines in the same project.
@@ -317,6 +321,8 @@ Page description: `$this->document->setDescription($description)`;
 ##### Sample:
    ```php
    <?php
+   use Phacil\Framework\Controller;
+
    class ControllerCommonHome extends Controller {
 	   public function index() {
 		   $this->document->addStyle('pipoca.css');
@@ -357,7 +363,8 @@ In this framework, loaders are a simple way to get resources to use in your PHP 
 For sample, to load a model, is just `$this->load->model('folder/file');` and to use is `$this->model_folder_file->object();`, like this sample:
  ```php
  <?php
- class ControllerSampleUse extends Controller {
+
+ class ControllerSampleUse extends Phacil\Framework\Controller {
 	 public function index() {
 		 $this->load->model('data/json');
 		 $this->data['totalData'] = $this->model_data_json->total();
@@ -386,6 +393,9 @@ This load is simple and registry to object of origin.
 ##### Sample:
  ```php
  <?php  
+
+ use Phacil\Framework\Model;
+
  class ModelDemoSample extends Model {
    public function otherData() {
      $this->load->database('mpdo', 'localhost', 'root', 'imtheking', 'nameDatabase');
@@ -405,6 +415,8 @@ To create a model, put in the models folder a directory and file with the code.
  ```php
  <?php
 
+ use Phacil\Framework\Model;
+
  class ModelFolderFile extends Model {
 	 public function SayMyName() {
 		 return "Heisenberg";
@@ -417,6 +429,9 @@ To create a model, put in the models folder a directory and file with the code.
 
   ```php
   <?php
+
+  use Phacil\Framework\Controller;
+
   class ControllerFolderFile extends Controller {
     public function index() {
       $this->load->model('folder/file');
@@ -473,6 +488,9 @@ Without SEO URL, we invoke a page with *route* get parameter when contains a sch
 In a sample case, we have this controller:
  ```php
  <?php
+
+ use Phacil\Framework\Controller;
+
  class ControllerFolderFile extends Controller {
 	 public function index() {
 		 echo "Index";
@@ -601,6 +619,9 @@ In a sample case, we have this controller:
 
    ```php
    <?php
+
+   use Phacil\Framework\Controller;
+
    class ControllerApiData extends Controller {
 	   public function index() {
 		   $record = array(array("index" => 482, "id" => 221), array("index" => 566, "id" => 328));
@@ -626,13 +647,16 @@ In a sample case, we have this controller:
 
   ```php
   <?php
+
+  use Phacil\Framework\Controller;
+
   class ControllerApiData extends Controller {
 	  public function xml() {
         $test_array = array (
             'bla' => 'blub',
             'foo' => 'bar',
         );
-        $xml = new SimpleXMLElement('<root/>');
+        $xml = new \SimpleXMLElement('<root/>');
         array_walk_recursive($test_array, array ($xml, 'addChild'));
 
         $this->response->addHeader('Content-Type: text/xml');
@@ -664,6 +688,9 @@ Except for the first parameter, the others are optional.
 
 ```php
 <?php
+
+  use Phacil\Framework\Controller;
+
    class ControllerApiData extends Controller {
 	  public function index() {
         $record = [
@@ -765,13 +792,16 @@ Except for the first parameter, the others are optional.
   <?php
   // use for register aditionals
 
-  $criptoClass = new CriptoClass('salt');
+  $criptoClass = new \CriptoClass('salt');
   $this->registry->set('cripto', $criptoClass);
   ```
 
   Using in /controler/demo/sample.php
    ```php
    <?php 
+
+  use Phacil\Framework\Controller;
+
    class ControllerDemoSample extends Controller {
      public function index() {
        $value = 123;
@@ -788,6 +818,7 @@ Except for the first parameter, the others are optional.
  ```php
  <?php
  //use for register aditionals
+  use Phacil\Framework\Controller;
 
  class DBne extends Controller {
    public function __construct($registry) {
@@ -802,7 +833,8 @@ Except for the first parameter, the others are optional.
 
  Using in /controller/demo/sample.php
   ```php
-  class ControllerDemoSample extends Controller {
+
+  class ControllerDemoSample extends Phacil\Framework\Controller {
     public function index() {
       $this->test->query("SELECT * FROM mundo");
     }
