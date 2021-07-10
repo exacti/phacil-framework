@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
+namespace Phacil\Framework;
 
 abstract class Controller {
     protected $registry;
@@ -109,8 +117,8 @@ abstract class Controller {
                         'cache'		 => DIR_CACHE."twig/",
                         'debug'      => (defined('DEBUG')) ? DEBUG : false
                     );
-                    $TwigLoaderFilesystem = constant('TwigLoaderFilesystem');
-                    $Twig_Environment = constant('TwigEnvironment');
+                    $TwigLoaderFilesystem = constant('\TwigLoaderFilesystem');
+                    $Twig_Environment = constant('\TwigEnvironment');
                     $Twig_SimpleFilter = constant('TwigSimpleFilter');
                     $Twig_Extension_Debug = constant('TwigExtensionDebug');
 
@@ -121,7 +129,7 @@ abstract class Controller {
                         $twig->addExtension(new $Twig_Extension_Debug());
                     }
 
-                    $twig->addExtension(new transExtension());
+                    $twig->addExtension(new \transExtension());
 
                     $twig->addFilter(new $Twig_SimpleFilter('translate', function ($str) {
                         // do something different from the built-in date filter
@@ -142,36 +150,18 @@ abstract class Controller {
                     $this->output = $template->render($this->data);
                     break;
 
-                case 'dwoo':
-                    require_once(DIR_SYSTEM."templateEngines/Dwoo/autoload.php");
-
-                    @trigger_error(sprintf("Dwoo template engine is deprecated since Phacil 1.5.0 and will be removed in further versions. Migration to Smarty (most similarity) or other template engine is recommended."), E_USER_DEPRECATED);
-
-                    $dwoo = new Dwoo\Core();
-
-                    // Configure directories
-                    $dwoo->setCompileDir(DIR_CACHE.'dwoo/compiled/dir/'); // Folder to store compiled templates
-                    $dwoo->setCacheDir(DIR_CACHE.'dwoo/cache/');// Folder to store cached templates
-                    $dwoo->setCacheTime(3600); //Cache Time
-                    $dwoo->setTemplateDir(DIR_TEMPLATE); // Folder containing template files
-
-                    $dwoo->getLoader()->addDirectory(DIR_SYSTEM."templateEngines/Dwoo/extension/");
-
-                    $this->output = $dwoo->get($this->template, $this->data);
-
-                    break;
 
                 case 'mustache':
                     require_once(DIR_SYSTEM."templateEngines/Mustache/autoload.php");
 
-                    Mustache_Autoloader::register();
+                    \Mustache_Autoloader::register();
 
-                    $mustache = new Mustache_Engine(array(
+                    $mustache = new \Mustache_Engine(array(
                         //'template_class_prefix' => '__MyTemplates_',
                         'cache' => DIR_CACHE.'mustache',
                         'cache_file_mode' => 0666, // Please, configure your umask instead of doing this :)
                         //'cache_lambda_templates' => true,
-                        'loader' => new Mustache_Loader_FilesystemLoader(DIR_TEMPLATE),
+                        'loader' => new \Mustache_Loader_FilesystemLoader(DIR_TEMPLATE),
                         //'partials_loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__).'/views/partials'),
                         'helpers' => array('translate' => function($text) {
                             if (class_exists('Translate')) {
@@ -197,7 +187,7 @@ abstract class Controller {
                 case 'smarty':
                     require_once(DIR_SYSTEM."templateEngines/smarty/autoload.php");
 
-                    $smarty = new Smarty();
+                    $smarty = new \Smarty();
 
                     $smarty->setTemplateDir(DIR_TEMPLATE);
                     $smarty->setCompileDir(DIR_CACHE."Smarty/compile/");
@@ -208,7 +198,7 @@ abstract class Controller {
 
                     $smarty->assign($this->data);
 
-                    $smarty->caching = Smarty::CACHING_LIFETIME_CURRENT;
+                    $smarty->caching = \Smarty::CACHING_LIFETIME_CURRENT;
 
                     //** un-comment the following line to show the debug console
                     $smarty->debugging = (defined('DEBUG')) ? DEBUG : false;
@@ -248,3 +238,4 @@ abstract class Controller {
         return $this->response->setOutput($this->render());
     }
 }
+

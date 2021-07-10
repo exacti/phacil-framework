@@ -6,6 +6,8 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
+ namespace Phacil\Framework;
+
 class startEngineExacTI {
     /*public $constants;
     public $userConstants;*/

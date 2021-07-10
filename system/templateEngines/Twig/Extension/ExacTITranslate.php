@@ -1,8 +1,14 @@
 <?php
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ */
 
 define('TWIGtagIni', 't');
 define('TWIGtagClose', 'endt');
 
+//use Phacil\Framework;
 
 
 class transTokenParser extends \Twig\TokenParser\AbstractTokenParser
@@ -173,7 +179,7 @@ function traduzir() {
 	$body = array_shift($params);
 	
 	if (class_exists('Translate')) {
-		$trans = new Translate();
+		$trans = new Phacil\Framework\Translate();
 		echo ($trans->translation($body)); 
 	} else {
 		echo $body;

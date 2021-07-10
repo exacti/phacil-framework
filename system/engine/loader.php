@@ -1,4 +1,13 @@
 <?php
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
+ namespace Phacil\Framework;
+
 final class Loader {
 	protected $registry;
 	
@@ -25,18 +34,58 @@ final class Loader {
 		}
 	}
 	
-	public function model($model) {
-		$file  = DIR_APPLICATION . 'model/' . $model . '.php';
-		$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', $model);
-		
-		if (file_exists($file)) {
+	public function model(string $model) {
+
+		$parts = explode('/', str_replace('../', '', (string)$model));
+
+		$lastPart = array_pop($parts);
+
+		$path = str_replace('../', '', implode("/", $parts) );
+
+		$file = DIR_APP_MODULAR.$path."/model/". $lastPart.".php";
+
+		if(file_exists($file)){
 			include_once($file);
+			$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', $model);
 			
 			$this->registry->set('model_' . str_replace('/', '_', $model), new $class($this->registry));
 		} else {
-			trigger_error('Error: Could not load model ' . $model . '!');
+
+			$file  = DIR_APPLICATION . 'model/' . $model . '.php';
+			$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', $model);
+			
+			if (file_exists($file)) {
+				include_once($file);
+				
+				$this->registry->set('model_' . str_replace('/', '_', $model), new $class($this->registry));
+			} else {
+				trigger_error('Error: Could not load model ' . $model . '!');
+				exit();					
+			}
+		}
+		
+	}
+	
+	public function helper(string $helper) {
+
+		$parts = explode('/', str_replace('../', '', (string)$helper));
+
+		$lastPart = array_pop($parts);
+
+		$path = str_replace('../', '', implode("/", $parts) );
+
+		$file = DIR_APP_MODULAR.$path."/helper/". $lastPart.".php";
+
+		if(file_exists($file)){
+			include_once($file);
+			/* $class = 'Helper' . preg_replace('/[^a-zA-Z0-9]/', '', $model);
+			
+			$this->registry->set('model_' . str_replace('/', '_', $model), new $class($this->registry)); */
+		} else {
+			trigger_error('Error: Could not load Helper ' . $helper . '!');
 			exit();					
 		}
+		
 	}
 
     public function control($model) { //temp alias, consider change to loader controller function

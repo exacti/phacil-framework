@@ -9,6 +9,8 @@
 define('TWIGtagIni', 't');
 define('TWIGtagClose', 'endt');
 
+//use Phacil\Framework;
+
 class transTokenParser extends \Twig_TokenParser
 {
 
@@ -177,7 +179,7 @@ function traduzir() {
     $body = array_shift($params);
 
     if (class_exists('Translate')) {
-        $trans = new Translate();
+        $trans = new Phacil\Framework\Translate();
         echo ($trans->translation($body));
     } else {
         echo $body;

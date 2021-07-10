@@ -1,4 +1,13 @@
 <?php
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
+namespace Phacil\Framework;
+
 final class Action {
 	protected $file;
 	protected $class;
@@ -11,9 +20,16 @@ final class Action {
 		$parts = explode('/', str_replace('../', '', (string)$route));
 		
 		foreach ($parts as $part) { 
+			$pathNew = $path;
 			$path .= $part;
 			
-			if (is_dir(DIR_APPLICATION . 'controller/' . $path)) {
+			if (is_dir(DIR_APP_MODULAR . $path)) {
+				$path = $path.'/';
+				
+				array_shift($parts);
+				
+				continue;
+			}elseif (is_dir(DIR_APPLICATION . 'controller' . $path)) {
 				$path .= '/';
 				
 				array_shift($parts);
@@ -21,7 +37,15 @@ final class Action {
 				continue;
 			}
 			
-			if (is_file(DIR_APPLICATION . 'controller/' . str_replace('../', '', $path) . '.php')) {
+			if (is_file(DIR_APP_MODULAR  . str_replace('../', '', $pathNew) . 'controller/' . str_replace('../', '', $part) . '.php')) {
+				$this->file = DIR_APP_MODULAR . str_replace('../', '', $pathNew) . 'controller/' . str_replace('../', '', $part) . '.php';
+				
+				$this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
+
+				array_shift($parts);
+				
+				break;
+			} elseif (is_file(DIR_APPLICATION . 'controller/' . str_replace('../', '', $path) . '.php')) {
 				$this->file = DIR_APPLICATION . 'controller/' . str_replace('../', '', $path) . '.php';
 				
 				$this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
@@ -43,6 +67,7 @@ final class Action {
 		} else {
 			$this->method = 'index';
 		}
+
 	}
 	
 	public function getFile() {

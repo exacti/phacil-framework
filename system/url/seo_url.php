@@ -1,5 +1,15 @@
 <?php
-class SystemUrlSeoUrl extends Controller {
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ */
+
+ //namespace Phacil\Framework;
+
+use Phacil\Framework\Controller as ControllerController;
+
+class SystemUrlSeoUrl extends ControllerController {
     private $notfound = 'error/not_found';
     private $regType = array(
         "%d" => '(\\d{1,})',
