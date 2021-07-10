@@ -8,11 +8,30 @@
 
 namespace Phacil\Framework;
 
+use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
+
+/** @package Phacil\Framework */
 final class DB {
+	/**
+	 * 
+	 * @var object
+	 */
 	private $driver;
 	
+	/**
+	 * 
+	 * @var string
+	 */
 	private $cachePrefix = "SQL_";
 	
+	/**
+	 * @param string $driver 
+	 * @param string $hostname 
+	 * @param string $username 
+	 * @param string $password 
+	 * @param string $database 
+	 * @return void 
+	 */
 	public function __construct($driver, $hostname, $username, $password, $database) {
 		if (file_exists(DIR_DATABASE .'database/'. $driver . '.php')) {
 			require_once(DIR_DATABASE .'database/'. $driver . '.php');
@@ -23,6 +42,12 @@ final class DB {
 		$this->driver = new $driver($hostname, $username, $password, $database);
 	}
 		
+  	/**
+  	 * @param string $sql 
+  	 * @param bool $cacheUse 
+  	 * @return object|\Phacil\Framework\DB::Cache 
+  	 * @throws PhpfastcacheInvalidArgumentException 
+  	 */
   	public function query($sql, $cacheUse = true) {
 		
 		if(defined('SQL_CACHE') && SQL_CACHE == true && $cacheUse == true) {
@@ -36,18 +61,33 @@ final class DB {
 		
   	}
 	
+	/**
+	 * @param string $value 
+	 * @return mixed 
+	 */
 	public function escape($value) {
 		return $this->driver->escape($value);
 	}
 	
+  	/** @return int  */
   	public function countAffected() {
 		return $this->driver->countAffected();
   	}
 
+  	/** @return mixed  */
   	public function getLastId() {
 		return $this->driver->getLastId();
   	}
 
+    /**
+     * @param string $sql 
+     * @param int $pageNum_exibe 
+     * @param int $maxRows_exibe 
+     * @param bool $cache 
+     * @param mixed|null $sqlTotal 
+     * @return object 
+     * @throws PhpfastcacheInvalidArgumentException 
+     */
     public function pagination($sql, $pageNum_exibe = 1, $maxRows_exibe = 10, $cache = true, $sqlTotal = null){
 
         if (($pageNum_exibe >= 1)) {
@@ -83,6 +123,11 @@ final class DB {
         return $exibe;
     }
 	
+	/**
+	 * @param string $sql 
+	 * @return object 
+	 * @throws PhpfastcacheInvalidArgumentException 
+	 */
 	private function Cache($sql) {
 		if(class_exists('Caches')) {
 			$cache = new Caches();
@@ -106,6 +151,11 @@ final class DB {
 		}
 	}
 
+	/**
+	 * @param string $nome 
+	 * @param object $object 
+	 * @return void 
+	 */
 	public function createSubBase($nome, $object) {
 
         $this->$nome = $object;

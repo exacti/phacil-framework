@@ -8,11 +8,19 @@
 
 namespace Phacil\Framework;
 
+use Exception;
+
+/** @package Phacil\Framework */
 final class Image {
     private $file;
     private $image;
     private $info;
 
+    /**
+     * @param string $file 
+     * @return void 
+     * @throws Exception 
+     */
     public function __construct($file) {
         if(!extension_loaded('gd')){
             throw new \Exception("The image function requires GD extension on PHP!");
@@ -25,6 +33,11 @@ final class Image {
 
     }
 
+    /**
+     * @param string $file 
+     * @param bool $infoFile 
+     * @return bool 
+     */
     private function infoChk($file, $infoFile = true){
         if (file_exists($file)) {
             $this->file = $file;
@@ -46,6 +59,10 @@ final class Image {
         }
     }
 
+    /**
+     * @param string $image 
+     * @return GdImage|false|void 
+     */
     private function create($image) {
         $info = getimagesize($image);
         $mime = $info['mime'];
@@ -59,6 +76,11 @@ final class Image {
         }
     }
 
+    /**
+     * @param string $file 
+     * @param int $quality 
+     * @return void 
+     */
     public function save($file, $quality = 90) {
         $info = pathinfo($file);
 
@@ -75,6 +97,11 @@ final class Image {
         imagedestroy($this->image);
     }
 
+    /**
+     * @param int $width 
+     * @param int $height 
+     * @return void 
+     */
     public function resize($width = 0, $height = 0) {
         if (!$this->info['width'] || !$this->info['height']) {
             return;
@@ -115,6 +142,12 @@ final class Image {
         $this->info['height'] = $height;
     }
 
+    /**
+     * @param string $file 
+     * @param string $position 
+     * @param int $opacity 
+     * @return false|void 
+     */
     public function watermark($file, $position = 'bottomright', $opacity = 100) {
 
         if($this->infoChk($file, false))
@@ -164,6 +197,13 @@ final class Image {
         imagedestroy($watermark);
     }
 
+    /**
+     * @param int $top_x 
+     * @param int $top_y 
+     * @param int $bottom_x 
+     * @param int $bottom_y 
+     * @return void 
+     */
     public function crop($top_x, $top_y, $bottom_x, $bottom_y) {
         $image_old = $this->image;
         $this->image = imagecreatetruecolor($bottom_x - $top_x, $bottom_y - $top_y);
@@ -175,6 +215,11 @@ final class Image {
         $this->info['height'] = $bottom_y - $top_y;
     }
 
+    /**
+     * @param int $degree 
+     * @param string $color 
+     * @return void 
+     */
     public function rotate($degree, $color = 'FFFFFF') {
         $rgb = $this->html2rgb($color);
 
@@ -184,16 +229,35 @@ final class Image {
         $this->info['height'] = imagesy($this->image);
     }
 
+    /**
+     * @param mixed $filter 
+     * @return void 
+     */
     private function filter($filter) {
         imagefilter($this->image, $filter);
     }
 
+    /**
+     * @param string $text 
+     * @param int $x 
+     * @param int $y 
+     * @param int $size 
+     * @param string $color 
+     * @return void 
+     */
     private function text($text, $x = 0, $y = 0, $size = 5, $color = '000000') {
         $rgb = $this->html2rgb($color);
 
         imagestring($this->image, $size, $x, $y, $text, imagecolorallocate($this->image, $rgb[0], $rgb[1], $rgb[2]));
     }
 
+    /**
+     * @param string $file 
+     * @param int $x 
+     * @param int $y 
+     * @param int $opacity 
+     * @return void 
+     */
     private function merge($file, $x = 0, $y = 0, $opacity = 100) {
         $merge = $this->create($file);
 
@@ -203,6 +267,10 @@ final class Image {
         imagecopymerge($this->image, $merge, $x, $y, 0, 0, $merge_width, $merge_height, $opacity);
     }
 
+    /**
+     * @param string $color 
+     * @return false|(int|float)[] 
+     */
     private function html2rgb($color) {
         if ($color[0] == '#') {
             $color = substr($color, 1);

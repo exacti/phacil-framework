@@ -8,6 +8,9 @@
 
 namespace Phacil\Framework;
 
+use Exception;
+
+/** @package Phacil\Framework */
 class Captcha {
 	protected $code;
 	public $height = 40;
@@ -20,7 +23,15 @@ class Captcha {
 	public $fonts = "/fonts/*/*.ttf";
 	public $pos = 'ABCDEFGHJKLMNOPQRSTUWVXZ0123456789abcdefhijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWVXZ0123456789';
 
-	function __construct($width = NULL, $height = NULL, $numChar = 6, $background = 'black') {
+	/**
+	 * @param int|null $width 
+	 * @param int|null $height 
+	 * @param int $numChar 
+	 * @param string $background 
+	 * @return void 
+	 * @throws Exception 
+	 */
+	function __construct(int $width = NULL, int $height = NULL, $numChar = 6, $background = 'black') {
 
 	    $this->fonts = __DIR__."/fonts/*/*.ttf";
 
@@ -44,6 +55,7 @@ class Captcha {
 
 	}
 
+	/** @return void  */
 	public function __help() {
 	    $helpTxt =
             array(
@@ -56,10 +68,15 @@ class Captcha {
 	    var_dump($helpTxt, true);
     }
 
+	/** @return string  */
 	function getCode(){
 		return implode("", $this->code);
 	}
 
+	/**
+	 * @param string $format 
+	 * @return void 
+	 */
 	function showImage($format = 'png') {
         $image = imagecreatetruecolor($this->width, $this->height);
 
@@ -359,6 +376,7 @@ class Captcha {
         return $this->im;
     }
 
+    /** @return float  */
     protected function frand()
     {
         return 0.0001 * mt_rand(0,9999);

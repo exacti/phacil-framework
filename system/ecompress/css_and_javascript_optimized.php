@@ -192,5 +192,3 @@ if($include == true) {
 // Write everything out
 echo $buffer;
 
-
-?>

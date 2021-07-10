@@ -9,10 +9,19 @@
 namespace Phacil\Framework;
 
 final class Caches {
+    /**
+     * 
+     * @var int
+     */
     private $expire = 3600;
 
+    /**
+     * 
+     * @var string
+     */
     public $dirCache = "caches/";
 
+    /** @return void  */
     public function __construct() {
         $this->dirCache = DIR_CACHE."caches/";
 
@@ -23,6 +32,10 @@ final class Caches {
 
     }
 
+    /**
+     * @param string $key 
+     * @return bool 
+     */
     public function verify($key) {
         $files = $this->valid($key);
 
@@ -36,10 +49,18 @@ final class Caches {
         }
     }
 
+    /**
+     * @param string $key 
+     * @return bool 
+     */
     public function check($key) {
         return $this->verify($key);
     }
 
+    /**
+     * @param string $key 
+     * @return mixed 
+     */
     public function get($key) {
 
         $file = $this->valid($key);
@@ -51,6 +72,12 @@ final class Caches {
         }
     }
 
+    /**
+     * @param string $key 
+     * @param mixed $value 
+     * @param bool $expire 
+     * @return int|false 
+     */
     public function set($key, $value, $expire = true) {
         $this->delete($key);
 
@@ -60,6 +87,10 @@ final class Caches {
 
     }
 
+    /**
+     * @param string $key 
+     * @return int 
+     */
     public function delete($key) {
         $files = glob($this->dirCache . preg_replace('/[^A-Z0-9\.\*_-]/i', '', $key) . '.cache');
 
@@ -77,6 +108,10 @@ final class Caches {
         return (count($files));
     }
 
+    /**
+     * @param mixed $value 
+     * @return string|binary  
+     */
     private function encode($value){
 
         if(function_exists('igbinary_serialize')){

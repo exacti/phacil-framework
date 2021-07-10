@@ -34,7 +34,7 @@ spl_autoload_register(function ($class) {
 		'document',
 		'response',
 		'classes',
-		'caches'
+		//'caches'
 	];
 
 	if($namespace[0] == "Phacil" && in_array($class, $allowed)){

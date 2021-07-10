@@ -8,12 +8,18 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Action {
 	protected $file;
 	protected $class;
 	protected $method;
 	protected $args = array();
 
+	/**
+	 * @param string $route 
+	 * @param array $args 
+	 * @return void 
+	 */
 	public function __construct($route, $args = array()) {
 		$path = '';
 		
@@ -70,28 +76,40 @@ final class Action {
 
 	}
 	
+	/** @return string  */
 	public function getFile() {
 		return $this->file;
 	}
 	
+	/** @return string  */
 	public function getClass() {
 		return $this->class;
 	}
 	
+	/** @return string  */
 	public function getMethod() {
 		return $this->method;
 	}
 	
+	/** @return array  */
 	public function getArgs() {
 		return $this->args;
 	}
 }
+
+
+/** @package Phacil\Framework */
 final class ActionSystem {
 	protected $file;
 	protected $class;
 	protected $method;
 	protected $args = array();
 
+	/**
+	 * @param string $route 
+	 * @param array $args 
+	 * @return void 
+	 */
 	public function __construct($route, $args = array()) {
 		$path = '';
 		
@@ -132,20 +150,23 @@ final class ActionSystem {
 		}
 	}
 	
+	/** @return string  */
 	public function getFile() {
 		return $this->file;
 	}
 	
+	/** @return string  */
 	public function getClass() {
 		return $this->class;
 	}
 	
+	/** @return string  */
 	public function getMethod() {
 		return $this->method;
 	}
 	
+	/** @return array  */
 	public function getArgs() {
 		return $this->args;
 	}
 }
-?>

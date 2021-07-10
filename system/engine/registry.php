@@ -8,17 +8,31 @@
 
  namespace Phacil\Framework;
  
+/** @package Phacil\Framework */
 final class Registry {
 	private $data = array();
 
+	/**
+	 * @param string $key 
+	 * @return mixed 
+	 */
 	public function get($key) {
 		return (isset($this->data[$key]) ? $this->data[$key] : NULL);
 	}
 
+	/**
+	 * @param string $key 
+	 * @param string $value 
+	 * @return void 
+	 */
 	public function set($key, $value) {
 		$this->data[$key] = $value;
 	}
 
+	/**
+	 * @param string $key 
+	 * @return bool 
+	 */
 	public function has($key) {
     	return isset($this->data[$key]);
   	}

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @param mixed $css 
+ * @return string[]|string|null 
+ */
 function minimizeCSS($css){
     $css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
     $css = preg_replace('/\/\*((?!\*\/).)*\*\//', '', $css); // negative look ahead

@@ -7,6 +7,8 @@
  */
 
 class TestOfHelp {
+	
+	/** @return string  */
 	function helpme(){
 		return 'saved';
 	}

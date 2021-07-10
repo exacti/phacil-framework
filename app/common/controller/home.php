@@ -8,8 +8,16 @@
 
 use Phacil\Framework\Controller;
 
+/** @package  */
 class ControllerCommonHome extends Controller {
 	
+	/**
+	 * @return void 
+	 * @throws TypeError 
+	 * @throws Mustache_Exception_UnknownTemplateException 
+	 * @throws SmartyException 
+	 * @throws Exception 
+	 */
 	public function index() {
 		var_dump('oi');
 		$this->document->setTitle("Hello World! %s");

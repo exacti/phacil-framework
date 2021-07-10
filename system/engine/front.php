@@ -8,20 +8,48 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Front {
+
+	/**
+	 * 
+	 * @var Registry
+	 */
 	protected $registry;
+
+	/**
+	 * 
+	 * @var array
+	 */
 	protected $pre_action = array();
+
 	protected $error;
 	
-	public function __construct($registry) {
+	/**
+	 * 
+	 * @param Registry $registry 
+	 * @return void 
+	 */
+	public function __construct(Registry $registry) {
 		$this->registry = $registry;
 	}
 	
-	public function addPreAction($pre_action) {
+	
+	/**
+	 * @param ActionSystem $pre_action 
+	 * @return void 
+	 */
+	public function addPreAction(\Phacil\Framework\ActionSystem $pre_action) {
 		$this->pre_action[] = $pre_action;
 	}
 	
-  	public function dispatch($action, $error) {
+  	
+  	/**
+  	 * @param Action $action 
+  	 * @param Action $error 
+  	 * @return void 
+  	 */
+  	public function dispatch(\Phacil\Framework\Action $action, \Phacil\Framework\Action $error) {
 		$this->error = $error;
 			
 		foreach ($this->pre_action as $pre_action) {

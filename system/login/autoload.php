@@ -9,13 +9,37 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 class login {
 	
+	/**
+	 * 
+	 * @var array
+	 */
 	private $MM_authorizedUsers = array();
+
+	/**
+	 * 
+	 * @var string
+	 */
 	private $MM_donotCheckaccess = "false";
+
+	/**
+	 * 
+	 * @var Request
+	 */
 	private $request = '';
+
+	/**
+	 * 
+	 * @var Session
+	 */
 	private $session;
 	
+	/**
+	 * @param arrray $authorizedUsers 
+	 * @return void 
+	 */
 	public function __construct($authorizedUsers){
 		$this->MM_authorizedUsers = $authorizedUsers;
 		$this->request = new Request();
@@ -24,6 +48,13 @@ class login {
 	}
 
 	// *** Restrict Access To Page: Grant or deny access to this page
+	/**
+	 * @param mixed $strUsers 
+	 * @param mixed $strGroups 
+	 * @param mixed $UserName 
+	 * @param mixed $UserGroup 
+	 * @return bool 
+	 */
 	public function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) { 
 		
 		// For security, start by assuming the visitor is NOT authorized. 
@@ -50,6 +81,10 @@ class login {
 		return $isValid; 
 	}
 
+	/**
+	 * @param mixed $restrictGoTo 
+	 * @return void 
+	 */
 	public function check($restrictGoTo) {
 				
 		$MM_restrictGoTo = $restrictGoTo;
@@ -66,12 +101,14 @@ class login {
 		}
 	}
 	
+	/** @return bool  */
 	public function isLogged () {
 		$lgged = $this->isAuthorized("",$this->MM_authorizedUsers, $this->session->data['MM_Username'], $this->session->data['MM_UserGroup']);
 		
 		return($lgged);
 	}
 	
+	/** @return void  */
 	public function logout() {
 		unset($this->session->data['user_id']);
 	
@@ -81,10 +118,9 @@ class login {
 		session_destroy();
   	}
 	
+	/** @return string  */
 	public function getUserName() {
     	return $this->session->data['MM_Username'];
   	}
-
-	
 	
 }

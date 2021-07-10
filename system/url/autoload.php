@@ -9,12 +9,42 @@
 namespace Phacil\Framework;
 
 class Url {
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $baseurl;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	private $url;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	private $ssl;
+
+	/**
+	 * 
+	 * @var bool
+	 */
     public $cdn = false;
+
+	/**
+	 * 
+	 * @var array
+	 */
 	private $hook = array();
 	
+	/**
+	 * @param string $url 
+	 * @param string $ssl 
+	 * @return void 
+	 */
 	public function __construct($url, $ssl) {
 		$this->url = $url;
 		$this->ssl = $ssl;
@@ -31,6 +61,12 @@ class Url {
 		}
 	}
 	
+	/**
+	 * @param string $route 
+	 * @param string $args 
+	 * @param string $connection 
+	 * @return string 
+	 */
 	public function link($route, $args = '', $connection = 'NONSSL') {
 		if ($connection ==  'NONSSL') {
 			$url = $this->url;	
@@ -53,10 +89,18 @@ class Url {
 		return $this->rewrite($url);
 	}
 		
+	/**
+	 * @param string $hook 
+	 * @return void 
+	 */
 	public function addRewrite($hook) {
 		$this->hook[] = $hook;
 	}
 
+	/**
+	 * @param string $url 
+	 * @return string 
+	 */
 	public function rewrite($url) {
 		foreach ($this->hook as $hook) {
 			$url = $hook->rewrite($url);

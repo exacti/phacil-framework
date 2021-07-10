@@ -8,23 +8,100 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Pagination {
+
+	/**
+	 * 
+	 * @var int
+	 */
 	public $total = 0;
+
+	/**
+	 * 
+	 * @var int
+	 */
 	public $page = 1;
+
+	/**
+	 * 
+	 * @var int
+	 */
 	public $limit = 20;
+
+	/**
+	 * 
+	 * @var int
+	 */
 	public $num_links = 10;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $url = '';
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $text = 'Showing {start} to {end} of {total} ({pages} Pages)';
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $text_first = '|&lt;';
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $text_last = '&gt;|';
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $text_next = '&gt;';
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $text_prev = '&lt;';
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $style_links = 'links';
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $style_results = 'results';
+	
+	/**
+	 * 
+	 * @var string[]
+	 */
 	public $links_html = array('begin'=>'', 'end'=>'');
+
+	/**
+	 * 
+	 * @var string[]
+	 */
 	public $output_html = array('begin'=>'', 'end'=>'');
+
+	/**
+	 * 
+	 * @var string[]
+	 */
 	public $no_link_html = array('begin'=>'', 'end'=>'');
 	 
+	/** @return string  */
 	public function render() {
 		$total = $this->total;
 		
@@ -106,4 +183,3 @@ final class Pagination {
 		return ($output ? '<div class="' . $this->style_links . '">' .$this->output_html['begin']. $output .$this->output_html['end']. '</div>' : '') . '<div class="' . $this->style_results . '">' . str_replace($find, $replace, $this->text) . '</div>';
 	}
 }
-?>

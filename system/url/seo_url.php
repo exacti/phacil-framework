@@ -7,17 +7,33 @@
 
  //namespace Phacil\Framework;
 
+use Phacil\Framework\Action;
 use Phacil\Framework\Controller as ControllerController;
+use Phacil\Framework\Registry;
 
 class SystemUrlSeoUrl extends ControllerController {
+
+    /**
+     * 
+     * @var string
+     */
     private $notfound = 'error/not_found';
+
+    /**
+     * 
+     * @var string[]
+     */
     private $regType = array(
         "%d" => '(\\d{1,})',
         "%w" => '(\\w{1,})',
         "%a" => '([[:ascii:]]{1,})',
         "%" => '(.*)');
 
-    public function __construct($registry)
+    /**
+     * @param Registry $registry 
+     * @return void 
+     */
+    public function __construct(\Phacil\Framework\Registry $registry)
     {
         parent::__construct($registry);
 
@@ -26,6 +42,7 @@ class SystemUrlSeoUrl extends ControllerController {
         }
     }
 
+    /** @return Action|void  */
     public function index() {
         // Add rewrite to url class
         if ($this->config->get('config_seo_url')) {
@@ -111,6 +128,10 @@ class SystemUrlSeoUrl extends ControllerController {
         }
     }
 
+    /**
+     * @param string $link 
+     * @return string 
+     */
     public function rewrite($link) {
         if ($this->config->get('config_seo_url')) {
             $url_data = parse_url(str_replace('&amp;', '&', $link));
@@ -189,6 +210,10 @@ class SystemUrlSeoUrl extends ControllerController {
     }
 }
 
+/**
+ * @param string $string 
+ * @return bool 
+ */
 function isRegularExpression($string) {
     return (strpos($string, '%') !== false);
 }

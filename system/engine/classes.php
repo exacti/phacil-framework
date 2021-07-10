@@ -8,6 +8,7 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 class Classes {
 	
 	private $format;
@@ -18,6 +19,10 @@ class Classes {
 		
 	}
 	
+	/**
+	 * @param string|null $origin 
+	 * @return string
+	 */
 	public function classes($origin = NULL){
 		$mClass = get_declared_classes();
 		
@@ -45,6 +50,7 @@ class Classes {
 		return($pegaClass);
 	}
 	
+	/** @return array|string  */
 	public function functions(){
 		$classes = $this->classes('intern');
 		

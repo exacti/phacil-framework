@@ -8,60 +8,178 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Mail {
+
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $to;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $from;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $sender;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $subject;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $text;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $html;
+
+	/**
+	 * 
+	 * @var array
+	 */
 	protected $attachments = array();
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $protocol = 'mail';
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $hostname;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $username;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $password;
+
+	/**
+	 * 
+	 * @var int
+	 */
 	public $port = 25;
+
+	/**
+	 * 
+	 * @var int
+	 */
 	public $timeout = 5;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $newline = "\n";
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $crlf = "\r\n";
+
+	/**
+	 * 
+	 * @var bool
+	 */
 	public $verp = false;
+
+
+	/**
+	 * 
+	 * @var string
+	 */
 	public $parameter = '';
 
+	/**
+	 * @param string $to 
+	 * @return void 
+	 */
 	public function setTo($to) {
 		$this->to = $to;
 	}
 
+	/**
+	 * 
+	 * @param string $from 
+	 * @return void 
+	 */
 	public function setFrom($from) {
 		$this->from = $from;
 	}
 
+	/**
+	 * @param string $sender 
+	 * @return void 
+	 */
 	public function setSender($sender) {
 		$this->sender = html_entity_decode($sender, ENT_QUOTES, 'UTF-8');
 	}
 
+	/**
+	 * @param string $subject 
+	 * @return void 
+	 */
 	public function setSubject($subject) {
 		$this->subject = html_entity_decode($subject, ENT_QUOTES, 'UTF-8');
 	}
 
+	/**
+	 * @param string $text 
+	 * @return void 
+	 */
 	public function setText($text) {
 		$this->text = $text;
 	}
 
+	/**
+	 * @param string $html 
+	 * @return void 
+	 */
 	public function setHtml($html) {
 		$this->html = $html;
 	}
 
+	/**
+	 * @param string $file 
+	 * @param string $filename 
+	 * @return void 
+	 */
 	public function addAttachment($file, $filename = '') {
 		if (!$filename) {
 			$filename = basename($file);
 		}
 				
-		$this->attachments[] = array(
+		$this->attachments[] = [
 			'filename' => $filename,
 			'file'     => $file
-		);
+		];
 	}
 
+	/** @return void  */
 	public function send() {
 		if (!$this->to) {
 			trigger_error('Error: E-Mail to required!');

@@ -8,17 +8,32 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Log {
+	
+	/**
+	 * 
+	 * @var resource|false
+	 */
 	private $filename;
 		
+	/**
+	 * @param string $filename 
+	 * @return void 
+	 */
 	public function __construct($filename = "error.log") {
 		$this->filename = fopen(DIR_LOGS . $filename, 'a');
 	}
 	
+	/**
+	 * @param string $message 
+	 * @return void 
+	 */
 	public function write($message) {
 		fwrite($this->filename, date('Y-m-d G:i:s') . ' - ' . print_r($message, true)." | ".$_SERVER['REQUEST_URI'] . PHP_EOL);
 	}
 	
+	/** @return void  */
 	public function __destruct() {
 		fclose($this->filename);
 	}

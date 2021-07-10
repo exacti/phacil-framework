@@ -8,11 +8,35 @@
 
 namespace Phacil\Framework;
 
+use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
+
+/** @package Phacil\Framework */
+
 final class Translate {
 	
+	/**
+	 * 
+	 * @var string|null
+	 */
 	private $autoLang;
+
+	/**
+	 * 
+	 * @var Request
+	 */
 	private $request;
+
+	/**
+	 * 
+	 * @var Session
+	 */
 	private $session;
+
+	/**
+	 * 
+	 * @var Caches
+	 */
+	protected $cache;
 	
 	public function __construct(){
 		
@@ -33,6 +57,12 @@ final class Translate {
 		
 	}
 	
+	/**
+	 * @param string $value 
+	 * @param string|null $lang 
+	 * @return string 
+	 * @throws PhpfastcacheInvalidArgumentException 
+	 */
 	public function translation ($value, $lang = NULL) {
 		
 		global $db;
@@ -67,9 +97,13 @@ final class Translate {
 		
 	}
 	
+	/**
+	 * @param string $value 
+	 * @return void 
+	 */
 	public function insertBaseText ($value){
 		global $db;
 		
-		$sql = $db->query("INSERT INTO translate SET text='".$db->escape($value)."'");
+		$db->query("INSERT INTO translate SET text='".$db->escape($value)."'");
 	}
 }

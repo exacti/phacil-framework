@@ -6,17 +6,45 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
- namespace Phacil\Framework;
+namespace Phacil\Framework;
+
+use Exception;
+use TypeError;
 
 class startEngineExacTI {
     /*public $constants;
     public $userConstants;*/
+
+    /**
+     * 
+     * @var string|false
+     */
     public $phpversion;
     //protected $includes;
+
+    /**
+     * 
+     * @var array
+     */
     protected $dirs;
+    
+    /**
+     * 
+     * @var Registry
+     */
     public $registry;
+
+    /**
+     * 
+     * @var false|ActionSystem
+     */
     private $preActions = false;
 
+    /**
+     * @return void 
+     * @throws Exception 
+     * @throws TypeError 
+     */
     public function __construct () {
         //$this->constants = get_defined_constants(true);
         //$this->userConstants = $this->constants['user'];
@@ -43,14 +71,24 @@ class startEngineExacTI {
         $this->registry = new Registry();
     }
 
+    /**
+     * @param string $key 
+     * @return object 
+     */
     public function __get($key) {
         return $this->registry->get($key);
     }
 
+    /**
+     * @param string $key 
+     * @param object $value 
+     * @return void 
+     */
     public function __set($key, $value) {
         $this->registry->set($key, $value);
     }
 
+    /** @return string|false  */
     private function checkPHPversion() {
         if (version_compare(phpversion(), '5.4.0', '>') == false) {
             exit('PHP 5.4+ Required');
@@ -59,6 +97,7 @@ class startEngineExacTI {
         }
     }
 
+    /** @return true|void  */
     private function checkConfigFile() {
 
         if (!$this->checkConstantsRequired()) {
@@ -80,6 +119,7 @@ class startEngineExacTI {
 
     }
 
+    /** @return bool  */
     private function checkConstantsRequired () {
         $dbConsts = ['DB_DRIVER' => 'nullStatement', 'DB_HOSTNAME' => NULL, 'DB_USERNAME' => NULL, 'DB_PASSWORD' => NULL, 'DB_DATABASE' => NULL];
 
@@ -96,29 +136,50 @@ class startEngineExacTI {
         }
     }
 
+    /** @return void  */
     private function defineAuxConstants () {
         (defined('HTTP_URL')) ? define('HTTP_SERVER', HTTP_URL) : '';
         (defined('HTTPS_URL')) ? define('HTTPS_SERVER', HTTPS_URL) : '';
     }
 
+    /**
+     * @return void 
+     * @throws TypeError 
+     */
     private function loadengine () {
         $this->dirs = glob(DIR_SYSTEM.'*/autoload.php', GLOB_BRACE);
-        foreach($this->dirs as $key => $value) {
-            if($value != ""){
+
+        require_once (DIR_SYSTEM.'engine/autoload.php');
+
+        require_once (DIR_SYSTEM.'database/autoload.php');
+
+        spl_autoload_register(function ($class) {
+            $namespace = explode("\\", $class);
+        
+            $class = str_replace('phacil\framework\\', '', strtolower( $class));
+
+            $value = DIR_SYSTEM . $class.'/autoload.php';
+        
+            if($namespace[0] == "Phacil" && in_array($value, $this->dirs)){
                 try {
                     if(is_readable($value)) {
                         require_once $value;
                     } else {
                         throw new \Exception("I can't load '$value' file! Please check system permissions.");
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     exit($e->getMessage());
                 }
-
             }
-        }
+                
+        });
+
     }
 
+    /**
+     * @param string $utc 
+     * @return void 
+     */
     public function setTimezone($utc) {
 
         try {
@@ -134,32 +195,43 @@ class startEngineExacTI {
 
     }
 
+    /** @return string  */
     public function getTimezone(){
         return date_default_timezone_get();
     }
 
+    /** @return array|false  */
     public function listTimezones() {
-        return DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+        return \DateTimeZone::listIdentifiers(\DateTimeZone::ALL);
     }
 
+    /** @return string|false  */
     public function version() {
         return file_get_contents(DIR_SYSTEM."engine/VERSION");
     }
 
+    /** @return void  */
     public function extraRegistrations() {
 
         if(file_exists(DIR_SYSTEM."registrations.php"))
             include(DIR_SYSTEM."registrations.php");
     }
 
+    /** @return array  */
     public function constants(){
         return get_defined_constants(true);
     }
 
+    /** @return array  */
     public function userConstants() {
         return $this->constants()['user'];
     }
 
+    /**
+     * @param string $constant 
+     * @param string $group 
+     * @return mixed 
+     */
     public function constantName($constant, $group = 'user') {
 
         foreach ($this->constants()[$group] as $name => $value){
@@ -176,10 +248,11 @@ class startEngineExacTI {
 
 }
 
+/** @var \Phacil\Framework\startEngineExacTI $engine */
 $engine = new startEngineExacTI();
 
 // Registry
-//$registry = new Registry();
+/** @var \Phacil\Framework\startEngineExacTI $engine */
 $engine->registry->set('engine', $engine);
 
 // Loader
@@ -332,7 +405,7 @@ $engine->extraRegistrations();
 $controller = new Front($engine->registry);
 
 // SEO URL's
-$controller->addPreAction(new ActionSystem('url/seo_url'));
+$controller->addPreAction(new ActionSystem((string) 'url/seo_url'));
 
 //extraPreactions
 if($engine->controllerPreActions()){

@@ -9,10 +9,20 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 abstract class Model {
+	
+	/**
+	 * 
+	 * @var Registry
+	 */
 	protected $registry;
 	
-	public function __construct($registry) {
+	/**
+	 * @param Registry $registry 
+	 * @return void 
+	 */
+	public function __construct(Registry $registry) {
 		$this->registry = $registry;
 	}
 	

@@ -9,10 +9,21 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Session {
+    /**
+     * 
+     * @var array
+     */
     public $data = array();
+
+    /**
+     * 
+     * @var string
+     */
     private $name;
 
+    /** @return void  */
     public function __construct() {
         $this->name = ((defined('SESSION_PREFIX')) ? SESSION_PREFIX : 'SESS').(isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
@@ -29,6 +40,7 @@ final class Session {
 
     }
 
+    /** @return void  */
     private function openSession() {
 
         $this->closeSession();
@@ -46,6 +58,7 @@ final class Session {
 
     }
 
+    /** @return void  */
     private function closeSession() {
         if (session_status() == PHP_SESSION_ACTIVE) {
             session_unset();
@@ -53,6 +66,7 @@ final class Session {
         }
     }
 
+    /** @return bool  */
     private function isSecure() {
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }

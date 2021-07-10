@@ -8,6 +8,7 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 class Document {
 	private $title;
 	private $description;
@@ -17,6 +18,10 @@ class Document {
 	private $scripts = array();
 	private $fbmetas = array();
 	
+	/**
+	 * @param string $title 
+	 * @return void 
+	 */
 	public function setTitle($title) {
 		if(PATTERSITETITLE != false) {
 			$this->title =  sprintf($title, PATTERSITETITLE);
@@ -25,26 +30,42 @@ class Document {
 		}
 	}
 	
+	/** @return string  */
 	public function getTitle() {
 		return $this->title;
 	}
 	
+	/**
+	 * @param string $description 
+	 * @return void 
+	 */
 	public function setDescription($description) {
 		$this->description = $description;
 	}
 	
+	/** @return string  */
 	public function getDescription() {
 		return $this->description;
 	}
 	
+	/**
+	 * @param string $keywords 
+	 * @return void 
+	 */
 	public function setKeywords($keywords) {
 		$this->keywords = $keywords;
 	}
 	
+	/** @return string  */
 	public function getKeywords() {
 		return $this->keywords;
 	}
 	
+	/**
+	 * @param string $href 
+	 * @param string $rel 
+	 * @return void 
+	 */
 	public function addLink($href, $rel) {
 		$this->links[md5($href)] = array(
 			'href' => $href,
@@ -52,11 +73,16 @@ class Document {
 		);			
 	}
 	
+	/** @return array  */
 	public function getLinks() {
 		return $this->links;
 	}
 
-	private function checkCDN($var) {
+	/**
+	 * @param string $var 
+	 * @return string 
+	 */
+	private function checkCDN( $var) {
 
         if(defined('CDN')) {
             if($this->checkLocal($var)){
@@ -68,6 +94,13 @@ class Document {
 
     }
 	
+	/**
+	 * @param string $href 
+	 * @param string $rel 
+	 * @param string $media 
+	 * @param bool $minify 
+	 * @return void 
+	 */
 	public function addStyle($href, $rel = 'stylesheet', $media = 'screen', $minify = true) {
 
 	    if ($minify) $href = $this->cacheMinify($href, 'css');
@@ -81,16 +114,24 @@ class Document {
 		);
 	}
 	
+	/** @return array  */
 	public function getStyles() {
 		return $this->styles;
 	}	
 	
-	public function addScript($script, $sort = '0', $minify = true) {
+	/**
+	 * @param string $script 
+	 * @param int|string $sort 
+	 * @param bool $minify 
+	 * @return void 
+	 */
+	public function addScript($script, $sort = 0, $minify = true) {
 	    if($minify) $script = $this->cacheMinify($script, 'js');
         $script = $this->checkCDN($script);
 		$this->scripts[($sort)][md5($script)] = $script;			
 	}
 	
+	/** @return array  */
 	public function getScripts() {
 		$a = $this->scripts;
 		ksort($a);
@@ -102,6 +143,11 @@ class Document {
         return (isset($b)) ? $b : [];
 	}
 	
+	/**
+	 * @param string $property 
+	 * @param string $content 
+	 * @return void 
+	 */
 	public function addFBMeta($property, $content = ''){
 		$this->fbmetas[md5($property)] = array(
 			'property' => $property,
@@ -109,21 +155,26 @@ class Document {
 		);
 	}
 	
+	/** @return array  */
 	public function getFBMetas(){
 		return $this->fbmetas;
 	}
 
+	/**
+	 * @param string $val 
+	 * @return bool 
+	 */
 	private function checkLocal ($val) {
         $testaProtocolo = substr($val, 0, 7);
 
-        if($testaProtocolo != "http://" && $testaProtocolo != "https:/"){
-            return true;
-        } else {
-            return false;
-        }
-
+        return ($testaProtocolo != "http://" && $testaProtocolo != "https:/");
     }
 
+	/**
+	 * @param string $ref 
+	 * @param string $type 
+	 * @return string 
+	 */
 	private function cacheMinify($ref, $type) {
 
         $dir = "css-js-cache/";

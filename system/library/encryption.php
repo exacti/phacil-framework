@@ -1,9 +1,24 @@
 <?php
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
+namespace Phacil\Framework;
+
+/** @package Phacil\Framework */
 final class Encryption {
     private $key;
     private $method;
     private $cipher;
 
+    /**
+     * @param string $key 
+     * @param string $opensslCipher 
+     * @return void 
+     */
     function __construct($key, $opensslCipher = 'aes-128-cbc') {
         $this->key = $this->hash($key);
 
@@ -16,10 +31,20 @@ final class Encryption {
 
     }
 
+    /**
+     * @param string $value 
+     * @return string|false 
+     */
     public function hash($value) {
         return hash('sha256', $value, true);
     }
 
+    /**
+     * 
+     * @param mixed $value 
+     * @param mixed|null $key 
+     * @return string 
+     */
     public function encrypt ($value, $key = NULL) {
         $this->key = ($key != NULL) ? $key : $this->key;
 
@@ -30,6 +55,12 @@ final class Encryption {
         }
     }
 
+    /**
+     * 
+     * @param mixed $value 
+     * @param mixed|null $key 
+     * @return string|false 
+     */
     public function decrypt ($value, $key = NULL) {
         $this->key = ($key != NULL) ? $key : $this->key;
 
@@ -40,6 +71,10 @@ final class Encryption {
         }
     }
 
+    /**
+     * @param string $value 
+     * @return string 
+     */
     function base64Encrypt($value) {
         if (!$this->key) {
             return $value;
@@ -58,6 +93,10 @@ final class Encryption {
         return base64_encode($output);
     }
 
+    /**
+     * @param string $value 
+     * @return string|false 
+     */
     function base64Decrypt($value) {
         if (!$this->key) {
             return $value;
@@ -78,6 +117,10 @@ final class Encryption {
         return $output;
     }
 
+    /**
+     * @param string $value 
+     * @return string 
+     */
     private function opensslEncrypt ($value) {
 
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($this->cipher));
@@ -92,6 +135,10 @@ final class Encryption {
 
     }
 
+    /**
+     * @param string $value 
+     * @return string|false 
+     */
     private function opensslDecrypt ($value) {
 
         $c = $this->base64Decrypt(strtr($value, '-_,', '+/='));

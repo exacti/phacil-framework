@@ -8,10 +8,15 @@
 
  namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Loader {
 	protected $registry;
 	
-	public function __construct($registry) {
+	/**
+	 * @param Registry $registry 
+	 * @return void 
+	 */
+	public function __construct(\Phacil\Framework\Registry $registry) {
 		$this->registry = $registry;
 	}
 	
@@ -23,6 +28,10 @@ final class Loader {
 		$this->registry->set($key, $value);
 	}
 	
+	/**
+	 * @param string $library 
+	 * @return bool 
+	 */
 	public function library($library) {
 		$file = DIR_SYSTEM . 'library/' . $library . '.php';
 		
@@ -34,6 +43,10 @@ final class Loader {
 		}
 	}
 	
+	/**
+	 * @param string $model 
+	 * @return void 
+	 */
 	public function model(string $model) {
 
 		$parts = explode('/', str_replace('../', '', (string)$model));
@@ -66,6 +79,10 @@ final class Loader {
 		
 	}
 	
+	/**
+	 * @param string $helper 
+	 * @return void 
+	 */
 	public function helper(string $helper) {
 
 		$parts = explode('/', str_replace('../', '', (string)$helper));
@@ -88,10 +105,18 @@ final class Loader {
 		
 	}
 
-    public function control($model) { //temp alias, consider change to loader controller function
-	    $this->controller($model);
+    /**
+     * @param string $control 
+     * @return void 
+     */
+    public function control($control) { //temp alias, consider change to loader controller function
+	    $this->controller($control);
     }
 
+	/**
+	 * @param string $control 
+	 * @return void 
+	 */
 	public function controller($control) {
 		$file  = DIR_APPLICATION . 'controller/' . $control . '.php';
 		$class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $control);
@@ -106,6 +131,16 @@ final class Loader {
 		}
 	}
 	 
+	/**
+	 * @param string $driver 
+	 * @param string $hostname 
+	 * @param string $username 
+	 * @param string $password 
+	 * @param string $database 
+	 * @param int|null $port 
+	 * @param string|null $charset 
+	 * @return string[]|string|null 
+	 */
 	public function database($driver, $hostname, $username, $password, $database, $port = NULL, $charset = NULL) {
 		$file  = DIR_SYSTEM . 'database/database/' . $driver . '.php';
 		$class = ($driver);
@@ -130,12 +165,19 @@ final class Loader {
 		}
 	}
 	
+	/**
+	 * @param string $config 
+	 * @return void 
+	 */
 	public function config($config) {
 		$this->config->load($config);
 	}
 	
+	/**
+	 * @param string $language 
+	 * @return mixed 
+	 */
 	public function language($language) {
 		return $this->language->load($language);
 	}
 } 
-?>

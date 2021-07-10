@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @param int $length 
+ * @return string|false 
+ * @throws Exception 
+ */
 function token($length = 32) {
     if(!isset($length) || intval($length) <= 8 ){
         $length = 32;

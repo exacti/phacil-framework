@@ -8,21 +8,43 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Config {
+	/**
+	 * 
+	 * @var array
+	 */
 	private $data = array();
 
+  	/**
+  	 * @param string|int $key 
+  	 * @return null|array|string 
+  	 */
   	public function get($key) {
     	return (isset($this->data[$key]) ? $this->data[$key] : null);
   	}	
 	
+	/**
+	 * @param string $key 
+	 * @param mixed $value 
+	 * @return void 
+	 */
 	public function set($key, $value) {
     	$this->data[$key] = $value;
   	}
 
+	/**
+	 * @param string|int $key 
+	 * @return bool 
+	 */
 	public function has($key) {
     	return isset($this->data[$key]);
   	}
 
+  	/**
+  	 * @param string $filename 
+  	 * @return void 
+  	 */
   	public function load($filename) {
 		$file = DIR_CONFIG . $filename . '.php';
 		

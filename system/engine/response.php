@@ -8,25 +8,56 @@
 
 namespace Phacil\Framework;
 
+/** @package Phacil\Framework */
 final class Response {
+
+	/**
+	 * 
+	 * @var array
+	 */
 	private $headers = array(); 
+
+	/**
+	 * 
+	 * @var int
+	 */
 	private $level = 0;
+
 	private $output;
 	
+	/**
+	 * @param string $header 
+	 * @return void 
+	 */
 	public function addHeader($header) {
 		$this->headers[] = $header;
 	}
 
+	/**
+	 * @param string $url 
+	 * @return never 
+	 */
 	public function redirect($url) {
 		header('Location: ' . $url);
 		exit;
 	}
 	
+	/**
+	 * @param int $level 
+	 * @return void 
+	 */
 	public function setCompression($level) {
 		$this->level = $level;
 	}
 		
-	public function setOutput($output, bool $isJSON = false, int $HTTPCODE = 0, string $HTTPDESC = null) {
+	/**
+	 * @param mixed $output 
+	 * @param bool $isJSON 
+	 * @param int $HTTPCODE 
+	 * @param string|null $HTTPDESC 
+	 * @return void 
+	 */
+	public function setOutput($output, $isJSON = false, $HTTPCODE = 0, $HTTPDESC = null) {
 
 		if($isJSON)
 			$this->isJSON();
@@ -37,6 +68,11 @@ final class Response {
 		$this->output = $output;
 	}
 
+	/**
+	 * @param mixed $data 
+	 * @param int $level 
+	 * @return string|false 
+	 */
 	private function compress($data, $level = 0) {
 		if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false)) {
 			$encoding = 'gzip';
@@ -67,6 +103,7 @@ final class Response {
 		return gzencode($data, (int)$level);
 	}
 
+	/** @return void  */
 	public function output() {
 		if ($this->output) {
 			if ($this->level) {
@@ -85,10 +122,16 @@ final class Response {
 		}
 	}
 
+	/** @return void  */
 	public function isJSON() {
 		$this->addHeader('Content-Type: application/json');
 	}
 
+	/**
+	 * @param int $code 
+	 * @param string|null $description 
+	 * @return void 
+	 */
 	public function code(int $code, string $description = null){
 		$this->addHeader("HTTP/1.1 ".$code.(($description) ? " ". $description : ""));
         $this->addHeader("Status: ".$code."");

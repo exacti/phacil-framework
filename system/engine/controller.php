@@ -8,18 +8,59 @@
 
 namespace Phacil\Framework;
 
+use TypeError;
+use Mustache_Exception_UnknownTemplateException;
+use RuntimeException;
+use SmartyException;
+use Exception;
+
+/** @package Phacil\Framework */
 abstract class Controller {
+    /**
+     * 
+     * @var Registry
+     */
     protected $registry;
     protected $id;
     protected $layout;
     protected $template;
+
+    /**
+     * 
+     * @var array
+     */
     protected $children = array();
+
+    /**
+     * 
+     * @var array
+     */
     protected $data = array();
+
+    /**
+     * 
+     * @var array
+     */
     protected $twig = array();
+
+    /**
+     * 
+     * @var array
+     */
     protected $error = array();
+    
     protected $output;
+
+    /**
+     * 
+     * @var string[]
+     */
     public $templateTypes = ["tpl", "twig", "mustache", "smarty", "dwoo"];
 
+    /**
+     * @param \Phacil\Framework\Registry $registry 
+     * @return void 
+     */
     public function __construct($registry) {
         $this->registry = $registry;
     }
@@ -32,17 +73,32 @@ abstract class Controller {
         $this->registry->set($key, $value);
     }
 
-    protected function forward($route, $args = array()) {
+    /**
+     * @param string $route 
+     * @param array $args 
+     * @return Action 
+     */
+    protected function forward($route, array $args = array()) {
         return new Action($route, $args);
     }
 
+    /**
+     * @param string $url 
+     * @param int $status 
+     * @return never 
+     */
     protected function redirect($url, $status = 302) {
         header('Status: ' . $status);
         header('Location: ' . str_replace('&amp;', '&', $url));
         exit();
     }
 
-    protected function getChild($child, $args = array()) {
+    /**
+     * @param string $child 
+     * @param array $args 
+     * @return mixed 
+     */
+    protected function getChild($child, array $args = array()) {
         $action = new Action($child, $args);
         $file = $action->getFile();
         $class = $action->getClass();
@@ -62,6 +118,14 @@ abstract class Controller {
         }
     }
 
+    /**
+     * @return mixed 
+     * @throws TypeError 
+     * @throws Mustache_Exception_UnknownTemplateException 
+     * @throws RuntimeException 
+     * @throws SmartyException 
+     * @throws Exception 
+     */
     protected function render() {
 
         foreach ($this->children as $child) {
@@ -227,6 +291,15 @@ abstract class Controller {
         }
     }
 
+    /**
+     * @param bool $commonChildren 
+     * @return mixed 
+     * @throws TypeError 
+     * @throws Mustache_Exception_UnknownTemplateException 
+     * @throws RuntimeException 
+     * @throws SmartyException 
+     * @throws Exception 
+     */
     protected function out ($commonChildren = true) {
         if($commonChildren === true){
             $this->children = array_merge(array(
