@@ -22,6 +22,7 @@ $configs = array('PatternSiteTitle'=>' - ExacTI phacil',
 
 //App folders
 define('DIR_APPLICATION', '/patch/to/app/folder/');
+define('DIR_APP_MODULAR', '/patch/to/app/folder/');
 define('DIR_LOGS', DIR_APPLICATION.'logs/');
 define('DIR_PUBLIC', DIR_APPLICATION.'public_html/');
 define('DIR_SYSTEM', DIR_APPLICATION.'system/');

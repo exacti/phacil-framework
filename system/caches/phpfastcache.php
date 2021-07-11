@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__."/Phpfastcache/autoload.php";
-
 namespace Phacil\Framework;
+
+require_once __DIR__."/Phpfastcache/autoload.php";
 
 use Phpfastcache\CacheManager;
 use Phpfastcache\Config\ConfigurationOption;

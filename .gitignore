@@ -347,3 +347,5 @@ config.php
 system/registrations.php
 
 *.lst
+
+phpDocumentor.phar

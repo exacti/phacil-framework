@@ -10,7 +10,7 @@
 namespace Phacil\Framework;
 
 /** @package Phacil\Framework */
-abstract class Model {
+abstract class AbstractHelper {
 	
 	/**
 	 * 

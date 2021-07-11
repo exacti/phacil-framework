@@ -22,6 +22,7 @@ final class Action {
 	 */
 	public function __construct($route, $args = array()) {
 		$path = '';
+		$pathC = "";
 		
 		$parts = explode('/', str_replace('../', '', (string)$route));
 		
@@ -35,6 +36,12 @@ final class Action {
 				array_shift($parts);
 				
 				continue;
+			}elseif (is_dir(DIR_APP_MODULAR . ucfirst($path))) {
+				$path = ucfirst($path).'/';
+				
+				array_shift($parts);
+				
+				continue;
 			}elseif (is_dir(DIR_APPLICATION . 'controller' . $path)) {
 				$path .= '/';
 				
@@ -43,8 +50,16 @@ final class Action {
 				continue;
 			}
 			
-			if (is_file(DIR_APP_MODULAR  . str_replace('../', '', $pathNew) . 'controller/' . str_replace('../', '', $part) . '.php')) {
-				$this->file = DIR_APP_MODULAR . str_replace('../', '', $pathNew) . 'controller/' . str_replace('../', '', $part) . '.php';
+			if (is_file(DIR_APP_MODULAR  . str_replace('../', '', $pathNew) . 'Controller/' . str_replace('../', '', $part) . '.php')) {
+				$this->file = DIR_APP_MODULAR . str_replace('../', '', $pathNew) . 'Controller/' . str_replace('../', '', $part) . '.php';
+				
+				$this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
+
+				array_shift($parts);
+				
+				break;
+			} elseif (is_file(DIR_APP_MODULAR  . str_replace('../', '', $pathNew) . 'Controller/' . str_replace('../', '', ucfirst($part)) . '.php')) {
+				$this->file = DIR_APP_MODULAR . str_replace('../', '', $pathNew) . 'Controller/' . str_replace('../', '', ucfirst($part)) . '.php';
 				
 				$this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
 

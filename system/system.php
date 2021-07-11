@@ -148,32 +148,10 @@ class startEngineExacTI {
      */
     private function loadengine () {
         $this->dirs = glob(DIR_SYSTEM.'*/autoload.php', GLOB_BRACE);
-
-        require_once (DIR_SYSTEM.'engine/autoload.php');
-
+        
         require_once (DIR_SYSTEM.'database/autoload.php');
 
-        spl_autoload_register(function ($class) {
-            $namespace = explode("\\", $class);
-        
-            $class = str_replace('phacil\framework\\', '', strtolower( $class));
-
-            $value = DIR_SYSTEM . $class.'/autoload.php';
-        
-            if($namespace[0] == "Phacil" && in_array($value, $this->dirs)){
-                try {
-                    if(is_readable($value)) {
-                        require_once $value;
-                    } else {
-                        throw new \Exception("I can't load '$value' file! Please check system permissions.");
-                    }
-                } catch (\Exception $e) {
-                    exit($e->getMessage());
-                }
-            }
-                
-        });
-
+        require_once (DIR_SYSTEM.'engine/autoload.php');
     }
 
     /**
@@ -247,6 +225,8 @@ class startEngineExacTI {
     }
 
 }
+
+global $engine;
 
 /** @var \Phacil\Framework\startEngineExacTI $engine */
 $engine = new startEngineExacTI();
