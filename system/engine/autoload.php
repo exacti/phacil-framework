@@ -30,7 +30,8 @@ spl_autoload_register(function ($class) {
 
 	if(in_array($class, $legacy)){
 
-		eval("class ".$class." extends \\Phacil\\Framework\\".$class." {}");
+		class_alias("\\Phacil\\Framework\\".$class, $class);
+		//eval("class ".$class." extends \\Phacil\\Framework\\".$class." {}");
 		return;
 	}
 
