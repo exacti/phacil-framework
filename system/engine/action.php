@@ -15,6 +15,8 @@ final class Action {
 	protected $method;
 	protected $args = array();
 
+	private $classAlt = [];
+
 	/**
 	 * @param string $route 
 	 * @param array $args 
@@ -49,27 +51,47 @@ final class Action {
 				
 				continue;
 			}
+
+			$strReplaceOnPathNew = str_replace('../', '', $pathNew);
+			$strReplaceOnPath = str_replace('../', '', $path);
+			$strReplaceOnPart = str_replace('../', '', $part);
+			$pregReplaceOnPath = preg_replace('/[^a-zA-Z0-9]/', '', $path);
+			$pregReplaceOnPart = preg_replace('/[^a-zA-Z0-9]/', '', $part);
 			
-			if (is_file(DIR_APP_MODULAR  . str_replace('../', '', $pathNew) . 'Controller/' . str_replace('../', '', $part) . '.php')) {
-				$this->file = DIR_APP_MODULAR . str_replace('../', '', $pathNew) . 'Controller/' . str_replace('../', '', $part) . '.php';
+			if (is_file(DIR_APP_MODULAR  . $strReplaceOnPathNew  . 'Controller/' . $strReplaceOnPart . '.php')) {
+				$this->file = DIR_APP_MODULAR . $strReplaceOnPathNew  . 'Controller/' . $strReplaceOnPart . '.php';
 				
-				$this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
+				$this->class = 'Controller' . $pregReplaceOnPath;
+
+				$this->classAlt = [
+					'class' => $this->mountClass($strReplaceOnPathNew, $pregReplaceOnPart),
+					'legacy' => $this->class,
+					'ucfirst' => ucfirst($pregReplaceOnPart),
+					'direct' => $pregReplaceOnPart
+				];
 
 				array_shift($parts);
 				
 				break;
-			} elseif (is_file(DIR_APP_MODULAR  . str_replace('../', '', $pathNew) . 'Controller/' . str_replace('../', '', ucfirst($part)) . '.php')) {
-				$this->file = DIR_APP_MODULAR . str_replace('../', '', $pathNew) . 'Controller/' . str_replace('../', '', ucfirst($part)) . '.php';
+			} elseif (is_file(DIR_APP_MODULAR  . $strReplaceOnPathNew  . 'Controller/' . ucfirst($strReplaceOnPart) . '.php')) {
+				$this->file = DIR_APP_MODULAR . $strReplaceOnPathNew  . 'Controller/' . ucfirst($strReplaceOnPart) . '.php';
 				
-				$this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
+				$this->class = 'Controller' . $pregReplaceOnPath;
+
+				$this->classAlt = [
+					'class' => $this->mountClass($strReplaceOnPathNew, $pregReplaceOnPart),
+					'legacy' => $this->class,
+					'ucfirst' => ucfirst($pregReplaceOnPart),
+					'direct' => $pregReplaceOnPart
+				];
 
 				array_shift($parts);
 				
 				break;
-			} elseif (is_file(DIR_APPLICATION . 'controller/' . str_replace('../', '', $path) . '.php')) {
-				$this->file = DIR_APPLICATION . 'controller/' . str_replace('../', '', $path) . '.php';
+			} elseif (is_file(DIR_APPLICATION . 'controller/' . $strReplaceOnPath . '.php')) {
+				$this->file = DIR_APPLICATION . 'controller/' . $strReplaceOnPath . '.php';
 				
-				$this->class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
+				$this->class = 'Controller' . $pregReplaceOnPath;
 
 				array_shift($parts);
 				
@@ -100,6 +122,25 @@ final class Action {
 	public function getClass() {
 		return $this->class;
 	}
+
+	private function mountClass(string $namespace, string $class) {
+		return (defined('NAMESPACE_PREFIX') ? NAMESPACE_PREFIX."\\" : "").str_replace("/", "\\", $namespace)."Controller\\".$class;
+	}
+
+	/**
+	 * 
+	 * @param string $class 
+	 * @return $this 
+	 */
+	public function setClass($class) {
+		$this->class = $class;
+		return $this;
+	}
+
+	/** @return array  */
+	public function getClassAlt() {
+		return $this->classAlt;
+	}
 	
 	/** @return string  */
 	public function getMethod() {
@@ -119,6 +160,12 @@ final class ActionSystem {
 	protected $class;
 	protected $method;
 	protected $args = array();
+
+	/**
+	 * 
+	 * @var (string[]|string|null)[]
+	 */
+	private $classAlt = [];
 
 	/**
 	 * @param string $route 
@@ -146,6 +193,11 @@ final class ActionSystem {
 				
 				$this->class = 'System' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
 
+				$this->classAlt = [
+					'legacy' => $this->class,
+					'direct' => preg_replace('/[^a-zA-Z0-9]/', '', $part)
+				];
+
 				array_shift($parts);
 				
 				break;
@@ -175,6 +227,11 @@ final class ActionSystem {
 		return $this->class;
 	}
 	
+	/** @return array  */
+	public function getClassAlt() {
+		return $this->classAlt;
+	}
+
 	/** @return string  */
 	public function getMethod() {
 		return $this->method;

@@ -67,18 +67,59 @@ final class Front {
 		}
   	}
     
-	private function execute($action) {
+	private function execute(object $action) {
 		$file = $action->getFile();
 		$class = $action->getClass();
+		$classAlt = $action->getClassAlt();
 		$method = $action->getMethod();
 		$args = $action->getArgs();
 
 		$action = '';
 
+		$c = get_declared_classes();
+
 		if (file_exists($file)) {
 			require_once($file);
 
-			$controller = new $class($this->registry);
+			try {
+				$controller = new $classAlt['class']($this->registry);
+				$action->setClass($classAlt['class']);
+				array_shift($classAlt['class']);
+			} catch (\Throwable $th) {
+				foreach($classAlt as $classController){
+					try {
+						$controller = new $classController($this->registry);
+						$action->setClass($classController);
+					} catch (\Throwable $th) {
+						//throw $th;
+					}
+				}
+			}
+
+			if(!$controller) {
+
+				try {
+					$controller = new $class($this->registry);
+					
+				} catch (\Throwable $th) {
+					$e = array_diff(get_declared_classes(), $c);
+					try {
+						$classController = end($e);
+						$controller = new $classController($this->registry);
+						$action->setClass($classController);
+					} catch (\Throwable $th) {
+						foreach($e as $classController){
+							try {
+								$controller = new $classController($this->registry);
+								$action->setClass($classController);
+							} catch (\Throwable $th) {
+								//throw $th;
+							}
+						}
+					}
+					
+				}
+			}
 			
 			if (is_callable(array($controller, $method))) {
 				$action = call_user_func_array(array($controller, $method), $args);
