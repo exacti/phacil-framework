@@ -405,7 +405,7 @@ if (isset($request->get['route'])) {
 
 // Dispatch
 $not_found = (defined('NOT_FOUND')) ? NOT_FOUND : 'error/not_found';
-$controller->dispatch($action, new Action($not_found));
+$controller->dispatch($action, ($not_found));
 
 // Output
 $response->output();

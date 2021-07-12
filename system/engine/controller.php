@@ -102,12 +102,23 @@ abstract class Controller {
         $action = new Action($child, $args);
         $file = $action->getFile();
         $class = $action->getClass();
+		$classAlt = $action->getClassAlt();
         $method = $action->getMethod();
 
         if (file_exists($file)) {
             require_once($file);
 
-            $controller = new $class($this->registry);
+            foreach($classAlt as $classController){
+				try {
+                    if(class_exists($classController)){
+					    $controller = new $classController($this->registry);
+					
+					    break;
+                    }
+				} catch (\Throwable $th) {
+					//throw $th;
+				}
+			}
 
             $controller->$method($args);
 

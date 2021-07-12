@@ -46,10 +46,10 @@ final class Front {
   	
   	/**
   	 * @param Action $action 
-  	 * @param Action $error 
+  	 * @param string $error 
   	 * @return void 
   	 */
-  	public function dispatch(\Phacil\Framework\Action $action, \Phacil\Framework\Action $error) {
+  	public function dispatch(\Phacil\Framework\Action $action, $error) {
 		$this->error = $error;
 			
 		foreach ($this->pre_action as $pre_action) {
@@ -74,62 +74,44 @@ final class Front {
 		$method = $action->getMethod();
 		$args = $action->getArgs();
 
-		$action = '';
-
-		$c = get_declared_classes();
+		unset($action);
 
 		if (file_exists($file)) {
 			require_once($file);
 
-			try {
-				$controller = new $classAlt['class']($this->registry);
-				$action->setClass($classAlt['class']);
-				array_shift($classAlt['class']);
-			} catch (\Throwable $th) {
-				foreach($classAlt as $classController){
-					try {
-						$controller = new $classController($this->registry);
-						$action->setClass($classController);
-					} catch (\Throwable $th) {
-						//throw $th;
-					}
-				}
-			}
-
-			if(!$controller) {
-
+			foreach($classAlt as $classController){
 				try {
-					$controller = new $class($this->registry);
-					
-				} catch (\Throwable $th) {
-					$e = array_diff(get_declared_classes(), $c);
-					try {
-						$classController = end($e);
+					if(class_exists($classController)){
 						$controller = new $classController($this->registry);
-						$action->setClass($classController);
-					} catch (\Throwable $th) {
-						foreach($e as $classController){
-							try {
-								$controller = new $classController($this->registry);
-								$action->setClass($classController);
-							} catch (\Throwable $th) {
-								//throw $th;
-							}
-						}
+						
+						break;
 					}
-					
+				} catch (\Throwable $th) {
+					//throw $th;
 				}
 			}
 			
-			if (is_callable(array($controller, $method))) {
-				$action = call_user_func_array(array($controller, $method), $args);
-			} else {
-				$action = $this->error;
+			try {
+				if (is_callable(array($controller, $method))) {
+					$action = call_user_func_array(array($controller, $method), $args);
+				} else {
+					$action = new Action($this->error);
+				
+					$this->error = '';
+					throw new \Exception("The controller can't be loaded", 1);
+				}
+			} catch (\Throwable $th) {
+				//throw $th;
+				$action = new Action($this->error);
 			
 				$this->error = '';
+
+				throw new \Exception("The controller can't be loaded", 1);
+				
 			}
+			
 		} else {
-			$action = $this->error;
+			$action = new Action($this->error);
 			
 			$this->error = '';
 		}

@@ -44,7 +44,7 @@ final class Action {
 				array_shift($parts);
 				
 				continue;
-			}elseif (is_dir(DIR_APPLICATION . 'controller' . $path)) {
+			}elseif (is_dir(DIR_APPLICATION . 'controller/' . $path)) {
 				$path .= '/';
 				
 				array_shift($parts);
@@ -92,6 +92,13 @@ final class Action {
 				$this->file = DIR_APPLICATION . 'controller/' . $strReplaceOnPath . '.php';
 				
 				$this->class = 'Controller' . $pregReplaceOnPath;
+
+				$this->classAlt = [
+					'class' => $this->mountClass($strReplaceOnPathNew, $pregReplaceOnPart),
+					'legacy' => $this->class,
+					'ucfirst' => ucfirst($pregReplaceOnPart),
+					'direct' => $pregReplaceOnPart
+				];
 
 				array_shift($parts);
 				
@@ -225,6 +232,16 @@ final class ActionSystem {
 	/** @return string  */
 	public function getClass() {
 		return $this->class;
+	}
+
+	/**
+	 * 
+	 * @param string $class 
+	 * @return $this 
+	 */
+	public function setClass($class) {
+		$this->class = $class;
+		return $this;
 	}
 	
 	/** @return array  */
