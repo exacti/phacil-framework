@@ -592,9 +592,10 @@ In a sample case, we have this controller:
    
 ##### Sample:
    ```php
-   define("ROUTES", array(
+   define("ROUTES", [
         "produto/%d/%/promo" => "feriado/natal/presentes"
-   )
+      ]
+   );
    ```
    
    ```php
