@@ -5,6 +5,8 @@
 
 A super easy PHP Framework for web development!
 
+v2 is comming soon... check the beta branch!
+
 
 ## Requirements
 
@@ -574,9 +576,10 @@ In a sample case, we have this controller:
    
 ##### Sample:
    ```php
-   define("ROUTES", array(
+   define("ROUTES", [
         "produto/%d/%/promo" => "feriado/natal/presentes"
-   )
+      ]
+   );
    ```
    
    ```php
