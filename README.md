@@ -5,6 +5,8 @@
 
 A super easy PHP Framework for web development!
 
+v2 is comming soon... check the beta branch!
+
 
 ## Requirements
 
