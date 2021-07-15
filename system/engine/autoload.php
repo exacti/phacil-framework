@@ -13,6 +13,7 @@ require_once(DIR_SYSTEM . 'engine/controller.php');
 /** @autoload class */
 spl_autoload_register(function ($class) {
 	$namespace = explode("\\", $class);
+	$namespaceWithoutPrefix = (defined('NAMESPACE_PREFIX')) ? explode("\\", str_replace(NAMESPACE_PREFIX."\\" , "", $class)) : $namespace;
 
 	$legacy = [
 		'Controller',
@@ -85,6 +86,24 @@ spl_autoload_register(function ($class) {
 
 	
 	if(file_exists($tryMagicOne = DIR_APP_MODULAR. implode("/", $namespace).".php")){
+		try {
+			if(is_readable($tryMagicOne)) {
+				require_once $tryMagicOne;
+				return;
+			} else {
+				$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
+				$log->write($class.' not loaded!');
+				throw new \Exception("I can't load '$tryMagicOne' file! Please check system permissions.");
+			}
+		} catch (\Exception $e) {
+			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
+			$log->write($class.' not loaded!');
+			exit($e->getMessage());
+		}
+	} 
+	
+
+	if(file_exists($tryMagicOne = DIR_APP_MODULAR. implode("/", $namespaceWithoutPrefix).".php")){
 		try {
 			if(is_readable($tryMagicOne)) {
 				require_once $tryMagicOne;

@@ -21,8 +21,23 @@ abstract class Controller {
      * @var Registry
      */
     protected $registry;
+
+    /**
+     * 
+     * @var int
+     */
     protected $id;
+
+    /**
+     * 
+     * @var mixed
+     */
     protected $layout;
+
+    /**
+     * 
+     * @var string
+     */
     protected $template;
 
     /**
@@ -49,13 +64,17 @@ abstract class Controller {
      */
     protected $error = array();
     
+    /**
+     * 
+     * @var string
+     */
     protected $output;
 
     /**
      * 
      * @var string[]
      */
-    public $templateTypes = ["tpl", "twig", "mustache", "smarty", "dwoo"];
+    public $templateTypes = ["tpl", "twig", "mustache", "smarty", "phtml"];
 
     /**
      * @param \Phacil\Framework\Registry $registry 
@@ -65,10 +84,21 @@ abstract class Controller {
         $this->registry = $registry;
     }
 
+    /**
+     * 
+     * @param string $key 
+     * @return Registry 
+     */
     public function __get($key) {
         return $this->registry->get($key);
     }
 
+    /**
+     * 
+     * @param string $key 
+     * @param object $value 
+     * @return void 
+     */
     public function __set($key, $value) {
         $this->registry->set($key, $value);
     }
@@ -96,7 +126,7 @@ abstract class Controller {
     /**
      * @param string $child 
      * @param array $args 
-     * @return mixed 
+     * @return object 
      */
     protected function getChild($child, array $args = array()) {
         $action = new Action($child, $args);
@@ -130,7 +160,7 @@ abstract class Controller {
     }
 
     /**
-     * @return mixed 
+     * @return string 
      * @throws TypeError 
      * @throws Mustache_Exception_UnknownTemplateException 
      * @throws RuntimeException 
@@ -148,13 +178,30 @@ abstract class Controller {
 
             $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
 
+            $structure = [];
             foreach($this->templateTypes as $extensionTemplate) {
 
-                $structure =  $thema.'/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
-                $structure_D = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
-                $structure_W = $pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure[] =  $thema.'/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure[] = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure[] = $pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
 
-                if (file_exists(DIR_TEMPLATE .$structure) != false) {
+
+                foreach($structure as $themefile){
+                    if(file_exists(DIR_APP_MODULAR."View/" .$themefile)){
+                        $this->template = $themefile;
+                        $templatePath = DIR_APP_MODULAR."View";
+                        break;
+                    }
+                    if(file_exists(DIR_TEMPLATE .$themefile)){
+                        $this->template = $themefile;
+                        $templatePath = DIR_TEMPLATE;
+                        break;
+                    }
+                }
+                /* if (file_exists(DIR_APP_MODULAR .$structure)) {
+                    $this->template = $structure;
+                    break;
+                }elseif (file_exists(DIR_TEMPLATE .$structure)) {
                     $this->template = $structure;
                     break;
                 } elseif (file_exists(DIR_TEMPLATE .$structure_D)){
@@ -163,21 +210,40 @@ abstract class Controller {
                 } elseif(file_exists(DIR_TEMPLATE .$structure_W)) {
                     $this->template = $structure_W;
                     break;
-                }
+                } */
 
+            }
+        } else {
+            if(file_exists(DIR_APP_MODULAR."View/" .$this->template)){
+                $templatePath = DIR_APP_MODULAR."View";
+            }
+            if(file_exists(DIR_TEMPLATE .$this->template)){
+                $templatePath = DIR_TEMPLATE;
             }
         }
 
-        if (file_exists(DIR_TEMPLATE . $this->template)) {
+        if (file_exists($templatePath . $this->template)) {
 
-            $templateType = substr(strrchr($this->template, '.'), 1);
+            $templateFileInfo = pathinfo($templatePath .$this->template);
+            $templateType = $templateFileInfo['extension'];
 
             switch($templateType) {
                 case 'tpl':
                     extract($this->data);
 
                     ob_start();
-                    require(DIR_TEMPLATE . $this->template);
+                    require($templatePath . $this->template);
+
+                    $this->output = ob_get_contents();
+
+                    ob_end_clean();
+                    break;
+
+                case 'phtml':
+                    extract($this->data);
+
+                    ob_start();
+                    require($templatePath . $this->template);
 
                     $this->output = ob_get_contents();
 
@@ -187,6 +253,9 @@ abstract class Controller {
                 case 'twig':
                     require_once(DIR_SYSTEM."templateEngines/Twig/autoload.php");
 
+                    /**
+                     * @var array
+                     */
                     $config = array(
                         'autoescape' => false,
                         'cache'		 => DIR_CACHE."twig/",
@@ -197,13 +266,23 @@ abstract class Controller {
                     $Twig_SimpleFilter = constant('TwigSimpleFilter');
                     $Twig_Extension_Debug = constant('TwigExtensionDebug');
 
-                    $loader = new $TwigLoaderFilesystem (DIR_TEMPLATE);
+                    /**
+                     * @var \TwigLoaderFilesystem
+                     */
+                    $loader = new $TwigLoaderFilesystem ($templatePath);
+
+                    /**
+                     * @var \TwigEnvironment
+                     */
                     $twig = new $Twig_Environment($loader, $config);
 
                     if($config['debug']) {
                         $twig->addExtension(new $Twig_Extension_Debug());
                     }
 
+                    /**
+                     * @var \transExtension
+                     */
                     $twig->addExtension(new \transExtension());
 
                     $twig->addFilter(new $Twig_SimpleFilter('translate', function ($str) {
@@ -231,12 +310,15 @@ abstract class Controller {
 
                     \Mustache_Autoloader::register();
 
+                    /**
+                     * @var \Mustache_Engine
+                     */
                     $mustache = new \Mustache_Engine(array(
                         //'template_class_prefix' => '__MyTemplates_',
                         'cache' => DIR_CACHE.'mustache',
                         'cache_file_mode' => 0666, // Please, configure your umask instead of doing this :)
                         //'cache_lambda_templates' => true,
-                        'loader' => new \Mustache_Loader_FilesystemLoader(DIR_TEMPLATE),
+                        'loader' => new \Mustache_Loader_FilesystemLoader($templatePath),
                         //'partials_loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__).'/views/partials'),
                         'helpers' => array('translate' => function($text) {
                             if (class_exists('Translate')) {
@@ -262,9 +344,12 @@ abstract class Controller {
                 case 'smarty':
                     require_once(DIR_SYSTEM."templateEngines/smarty/autoload.php");
 
+                    /**
+                     * @var \Smarty
+                     */
                     $smarty = new \Smarty();
 
-                    $smarty->setTemplateDir(DIR_TEMPLATE);
+                    $smarty->setTemplateDir($templatePath);
                     $smarty->setCompileDir(DIR_CACHE."Smarty/compile/");
                     //$smarty->setConfigDir('/web/www.example.com/guestbook/configs/');
                     $smarty->setCacheDir(DIR_CACHE."Smarty/cache/");
@@ -285,7 +370,7 @@ abstract class Controller {
                     extract($this->data);
 
                     ob_start();
-                    require(DIR_TEMPLATE . $this->template);
+                    require($templatePath . $this->template);
 
                     $this->output = ob_get_contents();
 
@@ -297,14 +382,14 @@ abstract class Controller {
             return $this->output;
 
         } else {
-            trigger_error('Error: Could not load template ' . DIR_TEMPLATE . $this->template . '!');
+            trigger_error('Error: Could not load template ' . $templatePath . $this->template . '!');
             exit();
         }
     }
 
     /**
      * @param bool $commonChildren 
-     * @return mixed 
+     * @return \Phacil\Framework\Response 
      * @throws TypeError 
      * @throws Mustache_Exception_UnknownTemplateException 
      * @throws RuntimeException 
