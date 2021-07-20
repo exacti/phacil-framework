@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019. ExacTI Technology Solutions
+ * Copyright (c) 2021. ExacTI Technology Solutions
  * GPLv3 General License.
  * https://exacti.com.br
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
@@ -23,6 +23,7 @@ switch($tipe) {
 		require_once(DIR_SYSTEM.'ecompress/css_and_javascript_optimized.php');
 		break;
 	default:
+		/** @return \Phacil\Framework\startEngineExacTI */
 		require_once(DIR_SYSTEM.'system.php');
 		break;
 }

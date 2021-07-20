@@ -11,9 +11,11 @@ namespace Phacil\Framework;
 use Exception;
 use TypeError;
 
+/**
+ * 
+ * @package Phacil\Framework
+ */
 class startEngineExacTI {
-    /*public $constants;
-    public $userConstants;*/
 
     /**
      * 
@@ -240,6 +242,7 @@ $loader = new Loader($engine->registry);
 $engine->registry->set('load', $loader);
 
 // Config
+/** @var Config */
 $config = new Config();
 $engine->registry->set('config', $config);
 

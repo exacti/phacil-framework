@@ -122,6 +122,10 @@ final class Caches {
 
     }
 
+    /**
+     * @param string $value 
+     * @return string 
+     */
     private function decode($value){
 
         if(function_exists('igbinary_serialize')){
@@ -131,6 +135,10 @@ final class Caches {
         }
     }
 
+    /**
+     * @param string $key 
+     * @return false|string 
+     */
     private function valid($key) {
         $file = ($this->dirCache . preg_replace('/[^A-Z0-9\._-]/i', '', $key) . '.cache');
 
@@ -155,6 +163,7 @@ final class Caches {
         }
     }
 
+    /** @return true  */
     public function deleteAll() {
         $files = glob($this->dirCache . '*.cache');
 
@@ -165,13 +174,15 @@ final class Caches {
         return true;
     }
 
+    /** @return bool  */
     public function clear() {
         return $this->deleteAll();
     }
 
+    /** @return Phacil\Framework\stdClass  */
     public function stats() {
 
-        $obj = new stdClass();
+        $obj = new \stdClass();
 
         $obj->size = $this->GetDirectorySize($this->dirCache);
         $obj->info = NULL;
@@ -181,6 +192,10 @@ final class Caches {
         return $obj;
     }
 
+    /**
+     * @param string $path 
+     * @return float|int 
+     */
     private function GetDirectorySize($path){
         $bytestotal = 0;
         $path = realpath($path);
