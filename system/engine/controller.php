@@ -76,6 +76,8 @@ abstract class Controller {
      */
     public $templateTypes = ["tpl", "twig", "mustache", "smarty", "phtml"];
 
+    public $routeOrig;
+
     /**
      * @param \Phacil\Framework\Registry $registry 
      * @return void 
@@ -141,6 +143,7 @@ abstract class Controller {
             foreach($classAlt as $classController){
 				try {
                     if(class_exists($classController)){
+                        $this->registry->routeOrig = $child;
 					    $controller = new $classController($this->registry);
 					
 					    break;
@@ -151,6 +154,8 @@ abstract class Controller {
 			}
 
             $controller->$method($args);
+
+            $this->registry->routeOrig = null;
 
             return $controller->output;
         } else {
@@ -173,8 +178,13 @@ abstract class Controller {
             $this->data[basename($child)] = $this->getChild($child);
         }
 
+        $pegRout = explode("/", ($this->registry->routeOrig)?: $this->request->get['route']);
+        $pegRoutWithoutLast = $pegRout;
+        array_pop($pegRoutWithoutLast);
+        $pegRoutWithoutPenultimate = $pegRoutWithoutLast;
+        array_pop($pegRoutWithoutPenultimate);
+
         if($this->template === NULL) {
-            $pegRout = explode("/", $this->request->get['route']);
 
             $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
 
@@ -184,12 +194,14 @@ abstract class Controller {
                 $structure[] =  $thema.'/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
                 $structure[] = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
                 $structure[] = $pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure[] = implode("/", $pegRoutWithoutLast).'/View/'.end($pegRout).'.'.$extensionTemplate;
+                $structure[] = implode("/", $pegRoutWithoutPenultimate).'/View/'.end($pegRout).((isset($pegRout[count($pegRout)-2])) ? "_".$pegRout[count($pegRout)-2] : "").'.'.$extensionTemplate;
 
 
                 foreach($structure as $themefile){
-                    if(file_exists(DIR_APP_MODULAR."View/" .$themefile)){
+                    if(file_exists(DIR_APP_MODULAR .$themefile)){
                         $this->template = $themefile;
-                        $templatePath = DIR_APP_MODULAR."View";
+                        $templatePath = DIR_APP_MODULAR;
                         break;
                     }
                     if(file_exists(DIR_TEMPLATE .$themefile)){
@@ -198,24 +210,14 @@ abstract class Controller {
                         break;
                     }
                 }
-                /* if (file_exists(DIR_APP_MODULAR .$structure)) {
-                    $this->template = $structure;
-                    break;
-                }elseif (file_exists(DIR_TEMPLATE .$structure)) {
-                    $this->template = $structure;
-                    break;
-                } elseif (file_exists(DIR_TEMPLATE .$structure_D)){
-                    $this->template = $structure_D;
-                    break;
-                } elseif(file_exists(DIR_TEMPLATE .$structure_W)) {
-                    $this->template = $structure_W;
-                    break;
-                } */
-
+                
             }
         } else {
-            if(file_exists(DIR_APP_MODULAR."View/" .$this->template)){
-                $templatePath = DIR_APP_MODULAR."View";
+            $teste = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template;
+            if(file_exists(DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template)){
+                $templatePath = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/";
+            } elseif(file_exists(DIR_APP_MODULAR.implode("/", $pegRoutWithoutPenultimate)."/View/" .$this->template)){
+                $templatePath = DIR_APP_MODULAR.implode("/", $pegRoutWithoutPenultimate)."/View/";
             }
             if(file_exists(DIR_TEMPLATE .$this->template)){
                 $templatePath = DIR_TEMPLATE;
