@@ -14,7 +14,19 @@ use RuntimeException;
 use SmartyException;
 use Exception;
 
-/** @package Phacil\Framework */
+/** 
+ * Extend this class to create interation with your module controller to Phacil engine controller.
+ * 
+ * Use as:
+ * class YouClass extends \Phacil\Framework\Controller {}
+ * 
+ * You can use the __construct function on call the \Phacil\Framework\Register object inside parent.
+ * 
+ *  Example: public funcion __construct(\Phacil\Framework\Registry $registry){ parent::__construct($registry); YOUR_CODE; }
+ * 
+ * @package Phacil\Framework 
+ * @since 1.0
+ * */
 abstract class Controller {
     /**
      * 
