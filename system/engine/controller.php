@@ -91,10 +91,14 @@ abstract class Controller {
     public $routeOrig;
 
     /**
+     * Implements constructor.
+     * 
+     * If you use this, don't forget the parent::__construct($registry);
+     * 
      * @param \Phacil\Framework\Registry $registry 
      * @return void 
      */
-    public function __construct($registry) {
+    public function __construct(\Phacil\Framework\Registry $registry) {
         $this->registry = $registry;
     }
 
