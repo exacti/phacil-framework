@@ -195,7 +195,7 @@ abstract class Controller {
                 $structure[] = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
                 $structure[] = $pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
                 $structure[] = implode("/", $pegRoutWithoutLast).'/View/'.end($pegRout).'.'.$extensionTemplate;
-                $structure[] = implode("/", $pegRoutWithoutPenultimate).'/View/'.end($pegRout).((isset($pegRout[count($pegRout)-2])) ? "_".$pegRout[count($pegRout)-2] : "").'.'.$extensionTemplate;
+                $structure[] = implode("/", $pegRoutWithoutPenultimate).'/View/'.((isset($pegRout[count($pegRout)-2])) ? $pegRout[count($pegRout)-2]."_".end($pegRout) : end($pegRout)).'.'.$extensionTemplate;
 
 
                 foreach($structure as $themefile){
@@ -265,8 +265,8 @@ abstract class Controller {
                     );
                     $TwigLoaderFilesystem = constant('\TwigLoaderFilesystem');
                     $Twig_Environment = constant('\TwigEnvironment');
-                    $Twig_SimpleFilter = constant('TwigSimpleFilter');
-                    $Twig_Extension_Debug = constant('TwigExtensionDebug');
+                    $Twig_SimpleFilter = constant('\TwigSimpleFilter');
+                    $Twig_Extension_Debug = constant('\TwigExtensionDebug');
 
                     /**
                      * @var \TwigLoaderFilesystem
