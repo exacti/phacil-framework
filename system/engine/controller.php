@@ -229,7 +229,7 @@ abstract class Controller {
                 
             }
         } else {
-            $teste = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template;
+            //$teste = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template;
             if(file_exists(DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template)){
                 $templatePath = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/";
             } elseif(file_exists(DIR_APP_MODULAR.implode("/", $pegRoutWithoutPenultimate)."/View/" .$this->template)){
@@ -408,10 +408,6 @@ abstract class Controller {
     /**
      * @param bool $commonChildren 
      * @return \Phacil\Framework\Response 
-     * @throws TypeError 
-     * @throws Mustache_Exception_UnknownTemplateException 
-     * @throws RuntimeException 
-     * @throws SmartyException 
      * @throws Exception 
      */
     protected function out ($commonChildren = true) {

@@ -8,8 +8,12 @@
 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Interfaces\front as frontinterface;
+
+use Exception;
+
 /** @package Phacil\Framework */
-final class Front {
+final class Front implements frontinterface {
 
 	/**
 	 * 
@@ -67,6 +71,11 @@ final class Front {
 		}
   	}
     
+	/**
+	 * @param object $action 
+	 * @return Action 
+	 * @throws Exception 
+	 */
 	private function execute(object $action) {
 		$file = $action->getFile();
 		$class = $action->getClass();
