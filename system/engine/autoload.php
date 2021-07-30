@@ -52,7 +52,8 @@ spl_autoload_register(function ($class) {
 		'response',
 		'classes',
 		'abstracthelper',
-		'interfaces\front'
+		'interfaces\front',
+		'interfaces\loader'
 	];
 
 	if($namespace[0] == "Phacil" && in_array($classNative, $allowed)){
