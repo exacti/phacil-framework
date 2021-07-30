@@ -11,7 +11,7 @@ namespace Phacil\Framework\Interfaces;
 use Phacil\Framework\Action;
 use Phacil\Framework\ActionSystem;
 
-interface front {
+interface Front {
 
 	/**
 	 * @param ActionSystem $pre_action 

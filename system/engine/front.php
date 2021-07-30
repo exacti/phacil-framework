@@ -8,7 +8,7 @@
 
 namespace Phacil\Framework;
 
-use Phacil\Framework\Interfaces\front as frontinterface;
+use Phacil\Framework\Interfaces\Front as frontinterface;
 
 use Exception;
 
