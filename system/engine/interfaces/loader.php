@@ -30,49 +30,49 @@
 
 	/**
 	 * @param string $model 
-	 * @return mixed 
+	 * @return void 
 	 */
 	public function model(string $model);
 
 	/**
 	 * @param string $helper 
-	 * @return mixed 
+	 * @return void 
 	 */
 	public function helper(string $helper);
 
 	/**
-	 * @param mixed $control 
-	 * @return mixed 
+	 * @param string $control 
+	 * @return void 
 	 */
 	public function control($control);
 
 	/**
-	 * @param mixed $control 
-	 * @return mixed 
+	 * @param string $control 
+	 * @return void 
 	 */
 	public function controller($control);
 
 	/**
-	 * @param mixed $driver 
-	 * @param mixed $hostname 
-	 * @param mixed $username 
-	 * @param mixed $password 
-	 * @param mixed $database 
-	 * @param mixed|null $port 
-	 * @param mixed|null $charset 
-	 * @return mixed 
+	 * @param string $driver 
+	 * @param string $hostname 
+	 * @param string $username 
+	 * @param string $password 
+	 * @param string $database 
+	 * @param int|null $port 
+	 * @param string|null $charset 
+	 * @return string[]|string|null 
 	 */
 	public function database(string $driver, $hostname, $username, $password, $database, $port = NULL, $charset = NULL);
 
 	/**
-	 * @param mixed $config 
-	 * @return mixed 
+	 * @param string $config 
+	 * @return void 
 	 */
 	public function config($config);
 
 	/**
-	 * @param mixed $language 
-	 * @return mixed 
+	 * @param string $language 
+	 * @return void 
 	 */
 	public function language($language);
  }

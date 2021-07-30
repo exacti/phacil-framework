@@ -124,7 +124,7 @@ abstract class Controller {
     /**
      * @param string $route 
      * @param array $args 
-     * @return Action 
+     * @return \Phacil\Framework\Interfaces\Action
      */
     protected function forward($route, array $args = array()) {
         return new Action($route, $args);

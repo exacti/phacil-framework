@@ -7,9 +7,6 @@
  */
 
 
-require_once(DIR_SYSTEM . 'engine/action.php'); 
-require_once(DIR_SYSTEM . 'engine/controller.php');
-
 /** @autoload class */
 spl_autoload_register(function ($class) {
 	$namespace = explode("\\", $class);
@@ -52,8 +49,9 @@ spl_autoload_register(function ($class) {
 		'response',
 		'classes',
 		'abstracthelper',
-		'interfaces\front',
-		'interfaces\loader'
+		'interfaces\\front',
+		'interfaces\\loader',
+		'interfaces\\action'
 	];
 
 	if($namespace[0] == "Phacil" && in_array($classNative, $allowed)){
@@ -145,5 +143,6 @@ spl_autoload_register(function ($class) {
 		
 });
 
-
+require_once(DIR_SYSTEM . 'engine/action.php'); 
+//require_once(DIR_SYSTEM . 'engine/controller.php');
 //require_once(DIR_SYSTEM . 'engine/legacy.php');

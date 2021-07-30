@@ -14,16 +14,16 @@ use Phacil\Framework\ActionSystem;
 interface Front {
 
 	/**
-	 * @param ActionSystem $pre_action 
+	 * @param \Phacil\Framework\Interfaces\Action $pre_action 
 	 * @return void 
 	 */
-	public function addPreAction(\Phacil\Framework\ActionSystem $pre_action);
+	public function addPreAction(\Phacil\Framework\Interfaces\Action $pre_action);
 
 	/**
-	 * @param Action $action 
+	 * @param \Phacil\Framework\Interfaces\Action $action 
 	 * @param string $error 
 	 * @return void 
 	 */
-	public function dispatch(\Phacil\Framework\Action $action, $error);
+	public function dispatch(\Phacil\Framework\Interfaces\Action $action, $error);
 
  }

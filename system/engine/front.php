@@ -9,6 +9,7 @@
 namespace Phacil\Framework;
 
 use Phacil\Framework\Interfaces\Front as frontinterface;
+use Phacil\Framework\Interfaces\Action;
 
 use Exception;
 
@@ -40,10 +41,10 @@ final class Front implements frontinterface {
 	
 	
 	/**
-	 * @param ActionSystem $pre_action 
+	 * @param \Phacil\Framework\Interfaces\Action $pre_action 
 	 * @return void 
 	 */
-	public function addPreAction(\Phacil\Framework\ActionSystem $pre_action) {
+	public function addPreAction(\Phacil\Framework\Interfaces\Action $pre_action) {
 		$this->pre_action[] = $pre_action;
 	}
 	
@@ -53,7 +54,7 @@ final class Front implements frontinterface {
   	 * @param string $error 
   	 * @return void 
   	 */
-  	public function dispatch(\Phacil\Framework\Action $action, $error) {
+  	public function dispatch(\Phacil\Framework\Interfaces\Action $action, $error) {
 		$this->error = $error;
 			
 		foreach ($this->pre_action as $pre_action) {
@@ -73,7 +74,7 @@ final class Front implements frontinterface {
     
 	/**
 	 * @param object $action 
-	 * @return Action 
+	 * @return \Phacil\Framework\Interfaces\Action 
 	 * @throws Exception 
 	 */
 	private function execute(object $action) {

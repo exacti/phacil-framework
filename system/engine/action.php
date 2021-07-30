@@ -8,13 +8,38 @@
 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Interfaces\Action as ActionInterface;
+
 /** @package Phacil\Framework */
-final class Action {
+final class Action implements ActionInterface {
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $file;
+	
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $class;
+	
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $method;
+	
+	/**
+	 * 
+	 * @var array
+	 */
 	protected $args = array();
 
+	/**
+	 * 
+	 * @var (string[]|string|null)[]
+	 */
 	private $classAlt = [];
 
 	/**
@@ -121,12 +146,12 @@ final class Action {
 	}
 	
 	/** @return string  */
-	public function getFile() {
+	public function getFile():string {
 		return $this->file;
 	}
 	
 	/** @return string  */
-	public function getClass() {
+	public function getClass():string {
 		return $this->class;
 	}
 
@@ -145,27 +170,47 @@ final class Action {
 	}
 
 	/** @return array  */
-	public function getClassAlt() {
+	public function getClassAlt():array {
 		return $this->classAlt;
 	}
 	
 	/** @return string  */
-	public function getMethod() {
+	public function getMethod():string {
 		return $this->method;
 	}
 	
 	/** @return array  */
-	public function getArgs() {
+	public function getArgs():array {
 		return $this->args;
 	}
 }
 
 
 /** @package Phacil\Framework */
-final class ActionSystem {
+final class ActionSystem implements ActionInterface {
+	
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $file;
+	
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $class;
+	
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $method;
+	
+	/**
+	 * 
+	 * @var array
+	 */
 	protected $args = array();
 
 	/**
@@ -225,12 +270,12 @@ final class ActionSystem {
 	}
 	
 	/** @return string  */
-	public function getFile() {
+	public function getFile():string {
 		return $this->file;
 	}
 	
 	/** @return string  */
-	public function getClass() {
+	public function getClass():string {
 		return $this->class;
 	}
 
@@ -245,17 +290,17 @@ final class ActionSystem {
 	}
 	
 	/** @return array  */
-	public function getClassAlt() {
+	public function getClassAlt():array {
 		return $this->classAlt;
 	}
 
 	/** @return string  */
-	public function getMethod() {
+	public function getMethod():string {
 		return $this->method;
 	}
 	
 	/** @return array  */
-	public function getArgs() {
+	public function getArgs():array {
 		return $this->args;
 	}
 }
