@@ -51,12 +51,13 @@ spl_autoload_register(function ($class) {
 		'abstracthelper',
 		'interfaces\\front',
 		'interfaces\\loader',
-		'interfaces\\action'
+		'interfaces\\action',
+		'traits\\action'
 	];
 
 	if($namespace[0] == "Phacil" && in_array($classNative, $allowed)){
 		try {
-			include_once(DIR_SYSTEM . 'engine/'. str_replace("\\", "/", $classNative).'.php');
+			require_once(DIR_SYSTEM . 'engine/'. str_replace("\\", "/", $classNative).'.php');
 			return;
 		} catch (\Exception $th) {
 			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
