@@ -6,9 +6,24 @@
  */
 
 
- namespace Phacil\Framework\Interfaces;
+namespace Phacil\Framework\Interfaces;
 
- interface front {
+use Phacil\Framework\Action;
+use Phacil\Framework\ActionSystem;
 
+interface front {
+
+	/**
+	 * @param ActionSystem $pre_action 
+	 * @return void 
+	 */
 	public function addPreAction(\Phacil\Framework\ActionSystem $pre_action);
+
+	/**
+	 * @param Action $action 
+	 * @param string $error 
+	 * @return void 
+	 */
+	public function dispatch(\Phacil\Framework\Action $action, $error);
+
  }
