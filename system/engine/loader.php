@@ -9,7 +9,7 @@
  namespace Phacil\Framework;
 
 /** @package Phacil\Framework */
-final class Loader {
+final class Loader implements \Phacil\Framework\Interfaces\Loader {
 	protected $registry;
 	
 	/**
@@ -106,10 +106,11 @@ final class Loader {
 	}
 
     /**
+	 * temp alias, consider change to loader controller function
      * @param string $control 
      * @return void 
      */
-    public function control($control) { //temp alias, consider change to loader controller function
+    public function control($control) { 
 	    $this->controller($control);
     }
 

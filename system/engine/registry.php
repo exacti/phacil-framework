@@ -12,6 +12,8 @@
 final class Registry {
 	private $data = array();
 
+	public $routeOrig;
+
 	/**
 	 * @param string $key 
 	 * @return mixed 

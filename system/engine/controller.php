@@ -14,15 +14,42 @@ use RuntimeException;
 use SmartyException;
 use Exception;
 
-/** @package Phacil\Framework */
+/** 
+ * Extend this class to create interation with your module controller to Phacil engine controller.
+ * 
+ * Use as:
+ * class YouClass extends \Phacil\Framework\Controller {}
+ * 
+ * You can use the __construct function on call the \Phacil\Framework\Register object inside parent.
+ * 
+ *  Example: public funcion __construct(\Phacil\Framework\Registry $registry){ parent::__construct($registry); YOUR_CODE; }
+ * 
+ * @package Phacil\Framework 
+ * @since 1.0
+ * */
 abstract class Controller {
     /**
      * 
      * @var Registry
      */
     protected $registry;
+
+    /**
+     * 
+     * @var int
+     */
     protected $id;
+
+    /**
+     * 
+     * @var mixed
+     */
     protected $layout;
+
+    /**
+     * 
+     * @var string
+     */
     protected $template;
 
     /**
@@ -49,26 +76,47 @@ abstract class Controller {
      */
     protected $error = array();
     
+    /**
+     * 
+     * @var string
+     */
     protected $output;
 
     /**
      * 
      * @var string[]
      */
-    public $templateTypes = ["tpl", "twig", "mustache", "smarty", "dwoo"];
+    public $templateTypes = ["tpl", "twig", "mustache", "smarty", "phtml"];
+
+    public $routeOrig;
 
     /**
+     * Implements constructor.
+     * 
+     * If you use this, don't forget the parent::__construct($registry);
+     * 
      * @param \Phacil\Framework\Registry $registry 
      * @return void 
      */
-    public function __construct($registry) {
+    public function __construct(\Phacil\Framework\Registry $registry) {
         $this->registry = $registry;
     }
 
+    /**
+     * 
+     * @param string $key 
+     * @return Registry 
+     */
     public function __get($key) {
         return $this->registry->get($key);
     }
 
+    /**
+     * 
+     * @param string $key 
+     * @param object $value 
+     * @return void 
+     */
     public function __set($key, $value) {
         $this->registry->set($key, $value);
     }
@@ -76,7 +124,7 @@ abstract class Controller {
     /**
      * @param string $route 
      * @param array $args 
-     * @return Action 
+     * @return \Phacil\Framework\Interfaces\Action
      */
     protected function forward($route, array $args = array()) {
         return new Action($route, $args);
@@ -96,20 +144,34 @@ abstract class Controller {
     /**
      * @param string $child 
      * @param array $args 
-     * @return mixed 
+     * @return object 
      */
     protected function getChild($child, array $args = array()) {
         $action = new Action($child, $args);
         $file = $action->getFile();
         $class = $action->getClass();
+		$classAlt = $action->getClassAlt();
         $method = $action->getMethod();
 
         if (file_exists($file)) {
             require_once($file);
 
-            $controller = new $class($this->registry);
+            foreach($classAlt as $classController){
+				try {
+                    if(class_exists($classController)){
+                        $this->registry->routeOrig = $child;
+					    $controller = new $classController($this->registry);
+					
+					    break;
+                    }
+				} catch (\Throwable $th) {
+					//throw $th;
+				}
+			}
 
             $controller->$method($args);
+
+            $this->registry->routeOrig = null;
 
             return $controller->output;
         } else {
@@ -119,7 +181,7 @@ abstract class Controller {
     }
 
     /**
-     * @return mixed 
+     * @return string 
      * @throws TypeError 
      * @throws Mustache_Exception_UnknownTemplateException 
      * @throws RuntimeException 
@@ -132,41 +194,74 @@ abstract class Controller {
             $this->data[basename($child)] = $this->getChild($child);
         }
 
+        $pegRout = explode("/", ($this->registry->routeOrig)?: $this->request->get['route']);
+        $pegRoutWithoutLast = $pegRout;
+        array_pop($pegRoutWithoutLast);
+        $pegRoutWithoutPenultimate = $pegRoutWithoutLast;
+        array_pop($pegRoutWithoutPenultimate);
+
         if($this->template === NULL) {
-            $pegRout = explode("/", $this->request->get['route']);
 
             $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
 
+            $structure = [];
             foreach($this->templateTypes as $extensionTemplate) {
 
-                $structure =  $thema.'/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
-                $structure_D = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
-                $structure_W = $pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure[] =  $thema.'/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure[] = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure[] = $pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
+                $structure[] = implode("/", $pegRoutWithoutLast).'/View/'.end($pegRout).'.'.$extensionTemplate;
+                $structure[] = implode("/", $pegRoutWithoutPenultimate).'/View/'.((isset($pegRout[count($pegRout)-2])) ? $pegRout[count($pegRout)-2]."_".end($pegRout) : end($pegRout)).'.'.$extensionTemplate;
 
-                if (file_exists(DIR_TEMPLATE .$structure) != false) {
-                    $this->template = $structure;
-                    break;
-                } elseif (file_exists(DIR_TEMPLATE .$structure_D)){
-                    $this->template = $structure_D;
-                    break;
-                } elseif(file_exists(DIR_TEMPLATE .$structure_W)) {
-                    $this->template = $structure_W;
-                    break;
+
+                foreach($structure as $themefile){
+                    if(file_exists(DIR_APP_MODULAR .$themefile)){
+                        $this->template = $themefile;
+                        $templatePath = DIR_APP_MODULAR;
+                        break;
+                    }
+                    if(file_exists(DIR_TEMPLATE .$themefile)){
+                        $this->template = $themefile;
+                        $templatePath = DIR_TEMPLATE;
+                        break;
+                    }
                 }
-
+                
+            }
+        } else {
+            //$teste = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template;
+            if(file_exists(DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template)){
+                $templatePath = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/";
+            } elseif(file_exists(DIR_APP_MODULAR.implode("/", $pegRoutWithoutPenultimate)."/View/" .$this->template)){
+                $templatePath = DIR_APP_MODULAR.implode("/", $pegRoutWithoutPenultimate)."/View/";
+            }
+            if(file_exists(DIR_TEMPLATE .$this->template)){
+                $templatePath = DIR_TEMPLATE;
             }
         }
 
-        if (file_exists(DIR_TEMPLATE . $this->template)) {
+        if (file_exists($templatePath . $this->template)) {
 
-            $templateType = substr(strrchr($this->template, '.'), 1);
+            $templateFileInfo = pathinfo($templatePath .$this->template);
+            $templateType = $templateFileInfo['extension'];
 
             switch($templateType) {
                 case 'tpl':
                     extract($this->data);
 
                     ob_start();
-                    require(DIR_TEMPLATE . $this->template);
+                    require($templatePath . $this->template);
+
+                    $this->output = ob_get_contents();
+
+                    ob_end_clean();
+                    break;
+
+                case 'phtml':
+                    extract($this->data);
+
+                    ob_start();
+                    require($templatePath . $this->template);
 
                     $this->output = ob_get_contents();
 
@@ -176,6 +271,9 @@ abstract class Controller {
                 case 'twig':
                     require_once(DIR_SYSTEM."templateEngines/Twig/autoload.php");
 
+                    /**
+                     * @var array
+                     */
                     $config = array(
                         'autoescape' => false,
                         'cache'		 => DIR_CACHE."twig/",
@@ -183,16 +281,26 @@ abstract class Controller {
                     );
                     $TwigLoaderFilesystem = constant('\TwigLoaderFilesystem');
                     $Twig_Environment = constant('\TwigEnvironment');
-                    $Twig_SimpleFilter = constant('TwigSimpleFilter');
-                    $Twig_Extension_Debug = constant('TwigExtensionDebug');
+                    $Twig_SimpleFilter = constant('\TwigSimpleFilter');
+                    $Twig_Extension_Debug = constant('\TwigExtensionDebug');
 
-                    $loader = new $TwigLoaderFilesystem (DIR_TEMPLATE);
+                    /**
+                     * @var \TwigLoaderFilesystem
+                     */
+                    $loader = new $TwigLoaderFilesystem ($templatePath);
+
+                    /**
+                     * @var \TwigEnvironment
+                     */
                     $twig = new $Twig_Environment($loader, $config);
 
                     if($config['debug']) {
                         $twig->addExtension(new $Twig_Extension_Debug());
                     }
 
+                    /**
+                     * @var \transExtension
+                     */
                     $twig->addExtension(new \transExtension());
 
                     $twig->addFilter(new $Twig_SimpleFilter('translate', function ($str) {
@@ -220,12 +328,15 @@ abstract class Controller {
 
                     \Mustache_Autoloader::register();
 
+                    /**
+                     * @var \Mustache_Engine
+                     */
                     $mustache = new \Mustache_Engine(array(
                         //'template_class_prefix' => '__MyTemplates_',
                         'cache' => DIR_CACHE.'mustache',
                         'cache_file_mode' => 0666, // Please, configure your umask instead of doing this :)
                         //'cache_lambda_templates' => true,
-                        'loader' => new \Mustache_Loader_FilesystemLoader(DIR_TEMPLATE),
+                        'loader' => new \Mustache_Loader_FilesystemLoader($templatePath),
                         //'partials_loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__).'/views/partials'),
                         'helpers' => array('translate' => function($text) {
                             if (class_exists('Translate')) {
@@ -251,9 +362,12 @@ abstract class Controller {
                 case 'smarty':
                     require_once(DIR_SYSTEM."templateEngines/smarty/autoload.php");
 
+                    /**
+                     * @var \Smarty
+                     */
                     $smarty = new \Smarty();
 
-                    $smarty->setTemplateDir(DIR_TEMPLATE);
+                    $smarty->setTemplateDir($templatePath);
                     $smarty->setCompileDir(DIR_CACHE."Smarty/compile/");
                     //$smarty->setConfigDir('/web/www.example.com/guestbook/configs/');
                     $smarty->setCacheDir(DIR_CACHE."Smarty/cache/");
@@ -274,7 +388,7 @@ abstract class Controller {
                     extract($this->data);
 
                     ob_start();
-                    require(DIR_TEMPLATE . $this->template);
+                    require($templatePath . $this->template);
 
                     $this->output = ob_get_contents();
 
@@ -286,18 +400,14 @@ abstract class Controller {
             return $this->output;
 
         } else {
-            trigger_error('Error: Could not load template ' . DIR_TEMPLATE . $this->template . '!');
+            trigger_error('Error: Could not load template ' . $templatePath . $this->template . '!');
             exit();
         }
     }
 
     /**
      * @param bool $commonChildren 
-     * @return mixed 
-     * @throws TypeError 
-     * @throws Mustache_Exception_UnknownTemplateException 
-     * @throws RuntimeException 
-     * @throws SmartyException 
+     * @return \Phacil\Framework\Response 
      * @throws Exception 
      */
     protected function out ($commonChildren = true) {
