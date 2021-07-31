@@ -8,8 +8,6 @@
 
 namespace Phacil\Framework\Interfaces;
 
-use Phacil\Framework\Action;
-use Phacil\Framework\ActionSystem;
 
 interface Front {
 

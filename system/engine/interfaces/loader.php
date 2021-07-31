@@ -32,13 +32,13 @@
 	 * @param string $model 
 	 * @return void 
 	 */
-	public function model(string $model);
+	public function model($model);
 
 	/**
 	 * @param string $helper 
 	 * @return void 
 	 */
-	public function helper(string $helper);
+	public function helper($helper);
 
 	/**
 	 * @param string $control 
@@ -62,7 +62,7 @@
 	 * @param string|null $charset 
 	 * @return string[]|string|null 
 	 */
-	public function database(string $driver, $hostname, $username, $password, $database, $port = NULL, $charset = NULL);
+	public function database($driver, $hostname, $username, $password, $database, $port = NULL, $charset = NULL);
 
 	/**
 	 * @param string $config 

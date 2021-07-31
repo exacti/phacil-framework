@@ -9,7 +9,6 @@
 namespace Phacil\Framework;
 
 use Phacil\Framework\Interfaces\Front as frontinterface;
-use Phacil\Framework\Interfaces\Action;
 
 use Exception;
 
@@ -77,7 +76,7 @@ final class Front implements frontinterface {
 	 * @return \Phacil\Framework\Interfaces\Action 
 	 * @throws Exception 
 	 */
-	private function execute(object $action) {
+	private function execute($action) {
 		$file = $action->getFile();
 		$class = $action->getClass();
 		$classAlt = $action->getClassAlt();
@@ -96,7 +95,7 @@ final class Front implements frontinterface {
 						
 						break;
 					}
-				} catch (\Throwable $th) {
+				} catch (\Exception $th) {
 					//throw $th;
 				}
 			}
@@ -110,7 +109,7 @@ final class Front implements frontinterface {
 					$this->error = '';
 					throw new \Exception("The controller can't be loaded", 1);
 				}
-			} catch (\Throwable $th) {
+			} catch (\Exception $th) {
 				//throw $th;
 				$action = new Action($this->error);
 			

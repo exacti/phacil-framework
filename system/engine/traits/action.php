@@ -46,17 +46,17 @@ trait Action {
 	private $classAlt = [];
 
 	/** @return string  */
-	public function getFile():string {
+	public function getFile() {
 		return $this->file;
 	}
 	
 	/** @return string  */
-	public function getClass():string {
+	public function getClass() {
 		return $this->class;
 	}
 
-	private function mountClass(string $namespace, string $class) {
-		return (defined('NAMESPACE_PREFIX') ? NAMESPACE_PREFIX."\\" : "").str_replace("/", "\\", $namespace)."Controller\\".$class;
+	private function mountClass($namespace, $class) {
+		return (defined('NAMESPACE_PREFIX') ? NAMESPACE_PREFIX."\\" : "").str_replace("/", "\\", (string) $namespace)."Controller\\".(string) $class;
 	}
 
 	/**
@@ -70,17 +70,17 @@ trait Action {
 	}
 
 	/** @return array  */
-	public function getClassAlt():array {
+	public function getClassAlt() {
 		return $this->classAlt;
 	}
 	
 	/** @return string  */
-	public function getMethod():string {
+	public function getMethod() {
 		return $this->method;
 	}
 	
 	/** @return array  */
-	public function getArgs():array {
+	public function getArgs() {
 		return $this->args;
 	}
 }

@@ -18,10 +18,10 @@ interface Action {
 	public function __construct($route, $args = array());
 
 	/** @return string  */
-	public function getFile():string;
+	public function getFile();
 
 	/** @return string  */
-	public function getClass():string;
+	public function getClass();
 
 	/**
 	 * 
@@ -31,11 +31,11 @@ interface Action {
 	public function setClass($class);
 
 	/** @return array  */
-	public function getClassAlt():array;
+	public function getClassAlt();
 
 	/** @return string  */
-	public function getMethod():string;
+	public function getMethod();
 
 	/** @return array  */
-	public function getArgs():array;
+	public function getArgs();
 }

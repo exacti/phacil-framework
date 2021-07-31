@@ -47,7 +47,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 	 * @param string $model 
 	 * @return void 
 	 */
-	public function model(string $model) {
+	public function model($model) {
 
 		$parts = explode('/', str_replace('../', '', (string)$model));
 
@@ -83,7 +83,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 	 * @param string $helper 
 	 * @return void 
 	 */
-	public function helper(string $helper) {
+	public function helper($helper) {
 
 		$parts = explode('/', str_replace('../', '', (string)$helper));
 
