@@ -22,7 +22,8 @@ final class Log {
 	 * @return void 
 	 */
 	public function __construct($filename = "error.log") {
-		$this->filename = fopen(DIR_LOGS . $filename, 'a');
+		$this->filename = fopen(DIR_LOGS . $filename, 'a+');
+		return;
 	}
 	
 	/**

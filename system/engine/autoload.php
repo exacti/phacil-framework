@@ -28,7 +28,7 @@ spl_autoload_register(function ($class) {
 		try {
 			class_alias("\\Phacil\\Framework\\".$class, $class);
 		} catch (\Exception $th) {
-			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
+			$log = new \Phacil\Framework\Log("exception.log");
 			$log->write($class.' not loaded!');
 		}
 		
@@ -42,13 +42,20 @@ spl_autoload_register(function ($class) {
 		if(!defined('DIR_DATABASE'))
     		define('DIR_DATABASE', DIR_SYSTEM."database/");
 
+
+		$fileDB = DIR_DATABASE . str_replace("\\", "/", $classNative).'.php';
+
 		try {
-			require_once(DIR_DATABASE . str_replace("\\", "/", $classNative).'.php');
+			if (!file_exists($fileDB))
+				throw new Exception ($fileDB.' does not exist');
+			else
+				require_once($fileDB);
+
 			return;
-		} catch (\Exception $th) {
-			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-			$log->write($class.' not loaded!');
-			throw new \Phacil\Framework\Exception("Class '$class' not loaded.");
+		} catch (Exception $th) {
+			$log = new \Phacil\Framework\Log("exception.log");
+			$log->write($th->getMessage());
+			
 		}
 	}
 
@@ -71,13 +78,20 @@ spl_autoload_register(function ($class) {
 	];
 
 	if($namespace[0] == "Phacil" && in_array($classNative, $allowed)){
+		$file = DIR_SYSTEM . 'engine/'. str_replace("\\", "/", $classNative).'.php';
+
 		try {
-			require_once(DIR_SYSTEM . 'engine/'. str_replace("\\", "/", $classNative).'.php');
-			return;
+			if(is_readable($file)){
+				require_once($file);
+				return;
+			} else {
+				throw new \Exception("Class '$class' not loaded.");
+			}
 		} catch (\Exception $th) {
-			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-			$log->write($class.' not loaded!');
-			throw new \Exception("Class '$class' not loaded.");
+			
+			$log = new \Phacil\Framework\Log("exception.log");
+			$log->write($th->getMessage());
+			
 		}
 	}
 
@@ -89,12 +103,10 @@ spl_autoload_register(function ($class) {
 				require_once $value;
 				return;
 			} else {
-				$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-				$log->write($class.' not loaded!');
 				throw new \Exception("I can't load '$value' file! Please check system permissions.");
 			}
 		} catch (\Exception $e) {
-			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
+			$log = new \Phacil\Framework\Log("exception.log");
 			$log->write($class.' not loaded!');
 			exit($e->getMessage());
 		}
@@ -107,13 +119,11 @@ spl_autoload_register(function ($class) {
 				require_once $tryMagicOne;
 				return;
 			} else {
-				$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-				$log->write($class.' not loaded!');
 				throw new \Exception("I can't load '$tryMagicOne' file! Please check system permissions.");
 			}
 		} catch (\Exception $e) {
-			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-			$log->write($class.' not loaded!');
+			$log = new \Phacil\Framework\Log("exception.log");
+			$log->write($e->getMessage());
 			exit($e->getMessage());
 		}
 	} 
@@ -125,13 +135,11 @@ spl_autoload_register(function ($class) {
 				require_once $tryMagicOne;
 				return;
 			} else {
-				$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-				$log->write($class.' not loaded!');
 				throw new \Exception("I can't load '$tryMagicOne' file! Please check system permissions.");
 			}
 		} catch (\Exception $e) {
-			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-			$log->write($class.' not loaded!');
+			$log = new \Phacil\Framework\Log("exception.log");
+			$log->write($e->getMessage());
 			exit($e->getMessage());
 		}
 	} 
@@ -144,13 +152,11 @@ spl_autoload_register(function ($class) {
 				require_once $tryMagicOne;
 				return;
 			} else {
-				$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-				$log->write($class.' not loaded!');
 				throw new \Exception("I can't load '$tryMagicOne' file! Please check system permissions.");
 			}
 		} catch (\Exception $e) {
-			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
-			$log->write($class.' not loaded!');
+			$log = new \Phacil\Framework\Log("exception.log");
+			$log->write($e->getMessage());
 			exit($e->getMessage());
 		}
 	}
@@ -160,5 +166,3 @@ spl_autoload_register(function ($class) {
 });
 
 require_once(DIR_SYSTEM . 'engine/action.php'); 
-//require_once(DIR_SYSTEM . 'engine/controller.php');
-//require_once(DIR_SYSTEM . 'engine/legacy.php');
