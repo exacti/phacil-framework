@@ -14,7 +14,7 @@ namespace Phacil\Framework\Databases;
  * Doesn't work with PHP 7+
  * @package Phacil\Framework\Databases 
  * */
-final class MySQL_legacy {
+final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 	private $connection;
 	
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
@@ -31,6 +31,8 @@ final class MySQL_legacy {
 		mysql_query("SET CHARACTER_SET_CONNECTION=".$charset."", $this->connection);
 		mysql_query("SET SQL_MODE = ''", $this->connection);
   	}
+
+	public function isConnected() { }
 		
   	public function query($sql) {
 		$resource = mysql_query($sql, $this->connection);

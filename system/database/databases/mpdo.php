@@ -9,12 +9,13 @@
 namespace Phacil\Framework\Databases;
 
 use PDO;
+use Phacil\Framework\Interfaces\Databases;
 
 /** 
  * Alternative PDO MySQL connection method.
  * 
  * @package Phacil\Framework\Databases */
-final class mPDO {
+final class mPDO implements Databases {
 	/**
 	 * 
 	 * @var PDO

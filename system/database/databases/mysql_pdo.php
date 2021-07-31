@@ -8,7 +8,9 @@
 
 namespace Phacil\Framework\Databases;
 
-final class MYSQL_PDO
+use Phacil\Framework\Interfaces\Databases;
+
+final class MYSQL_PDO implements Databases
 {
     /**
      * Link to the database connection
@@ -58,6 +60,14 @@ final class MYSQL_PDO
         # add the connection parameters
         $this->options['PDO::MYSQL_ATTR_INIT_COMMAND'] = "SET NAMES '{$charset}'";
         $this->connect();
+    }
+
+    public function isConnected() { 
+        if ($this->dbh) {
+			return true;
+		} else {
+			return false;
+		}
     }
     /**
      * Connect to database

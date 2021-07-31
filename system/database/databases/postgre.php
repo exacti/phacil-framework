@@ -8,7 +8,9 @@
 
 namespace Phacil\Framework\Databases;
 
-final class Postgre {
+use Phacil\Framework\Interfaces\Databases;
+
+final class Postgre implements Databases {
 	/**
 	 * 
 	 * @var resource|false
@@ -34,6 +36,10 @@ final class Postgre {
 			throw new \Exception('Error: Could not connect to database ' . $database);
 		}
 		pg_query($this->link, "SET CLIENT_ENCODING TO '".$charset."'");
+	}
+
+	public function isConnected() { 
+		return ($this->link) ? true : false;
 	}
 
 	/**

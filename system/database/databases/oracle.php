@@ -9,6 +9,7 @@
 namespace Phacil\Framework\Databases;
 
 use Exception;
+use Phacil\Framework\Interfaces\Databases;
 use stdClass;
 
 /**
@@ -16,7 +17,7 @@ use stdClass;
  * 
  * @package Phacil\Framework\Databases
  */
-final class Oracle{
+final class Oracle implements Databases {
 	/**
 	 * 
 	 * @var resource|false

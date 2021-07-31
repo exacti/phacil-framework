@@ -8,9 +8,10 @@
 
 namespace Phacil\Framework\Databases;
 
+use Phacil\Framework\Interfaces\Databases;
 use \stdClass;
 
-final class SQLSRV {
+final class SQLSRV implements Databases {
     /**
      * 
      * @var resource
@@ -48,6 +49,10 @@ final class SQLSRV {
 
         sqlsrv_query($this->link,"SET NAMES 'utf8'");
         sqlsrv_query($this->link, "SET CHARACTER SET utf8");
+    }
+
+    public function isConnected() {
+        return ($this->link) ? true : false;
     }
 
     /**

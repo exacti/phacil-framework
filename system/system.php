@@ -151,7 +151,7 @@ class startEngineExacTI {
     private function loadengine () {
         $this->dirs = glob(DIR_SYSTEM.'*/autoload.php', GLOB_BRACE);
         
-        require_once (DIR_SYSTEM.'database/autoload.php');
+        //require_once (DIR_SYSTEM.'database/autoload.php');
 
         require_once (DIR_SYSTEM.'engine/autoload.php');
     }

@@ -6,13 +6,18 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
- 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Interfaces\Databases;
+
+/** 
+ * Principal class to load databases drivers
+ * 
+ * @package Phacil\Framework */
 final class Database {
 	/**
 	 * 
-	 * @var object
+	 * @var Databases
 	 */
 	private $driver;
 	
@@ -23,6 +28,8 @@ final class Database {
 	private $cachePrefix = "SQL_";
 	
 	/**
+	 * Construct the connection.
+	 * 
 	 * @param string $driver 
 	 * @param string $hostname 
 	 * @param string $username 
@@ -42,11 +49,28 @@ final class Database {
         }		
 		
 	}
+
+	/** 
+	 * Check is connected on database
+	 * @return bool  */
+	public function isConnected() { 
+		return $this->driver->isConnected();
+	}
+
+	/** 
+	 * Destroy the connection
+	 * 
+	 * @return void  */
+	public function __destruct() {
+		unset($this->driver);
+	 }
 		
   	/**
+	 * Execute the SQL Query
+	 * 
   	 * @param string $sql 
   	 * @param bool $cacheUse 
-  	 * @return object|\Phacil\Framework\DB::Cache 
+  	 * @return object|\Phacil\Framework\Database::Cache 
   	 * @throws PhpfastcacheInvalidArgumentException 
   	 */
   	public function query($sql, $cacheUse = true) {
@@ -63,19 +87,27 @@ final class Database {
   	}
 	
 	/**
+	 * Important escape to prevent SQL injection.
+	 * 
 	 * @param string $value 
-	 * @return mixed 
+	 * @return string 
 	 */
 	public function escape($value) {
 		return $this->driver->escape($value);
 	}
 	
-  	/** @return int  */
+  	/** 
+	 * Gets the number of rows affected by the last operation
+	 * 
+	 * @return int  */
   	public function countAffected() {
 		return $this->driver->countAffected();
   	}
 
-  	/** @return mixed  */
+  	/** 
+	 * Gets the ID of the last inserted row or sequence of values
+	 * 
+	 * @return int|string  */
   	public function getLastId() {
 		return $this->driver->getLastId();
   	}
@@ -162,12 +194,3 @@ final class Database {
         $this->$nome = $object;
     }
 }
-
-
-/* if(defined('DB_DRIVER')) {
-    global $db;
-    $db = new Phacil\Framework\DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
-} else {
-    global $db;
-    $db = new Phacil\Framework\DB('nullStatement', NULL, NULL, NULL, NULL);
-} */

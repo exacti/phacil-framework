@@ -8,16 +8,23 @@
 
 namespace Phacil\Framework\Databases;
 
+use Phacil\Framework\Interfaces\Databases;
+
 /**
  * Nullable fake simulated DB connection.
  * 
  * @package Phacil\Framework\Databases
  */
-final class nullStatement {
+final class nullStatement implements Databases {
     //private $connection;
 
     public function __construct($hostname, $username, $password, $database, $charset = 'utf8mb4') {
         //$this->connection = NULL;
+    }
+
+    public function isConnected() { 
+
+        return false;
     }
 
     public function query($sql) {

@@ -10,9 +10,10 @@ namespace Phacil\Framework\Databases;
 
 use Exception;
 use \PDO as PDONative;
+use Phacil\Framework\Interfaces\Databases;
 use stdClass;
 
-final class sqlsrvPDO {
+final class sqlsrvPDO implements Databases {
     /**
      * 
      * @var PDONative

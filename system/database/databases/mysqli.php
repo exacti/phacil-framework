@@ -10,6 +10,7 @@ namespace Phacil\Framework\Databases;
 
 use Exception;
 use MySQLi as GlobalMysqli;
+use Phacil\Framework\Interfaces\Databases;
 use stdClass;
 
 /** 
@@ -18,7 +19,7 @@ use stdClass;
  * Works on most of PHP instalations 
  * 
  * @package Phacil\Framework\Databases */
-class MySQLi {
+class MySQLi implements Databases {
 	/**
 	 * 
 	 * @var GlobalMysqli
