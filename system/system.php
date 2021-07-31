@@ -222,8 +222,9 @@ class startEngineExacTI {
         return $constant;
     }
 
+    /** @return array  */
     public function controllerPreActions() {
-        return (isset($this->preActions) && is_array($this->preActions)) ? $this->preActions : false;
+        return (isset($this->preActions) && is_array($this->preActions)) ? $this->preActions : [];
     }
 
 }
@@ -238,6 +239,9 @@ $engine = new startEngineExacTI();
 $engine->registry->set('engine', $engine);
 
 // Loader
+/**
+ * @var Loader
+ */
 $loader = new Loader($engine->registry);
 $engine->registry->set('load', $loader);
 
