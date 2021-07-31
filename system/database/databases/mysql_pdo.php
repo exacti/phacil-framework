@@ -1,13 +1,14 @@
 <?php
-/**
- * Class for working with database (PDO)
- *
- * @property \PDO $dbh
- *
- * @author		Bruno Oliveira Notario
- * @link		https://exacti.com.br
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
-final class DB_PDO
+
+namespace Phacil\Framework\Databases;
+
+final class MYSQL_PDO
 {
     /**
      * Link to the database connection
@@ -21,7 +22,7 @@ final class DB_PDO
      * @var array
      */
     private $options = array(
-        'PDO::ATTR_ERRMODE' => PDO::ERRMODE_SILENT
+        'PDO::ATTR_ERRMODE' => \PDO::ERRMODE_SILENT
     );
     /**
      * The number of rows affected by the last operation
@@ -46,7 +47,7 @@ final class DB_PDO
      */
     public function __construct($host, $user, $pass, $name, $port = '3306', $charset = 'utf8mb4')
     {
-        $this->params = new stdClass;
+        $this->params = new \stdClass;
         # keep connection data
         $this->params->host    = $host;
         $this->params->user    = $user;
@@ -64,11 +65,11 @@ final class DB_PDO
     public function connect()
     {
         try {
-            $this->dbh = new PDO($this->params->connstr, $this->params->user, $this->params->pass, $this->options);
+            $this->dbh = new \PDO($this->params->connstr, $this->params->user, $this->params->pass, $this->options);
             if (version_compare(PHP_VERSION, '5.3.6', '<=')) {
                 $this->dbh->exec($this->options['PDO::MYSQL_ATTR_INIT_COMMAND']);
             }
-        } catch (PDOException $exception) {
+        } catch (\PDOException $exception) {
             trigger_error($exception->getMessage());
         }
     }
@@ -81,7 +82,7 @@ final class DB_PDO
     public function query($sql = null)
     {
         if ($this->dbh) {
-            $data = new stdClass;
+            $data = new \stdClass;
 			
 			$sth=$this->dbh->prepare($sql);
 			$sth->execute();
@@ -129,7 +130,7 @@ final class DB_PDO
      */
     public function getDriverName()
     {
-        return $this->dbh ? $this->dbh->getAttribute(PDO::ATTR_DRIVER_NAME) : null;
+        return $this->dbh ? $this->dbh->getAttribute(\PDO::ATTR_DRIVER_NAME) : null;
     }
     /**
      * Get information about the version of the client libraries that are used by the PDO driver
@@ -138,7 +139,7 @@ final class DB_PDO
      */
     public function getVersion()
     {
-        return $this->dbh ? $this->dbh->getAttribute(PDO::ATTR_CLIENT_VERSION) : null;
+        return $this->dbh ? $this->dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION) : null;
     }
     /**
      * Closing a database connection

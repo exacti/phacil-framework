@@ -38,6 +38,20 @@ spl_autoload_register(function ($class) {
 
 	$classNative = ($namespace[0] == "Phacil") ? str_replace('phacil\\framework\\', '', strtolower( $class)) : $class;
 
+	if($namespace[0] == 'Phacil' && isset($namespace[2]) && $namespace[2] == 'Databases'){
+		if(!defined('DIR_DATABASE'))
+    		define('DIR_DATABASE', DIR_SYSTEM."database/");
+
+		try {
+			require_once(DIR_DATABASE . str_replace("\\", "/", $classNative).'.php');
+			return;
+		} catch (\Exception $th) {
+			$log = new \Phacil\Framework\Log(DIR_LOGS."exception.log");
+			$log->write($class.' not loaded!');
+			throw new \Phacil\Framework\Exception("Class '$class' not loaded.");
+		}
+	}
+
 	$allowed = [
 		'log',
 		'front',

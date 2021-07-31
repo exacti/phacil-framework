@@ -1,12 +1,33 @@
 <?php
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
+namespace Phacil\Framework\Databases;
+
+use Exception;
+use \PDO as PDONative;
+use stdClass;
 
 final class sqlsrvPDO {
+    /**
+     * 
+     * @var PDONative
+     */
     private $connection = null;
+
+    /**
+     * 
+     * @var PDONative
+     */
     private $statement = null;
 
     public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
         try {
-            $this->connection = new \PDO("sqlsrv:Server=" . $hostname . ";Database=" . $database, $username, $password, array(\PDO::SQLSRV_ATTR_DIRECT_QUERY => true));
+            $this->connection = new PDONative("sqlsrv:Server=" . $hostname . ";Database=" . $database, $username, $password, array(\PDO::SQLSRV_ATTR_DIRECT_QUERY => true));
         } catch(\PDOException $e) {
             throw new \Exception('Failed to connect to database. Reason: \'' . $e->getMessage() . '\'');
         }
@@ -14,10 +35,21 @@ final class sqlsrvPDO {
 
     }
 
+    /**
+     * @param string $sql 
+     * @return void 
+     */
     public function prepare($sql) {
         $this->statement = $this->connection->prepare($sql);
     }
 
+    /**
+     * @param mixed $parameter 
+     * @param mixed $variable 
+     * @param int $data_type 
+     * @param int $length 
+     * @return void 
+     */
     public function bindParam($parameter, $variable, $data_type = \PDO::PARAM_STR, $length = 0) {
         if ($length) {
             $this->statement->bindParam($parameter, $variable, $data_type, $length);
@@ -26,6 +58,10 @@ final class sqlsrvPDO {
         }
     }
 
+    /**
+     * @return never 
+     * @throws Exception 
+     */
     public function execute() {
         try {
             if ($this->statement && $this->statement->execute()) {
@@ -45,6 +81,12 @@ final class sqlsrvPDO {
         }
     }
 
+    /**
+     * @param string $sql 
+     * @param array $params 
+     * @return stdClass 
+     * @throws Exception 
+     */
     public function query($sql, $params = array()) {
         $this->statement = $this->connection->prepare($sql);
 
@@ -78,10 +120,15 @@ final class sqlsrvPDO {
         }
     }
 
+    /**
+     * @param string $value 
+     * @return string 
+     */
     public function escape($value) {
         return str_replace(array("\\", "\0", "\n", "\r", "\x1a", "'", '"'), array("\\\\", "\\0", "\\n", "\\r", "\Z", "\'", '\"'), $value);
     }
 
+    /** @return int  */
     public function countAffected() {
         if ($this->statement) {
             return $this->statement->rowCount();
@@ -90,10 +137,12 @@ final class sqlsrvPDO {
         }
     }
 
+    /** @return string  */
     public function getLastId() {
         return $this->connection->lastInsertId();
     }
 
+    /** @return bool  */
     public function isConnected() {
         if ($this->connection) {
             return true;
@@ -102,7 +151,8 @@ final class sqlsrvPDO {
         }
     }
 
+    /** @return void  */
     public function __destruct() {
-        $this->connection = null;
+        unset($this->connection);
     }
 }

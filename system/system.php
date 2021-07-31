@@ -246,7 +246,8 @@ $engine->registry->set('load', $loader);
 $config = new Config();
 $engine->registry->set('config', $config);
 
-$engine->registry->set('db', new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE));
+if(defined('DB_DRIVER'))
+    $engine->registry->set('db', new Database(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE));
 
 // Settings
 if(!empty($configs)){
@@ -257,7 +258,7 @@ if(!empty($configs)){
 
 if(USE_DB_CONFIG === true) {
 
-    $query = (defined('CUSTOM_DB_CONFIG')) ? $db->query(CUSTOM_DB_CONFIG) : $db->query("SELECT * FROM settings ORDER BY setting_id ASC");
+    $query = (defined('CUSTOM_DB_CONFIG')) ? $engine->db->query(CUSTOM_DB_CONFIG) : $engine->db->query("SELECT * FROM settings ORDER BY setting_id ASC");
 
     foreach ($query->rows as $setting) {
         if (!$setting['serialized']) {

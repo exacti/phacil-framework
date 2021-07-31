@@ -1,8 +1,32 @@
 <?php
-//namespace DB;
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
+namespace Phacil\Framework\Databases;
+
+use PDO;
+
+/** 
+ * Alternative PDO MySQL connection method.
+ * 
+ * @package Phacil\Framework\Databases */
 final class mPDO {
+	/**
+	 * 
+	 * @var PDO
+	 */
 	private $connection = null;
+
+	/**
+	 * 
+	 * @var mixed
+	 */
 	private $statement = null;
+	
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'UTF8') {
 		try {
 			$dsn = "mysql:host={$hostname};port={$port};dbname={$database};charset={$charset}";
@@ -105,6 +129,6 @@ final class mPDO {
 	}
 	
 	public function __destruct() {
-		$this->connection = null;
+		unset($this->connection);
 	}
 }

@@ -1,5 +1,20 @@
 <?php
-final class MySQL {
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
+namespace Phacil\Framework\Databases;
+
+/** 
+ * Legacy class to connect a MySQL with PHP 5 legacy driver.
+ * 
+ * Doesn't work with PHP 7+
+ * @package Phacil\Framework\Databases 
+ * */
+final class MySQL_legacy {
 	private $connection;
 	
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
@@ -67,4 +82,3 @@ final class MySQL {
 		mysql_close($this->connection);
 	}
 }
-?>

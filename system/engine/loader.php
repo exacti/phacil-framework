@@ -157,7 +157,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 		if (file_exists($file)) {
             //include_once($file);
 
-            $this->db->createSubBase($database_name, new DB($driver, $hostname, $username, $password, $database));
+            $this->db->createSubBase($database_name, new Database($driver, $hostname, $username, $password, $database));
 
 			return $database_name;
 		} else {

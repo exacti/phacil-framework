@@ -1,14 +1,31 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: bruno
- * Date: 2019-02-03
- * Time: 14:50
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
+namespace Phacil\Framework\Databases;
+
+use \stdClass;
+
 final class SQLSRV {
+    /**
+     * 
+     * @var resource
+     */
     private $link;
 
+    /**
+     * @param string $hostname 
+     * @param string $username 
+     * @param string $password 
+     * @param string $database 
+     * @param string $port 
+     * @param string $charset 
+     * @return void 
+     */
     public function __construct($hostname, $username, $password, $database, $port = '1443', $charset = 'utf8') {
         /*
         * Argument 2 passed to sqlsrv_connect() must be an array, string given
@@ -33,6 +50,10 @@ final class SQLSRV {
         sqlsrv_query($this->link, "SET CHARACTER SET utf8");
     }
 
+    /**
+     * @param string $sql 
+     * @return stdClass|true 
+     */
     public function query($sql) {
         $resource = \sqlsrv_query($this->link, $sql);
 
@@ -42,7 +63,7 @@ final class SQLSRV {
 
                 $data = array();
 
-                while ($result = \sqlsrv_fetch_array($resource, SQLSRV_FETCH_ASSOC)) {
+                while ($result = \sqlsrv_fetch_array($resource, \SQLSRV_FETCH_ASSOC)) {
                     $data[$i] = $result;
 
                     $i++;
@@ -67,16 +88,22 @@ final class SQLSRV {
         }
     }
 
+    /**
+     * @param string $value 
+     * @return string 
+     */
     public function escape($value) {
         $unpacked = unpack('H*hex', $value);
 
         return '0x' . $unpacked['hex'];
     }
 
+    /** @return int  */
     public function countAffected() {
         return \sqlsrv_rows_affected($this->link);
     }
 
+    /** @return false|int  */
     public function getLastId() {
         $last_id = false;
 
@@ -91,6 +118,7 @@ final class SQLSRV {
         return $last_id;
     }
 
+    /** @return void  */
     public function __destruct() {
         \sqlsrv_close($this->link);
     }
