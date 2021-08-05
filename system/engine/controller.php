@@ -107,7 +107,7 @@ abstract class Controller {
      * @param string $key 
      * @return Registry 
      */
-    public function __get($key) {
+    final public function __get($key) {
         return $this->registry->get($key);
     }
 
@@ -117,7 +117,7 @@ abstract class Controller {
      * @param object $value 
      * @return void 
      */
-    public function __set($key, $value) {
+    final public function __set($key, $value) {
         $this->registry->set($key, $value);
     }
 
@@ -126,7 +126,7 @@ abstract class Controller {
      * @param array $args 
      * @return \Phacil\Framework\Interfaces\Action
      */
-    protected function forward($route, array $args = array()) {
+    final protected function forward($route, array $args = array()) {
         return new Action($route, $args);
     }
 
@@ -135,7 +135,7 @@ abstract class Controller {
      * @param int $status 
      * @return never 
      */
-    protected function redirect($url, $status = 302) {
+    final protected function redirect($url, $status = 302) {
         header('Status: ' . $status);
         header('Location: ' . str_replace('&amp;', '&', $url));
         exit();
@@ -146,7 +146,7 @@ abstract class Controller {
      * @param array $args 
      * @return object 
      */
-    protected function getChild($child, array $args = array()) {
+    final protected function getChild($child, array $args = array()) {
         $action = new Action($child, $args);
         $file = $action->getFile();
         $class = $action->getClass();
@@ -188,7 +188,7 @@ abstract class Controller {
      * @throws SmartyException 
      * @throws Exception 
      */
-    protected function render() {
+    final protected function render() {
 
         foreach ($this->children as $child) {
             $this->data[basename($child)] = $this->getChild($child);
@@ -410,7 +410,7 @@ abstract class Controller {
      * @return \Phacil\Framework\Response 
      * @throws Exception 
      */
-    protected function out ($commonChildren = true) {
+    final protected function out ($commonChildren = true) {
         if($commonChildren === true){
             $this->children = array_merge(array(
                 'common/footer',

@@ -49,7 +49,7 @@ class MySQLi implements Databases {
 			//$this->connection->query("SET SESSION sql_mode = 'NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION'");
 			$this->connection->query("SET SQL_MODE = ''");
 		} else {
-			throw new \Exception('Error: Could not make a database link using ' . $username . '@' . $hostname . '!');
+			throw new \Exception('Error: ' . $this->connection->error . '<br />Error No: ' . $this->connection->errno);
 		}
 
 	}

@@ -9,7 +9,7 @@
 namespace Phacil\Framework;
 
 /** @package Phacil\Framework */
-class Classes {
+final class Classes {
 	
 	private $format;
 	
