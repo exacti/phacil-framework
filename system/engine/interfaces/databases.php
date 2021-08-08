@@ -29,7 +29,7 @@
 	 * Execute the SQL Query.
 	 * 
 	 * @param string $sql 
-	 * @return stdClass|true 
+	 * @return \stdClass|true 
 	 * @throws Exception 
 	 */
 	public function query($sql);

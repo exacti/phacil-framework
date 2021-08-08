@@ -62,8 +62,7 @@ final class Database {
 		try {
             $this->driver = $driverObject;
         } catch (Exception $th) {
-            throw new Exception('Error: Could not load database file ' . $driver . '!');
-            //exit('Error: Could not load database file ' . $driver . '!');
+            throw new Exception('Error: Could not create the driver!');
         }
 	}
 

@@ -386,6 +386,7 @@ $engine->request = new Request();
 $response->addHeader('Content-Type: text/html; charset=utf-8');
 $response->setCompression($engine->config->get('config_compression')); */
 $engine->response = new Response();
+$engine->response->addHeader('Content-Type: text/html; charset=utf-8');
 
 if($engine->config->get('config_compression'))
     $engine->response->setCompression($engine->config->get('config_compression'));
