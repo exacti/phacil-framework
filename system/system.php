@@ -15,7 +15,7 @@ use TypeError;
  * 
  * @package Phacil\Framework
  */
-class startEngineExacTI {
+final class startEngineExacTI {
 
     /**
      * 
@@ -92,7 +92,7 @@ class startEngineExacTI {
 
     /** @return string|false  */
     private function checkPHPversion() {
-        if (version_compare(phpversion(), '5.4.0', '>') == false) {
+        if (version_compare(phpversion(), '5.4.40', '>') == false) {
             exit('PHP 5.4+ Required');
         } else {
             return phpversion();
@@ -227,6 +227,29 @@ class startEngineExacTI {
         return (isset($this->preActions) && is_array($this->preActions)) ? $this->preActions : [];
     }
 
+    public function checkRegistry($key){
+        //mail
+		if(!isset($this->registry->$key) && $key == 'mail'){
+			$this->mail = new Mail();
+			$this->mail->protocol = $this->config->get('config_mail_protocol');
+			if($this->config->get('config_mail_protocol') == 'smtp'){
+				$this->mail->parameter = $this->config->get('config_mail_parameter');
+				$this->mail->hostname = $this->config->get('config_smtp_host');
+				$this->mail->username = $this->config->get('config_smtp_username');
+				$this->mail->password = $this->config->get('config_smtp_password');
+				$this->mail->port = $this->config->get('config_smtp_port');
+				$this->mail->timeout = $this->config->get('config_smtp_timeout');
+			}
+		}
+
+		// Translate
+		if(!isset($this->registry->$key) && $key == 'translate'){
+			$this->translate = new Translate();
+		}
+
+        return (isset($this->registry->$key)) ? $this->registry->$key : NULL;
+    }
+
 }
 
 global $engine;
@@ -236,27 +259,25 @@ $engine = new startEngineExacTI();
 
 // Registry
 /** @var \Phacil\Framework\startEngineExacTI $engine */
-$engine->registry->set('engine', $engine);
+$engine->engine = $engine;
 
 // Loader
 /**
  * @var Loader
  */
-$loader = new Loader($engine->registry);
-$engine->registry->set('load', $loader);
+$engine->load = new Loader($engine->registry);
 
 // Config
 /** @var Config */
-$config = new Config();
-$engine->registry->set('config', $config);
+$engine->config = new Config();
 
 if(defined('DB_DRIVER'))
-    $engine->registry->set('db', new Database(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE));
+    $engine->db = new Database(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 
 // Settings
 if(!empty($configs)){
     foreach ($configs as $key => $confValue) {
-        $config->set($key, $confValue);
+        $engine->config->set($key, $confValue);
     }
 }
 
@@ -266,43 +287,44 @@ if(USE_DB_CONFIG === true) {
 
     foreach ($query->rows as $setting) {
         if (!$setting['serialized']) {
-            $config->set($setting['key'], $setting['value']);
+            $engine->config->set($setting['key'], $setting['value']);
         } else {
-            $config->set($setting['key'], unserialize($setting['value']));
+            $engine->config->set($setting['key'], unserialize($setting['value']));
         }
     }
 }
 
 
-$config->set('config_url', HTTP_URL);
-$config->set('config_ssl', HTTPS_URL);
+$engine->config->set('config_url', HTTP_URL);
+$engine->config->set('config_ssl', HTTPS_URL);
 
 //timezone
-if($config->get('date_timezone')){
-    $engine->setTimezone($config->get('date_timezone'));
+if($engine->config->get('date_timezone')){
+    $engine->setTimezone($engine->config->get('date_timezone'));
 }
 
 // Site Title
-if($config->get('PatternSiteTitle') == true) {
-    define('PATTERSITETITLE', $config->get('PatternSiteTitle'));
+if($engine->config->get('PatternSiteTitle') == true) {
+    define('PATTERSITETITLE', $engine->config->get('PatternSiteTitle'));
 } else {
     define('PATTERSITETITLE', false);
 }
 
 // Url
-$url = new Url($config->get('config_url'), $config->get('config_use_ssl') ? $config->get('config_ssl') : $config->get('config_url'));
-$engine->registry->set('url', $url);
+$engine->url =  new Url($engine->config->get('config_url'), $engine->config->get('config_use_ssl') ? $engine->config->get('config_ssl') : $engine->config->get('config_url'));
 
 // Log
-if(!$config->get('config_error_filename')){
-    $config->set('config_error_filename', 'error.log');
+if(!$engine->config->get('config_error_filename')){
+    $engine->config->set('config_error_filename', 'error.log');
 }
 
-$log = new Log($config->get('config_error_filename'));
-$engine->registry->set('log', $log);
+/**
+ * @var Log
+ */
+$engine->log = new Log($engine->config->get('config_error_filename'));
 
 // Error Handler
-set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($log, $config, $engine){
+set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($engine){
 
     switch ($errno) {
         case E_NOTICE:
@@ -326,94 +348,82 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($log, $con
             break;
     }
 
-    if ($config->get('config_error_display')) {
+    if ($engine->config->get('config_error_display')) {
         echo '<b>' . $error . '</b>: ' . $errstr . ' in <b>' . $errfile . '</b> on line <b>' . $errline . '</b>';
     }
 
-    if ($config->get('config_error_log')) {
-        $log->write( $error . ':  ' . $errstr . ' in ' . $errfile . ' on line ' . $errline.' | Phacil '.$engine->version(). ' on PHP '.$engine->phpversion);
+    if ($engine->config->get('config_error_log')) {
+        $engine->log->write( $error . ':  ' . $errstr . ' in ' . $errfile . ' on line ' . $errline.' | Phacil '.$engine->version(). ' on PHP '.$engine->phpversion);
     }
 
     return true;
 });
 
-set_exception_handler(function($e) use ($log, $config) {
-    if ($config->get('config_error_display')) {
+set_exception_handler(function($e) use ($engine) {
+    if ($engine->config->get('config_error_display')) {
         echo '<b>' . get_class($e) . '</b>: ' . $e->getMessage() . ' in <b>' . $e->getFile() . '</b> on line <b>' . $e->getLine() . '</b>';
     }
 
-    if ($config->get('config_error_log')) {
-        $log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+    if ($engine->config->get('config_error_log')) {
+        $engine->log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
     }
 });
 
-//Caches
-$caches = new Caches();
-$engine->registry->set('cache', $caches);
+/**
+ * Caches
+ * @var Caches
+ */
+$engine->cache = new Caches();
 
-// Request
-$request = new Request();
-$engine->registry->set('request', $request);
+/**
+ * Request
+ * @var Request
+ */
+$engine->request = new Request();
 
 // Response
-$response = new Response();
+/* $response = new Response();
 $response->addHeader('Content-Type: text/html; charset=utf-8');
-$response->setCompression($config->get('config_compression'));
-$engine->registry->set('response', $response);
+$response->setCompression($engine->config->get('config_compression')); */
+$engine->response = new Response();
+
+if($engine->config->get('config_compression'))
+    $engine->response->setCompression($engine->config->get('config_compression'));
 
 // Session
-$session = new Session();
-$engine->registry->set('session', $session);
-
-// Translate
-$translate = new Translate();
-$engine->registry->set('translate', $translate);
-
-// E-Mail Config
-$mail = new Mail();
-$mail->protocol = $config->get('config_mail_protocol');
-if($config->get('config_mail_protocol') == 'smtp'){
-    $mail->parameter = $config->get('config_mail_parameter');
-    $mail->hostname = $config->get('config_smtp_host');
-    $mail->username = $config->get('config_smtp_username');
-    $mail->password = $config->get('config_smtp_password');
-    $mail->port = $config->get('config_smtp_port');
-    $mail->timeout = $config->get('config_smtp_timeout');
-}
-$engine->registry->set('mail', $mail);
+$engine->session = new Session();
 
 // Document
-$document = new Document();
-$engine->registry->set('document', $document);
+$engine->document = new Document();
 
 // Custom registrations
 $engine->extraRegistrations();
 
 // Front Controller
-$controller = new Front($engine->registry);
+$frontController = new Front($engine->registry);
 
 // SEO URL's
-$controller->addPreAction(new ActionSystem((string) 'url/seo_url'));
+$frontController->addPreAction(new ActionSystem((string) 'url/seo_url'));
 
 //extraPreactions
 if($engine->controllerPreActions()){
     foreach ($engine->controllerPreActions() as $action){
-        $controller->addPreAction(new Action($action));
+        $frontController->addPreAction(new Action($action));
     }
 }
 
 // Router
-if (isset($request->get['route'])) {
-    $action = new Action($request->get['route']);
+if (isset($engine->request->get['route'])) {
+    $action = new Action($engine->request->get['route']);
 } else {
     $default = (defined('DEFAULT_ROUTE')) ? DEFAULT_ROUTE : 'common/home';
-    $request->get['route'] = $default;
+    $engine->request->get['route'] = $default;
     $action = new Action($default);
 }
 
 // Dispatch
 $not_found = (defined('NOT_FOUND')) ? NOT_FOUND : 'error/not_found';
-$controller->dispatch($action, ($not_found));
+$frontController->dispatch($action, ($not_found));
 
 // Output
-$response->output();
+$engine->response->output();

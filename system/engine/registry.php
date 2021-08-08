@@ -10,8 +10,16 @@
  
 /** @package Phacil\Framework */
 final class Registry {
+	/**
+	 * data Objects
+	 * @var array
+	 */
 	private $data = array();
 
+	/**
+	 * Original route for childs
+	 * @var string
+	 */
 	public $routeOrig;
 
 	/**
@@ -19,7 +27,8 @@ final class Registry {
 	 * @return mixed 
 	 */
 	public function get($key) {
-		return (isset($this->data[$key]) ? $this->data[$key] : NULL);
+
+		return (isset($this->$key) ? $this->$key : $this->engine->checkRegistry($key));
 	}
 
 	/**
@@ -28,7 +37,7 @@ final class Registry {
 	 * @return void 
 	 */
 	public function set($key, $value) {
-		$this->data[$key] = $value;
+		$this->$key = $value;
 	}
 
 	/**
@@ -36,6 +45,20 @@ final class Registry {
 	 * @return bool 
 	 */
 	public function has($key) {
-    	return isset($this->data[$key]);
+    	return isset($this->$key);
   	}
+
+	/**
+	 * UnSet
+	 *
+	 * Unsets registry value by key.
+	 *
+	 * @param string $key
+	 * @return void
+	 */
+	public function destroy(string $key) {
+		if (isset($this->$key)) {
+			unset($this->$key);
+		}
+	}
 }

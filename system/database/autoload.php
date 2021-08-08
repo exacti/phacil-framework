@@ -8,7 +8,7 @@
 
 namespace Phacil\Framework;
 
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Interfaces\Databases as DatabaseInterface;
 
 /** 
  * Principal class to load databases drivers
@@ -16,12 +16,14 @@ use Phacil\Framework\Interfaces\Databases;
  * @package Phacil\Framework */
 final class Database {
 	/**
+	 * Loaded class db driver
 	 * 
-	 * @var Databases
+	 * @var DatabaseInterface
 	 */
 	private $driver;
 	
 	/**
+	 * Prefix for query cache
 	 * 
 	 * @var string
 	 */
@@ -42,12 +44,27 @@ final class Database {
         $driverClass = "\\Phacil\\Framework\\Databases\\".$driver;
 
 		try {
-            $this->driver = new $driverClass($hostname, $username, $password, $database);
+            $this->createDriver(new $driverClass($hostname, $username, $password, $database));
         } catch (Exception $th) {
             throw new Exception('Error: Could not load database file ' . $driver . '!');
             //exit('Error: Could not load database file ' . $driver . '!');
         }		
 		
+	}
+
+	/**
+	 * @param DatabaseInterface $driverObject 
+	 * @return never 
+	 * @throws Exception 
+	 */
+	private function createDriver(DatabaseInterface $driverObject)
+	{
+		try {
+            $this->driver = $driverObject;
+        } catch (Exception $th) {
+            throw new Exception('Error: Could not load database file ' . $driver . '!');
+            //exit('Error: Could not load database file ' . $driver . '!');
+        }
 	}
 
 	/** 
@@ -162,7 +179,7 @@ final class Database {
 	 * @throws PhpfastcacheInvalidArgumentException 
 	 */
 	private function Cache($sql) {
-		if(class_exists('Caches')) {
+		if(class_exists('\Phacil\Framework\Caches')) {
 			$cache = new Caches();
 		
 			if (stripos($sql, "select") !== false) {
