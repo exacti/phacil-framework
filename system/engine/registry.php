@@ -8,7 +8,13 @@
 
  namespace Phacil\Framework;
  
-/** @package Phacil\Framework */
+/** 
+ * The registration off all objects on this Framework.
+ * 
+ * @since 0.0.1
+ * 
+ * @package Phacil\Framework 
+ */
 final class Registry {
 	/**
 	 * data Objects
@@ -56,7 +62,7 @@ final class Registry {
 	 * @param string $key
 	 * @return void
 	 */
-	public function destroy(string $key) {
+	public function delete(string $key) {
 		if (isset($this->$key)) {
 			unset($this->$key);
 		}

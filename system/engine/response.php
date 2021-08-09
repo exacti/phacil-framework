@@ -8,7 +8,12 @@
 
 namespace Phacil\Framework;
 
-/** @package Phacil\Framework */
+/** 
+ * HTTP response class.
+ * 
+ * @since 0.0.1
+ * 
+ * @package Phacil\Framework */
 final class Response {
 
 	/**
@@ -26,11 +31,19 @@ final class Response {
 	private $output;
 	
 	/**
-	 * @param string $header 
+	 * Add a HTTP header, it's must be a one string or two string args.
+	 * 
+	 * @param string $header The all entire header or just a key
+	 * @param string|null $content [optional] An content value header
 	 * @return void 
 	 */
-	public function addHeader($header) {
-		$this->headers[] = $header;
+	public function addHeader($header, $content = null) {
+		if($content){
+			$this->headers[$header] = $content;
+		} else {
+			$head = explode(':', $header, 2);
+			$this->headers[$head['0']] = isset($head[1]) ? $head[1]: false;
+		}
 	}
 
 	/**
@@ -113,9 +126,21 @@ final class Response {
 			}	
 				
 			if (!headers_sent()) {
-				foreach ($this->headers as $header) {
-					header($header, true);
+				foreach ($this->headers as $key => $header) {
+					try {
+						if(!$header)
+							header($key, true);
+						else 
+							header($key.": ".$header, true);
+
+					} catch (Exception $th) {
+						//throw $th;
+						throw new Exception("Error Processing Header ".$key, 1);
+					}
+					
 				}
+			} else {
+				throw new Exception("Error Processing Headers: Header or Content has been sent", 1);
 			}
 			
 			echo $ouput;
@@ -124,7 +149,7 @@ final class Response {
 
 	/** @return void  */
 	public function isJSON() {
-		$this->addHeader('Content-Type: application/json');
+		$this->addHeader('Content-Type', 'application/json');
 	}
 
 	/**

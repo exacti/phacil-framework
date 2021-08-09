@@ -11,15 +11,19 @@ namespace Phacil\Framework;
 use \Phacil\Framework\Interfaces\Action as ActionInterface;
 use \Phacil\Framework\Traits\Action as ActionTrait;
 
-/** @package Phacil\Framework */
+/** 
+ * Action class to route all user controllers
+ * 
+ * @since 1.0.0
+ * 
+ * @package Phacil\Framework 
+ **/
 final class Action implements ActionInterface {
 
 	use ActionTrait;
 	
 	/**
-	 * @param string $route 
-	 * @param array $args 
-	 * @return void 
+	 * @inheritdoc
 	 */
 	public function __construct($route, $args = array()) {
 		$path = '';
@@ -123,15 +127,18 @@ final class Action implements ActionInterface {
 }
 
 
-/** @package Phacil\Framework */
+/** 
+ * Action class to route all framework system controllers
+ * 
+ * @since 1.0.1
+ * 
+ * @package Phacil\Framework */
 final class ActionSystem implements ActionInterface {
 	
 	use ActionTrait;
 
 	/**
-	 * @param string $route 
-	 * @param array $args 
-	 * @return void 
+	 * @inheritdoc
 	 */
 	public function __construct($route, $args = array()) {
 		$path = '';

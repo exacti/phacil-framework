@@ -12,6 +12,8 @@ namespace Phacil\Framework\Traits;
  * Trait for the Action class
  * 
  * Code reused in ActionSystem class
+ * 
+ * @see \Phacil\Framework\Interfaces\Action
  */
 trait Action {
 
@@ -45,12 +47,14 @@ trait Action {
 	 */
 	private $classAlt = [];
 
-	/** @return string  */
+	/** @inheritdoc */
 	public function getFile() {
 		return $this->file;
 	}
 	
-	/** @return string  */
+	/** 
+	 * @deprecated 2.0.0 This method return only legacy class. user getClassAlt instead.
+	 * @inheritdoc */
 	public function getClass() {
 		return $this->class;
 	}
@@ -60,26 +64,24 @@ trait Action {
 	}
 
 	/**
-	 * 
-	 * @param string $class 
-	 * @return $this 
+	 * @inheritdoc
 	 */
 	public function setClass($class) {
 		$this->class = $class;
 		return $this;
 	}
 
-	/** @return array  */
+	/** @inheritdoc  */
 	public function getClassAlt() {
 		return $this->classAlt;
 	}
 	
-	/** @return string  */
+	/** @inheritdoc  */
 	public function getMethod() {
 		return $this->method;
 	}
 	
-	/** @return array  */
+	/** @inheritdoc  */
 	public function getArgs() {
 		return $this->args;
 	}

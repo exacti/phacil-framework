@@ -24,7 +24,12 @@ abstract class Model {
 	 */
 	public function __construct(Registry $registry = NULL) {
 		if(!$registry){
+			
+			/**
+			 * @global \Phacil\Framework\startEngineExacTI $engine
+			 */
 			global $engine;
+
 			$registry = $engine->registry;
 		}
 		$this->registry = $registry;

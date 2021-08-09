@@ -252,9 +252,14 @@ final class startEngineExacTI {
 
 }
 
+/**
+ * @global startEngineExacTI $engine
+ */
 global $engine;
 
-/** @var \Phacil\Framework\startEngineExacTI $engine */
+/** 
+ * @global \Phacil\Framework\startEngineExacTI $engine 
+ * */
 $engine = new startEngineExacTI();
 
 // Registry

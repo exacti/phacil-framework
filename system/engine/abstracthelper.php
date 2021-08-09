@@ -24,6 +24,10 @@ abstract class AbstractHelper {
 	 */
 	public function __construct(Registry $registry = NULL) {
 		if(!$registry){
+			
+			/**
+			 * @global \Phacil\Framework\startEngineExacTI $engine
+			 */
 			global $engine;
 			$registry = $engine->registry;
 		}

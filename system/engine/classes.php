@@ -8,11 +8,30 @@
 
 namespace Phacil\Framework;
 
-/** @package Phacil\Framework */
+/** 
+ * This class return the loaded classes and functions in HTML or array format.
+ * 
+ * @uses Classes()->classes() to view loaded classes
+ * @uses Classes()->functions() to view the funcions of loaded classes.
+ * 
+ * The method exists('class') check if a class exists and is most compatible instead PHP native function.
+ * 
+ * @uses Classes()->exists('class') to check if a class exists.
+ * 
+ * @package Phacil\Framework
+ * @since 1.5.0 */
 final class Classes {
 	
+	/**
+	 * 
+	 * @var string|null
+	 */
 	private $format;
 	
+	/**
+	 * @param string|null $format Define if the output is an array or HTML format
+	 * @return void 
+	 */
 	public function __construct($format = NULL) {
 		
 		$this->format = $format;
@@ -20,13 +39,16 @@ final class Classes {
 	}
 	
 	/**
+	 * Return the loaded classes 
 	 * @param string|null $origin 
-	 * @return string
+	 * @return string|array
 	 */
 	public function classes($origin = NULL){
 		$mClass = get_declared_classes();
 		
 		$pegaKey = 0;
+
+		$pegaClass = [];
 		
 		foreach($mClass as $key => $value){
 			if($value == 'startEngineExacTI'){
@@ -50,7 +72,10 @@ final class Classes {
 		return($pegaClass);
 	}
 	
-	/** @return array|string  */
+	/** 
+	 * Return the functions of loaded classes
+	 * 
+	 * @return array|string  */
 	public function functions(){
 		$classes = $this->classes('intern');
 		
@@ -73,6 +98,17 @@ final class Classes {
 		
 		return $functions;
 		
+	}
+
+	/**
+	 * Check the class exists
+	 * 
+	 * @param string $class 
+	 * @return bool 
+	 */
+	public function exists($class)
+	{
+		return class_exists($class);
 	}
 	
 	

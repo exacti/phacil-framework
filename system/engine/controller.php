@@ -18,15 +18,26 @@ use Exception;
  * Extend this class to create interation with your module controller to Phacil engine controller.
  * 
  * Use as:
- * class YouClass extends \Phacil\Framework\Controller {}
+ * <code>
+ * <?php 
+ * namespace YourPrefix\Path\Controller;
+ * class YouClass extends \Phacil\Framework\Controller {
+ *  public function index() {
+ *      #Your code
+ *  }
+ * } 
+ * </code>
  * 
  * You can use the __construct function on call the \Phacil\Framework\Register object inside parent.
  * 
- *  Example: public funcion __construct(\Phacil\Framework\Registry $registry){ parent::__construct($registry); YOUR_CODE; }
+ * <code>
+ *  public funcion __construct(\Phacil\Framework\Registry $registry){ parent::__construct($registry); YOUR_CODE; }
+ * </code>
  * 
+ * @abstract
  * @package Phacil\Framework 
- * @since 1.0
- * */
+ * @since 0.1.0
+ */
 abstract class Controller {
     /**
      * 
@@ -106,6 +117,7 @@ abstract class Controller {
      * 
      * @param string $key 
      * @return Registry 
+     * @final
      */
     final public function __get($key) {
         return $this->registry->get($key);
@@ -116,6 +128,7 @@ abstract class Controller {
      * @param string $key 
      * @param object $value 
      * @return void 
+     * @final
      */
     final public function __set($key, $value) {
         $this->registry->set($key, $value);
@@ -125,6 +138,7 @@ abstract class Controller {
      * @param string $route 
      * @param array $args 
      * @return \Phacil\Framework\Interfaces\Action
+     * @final
      */
     final protected function forward($route, array $args = array()) {
         return new Action($route, $args);
@@ -134,6 +148,7 @@ abstract class Controller {
      * @param string $url 
      * @param int $status 
      * @return never 
+     * @final
      */
     final protected function redirect($url, $status = 302) {
         header('Status: ' . $status);
@@ -142,6 +157,7 @@ abstract class Controller {
     }
 
     /**
+     * @final
      * @param string $child 
      * @param array $args 
      * @return object 
@@ -187,6 +203,7 @@ abstract class Controller {
      * @throws RuntimeException 
      * @throws SmartyException 
      * @throws Exception 
+     * @final
      */
     final protected function render() {
 
@@ -409,6 +426,7 @@ abstract class Controller {
      * @param bool $commonChildren 
      * @return \Phacil\Framework\Response 
      * @throws Exception 
+     * @final
      */
     final protected function out ($commonChildren = true) {
         if($commonChildren === true){
