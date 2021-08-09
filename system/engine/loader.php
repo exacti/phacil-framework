@@ -108,7 +108,8 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
     /**
 	 * temp alias, consider change to loader controller function
      * @param string $control Name of controller
-	 * @deprecated 2.0.0
+	 * @deprecated 2.0.0 instead, use controller 
+	 * @see \Phacil\Framework\Loader::controller()
 	 * @since 1.1.0
      * @return void 
      */

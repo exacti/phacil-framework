@@ -21,7 +21,8 @@ spl_autoload_register(function ($class) {
 		'Pagination',
 		'Request',
 		'Mail',
-		'Translate'
+		'Translate'.
+		'Encryption'
 	];
 
 	if(in_array($class, $legacy)){
