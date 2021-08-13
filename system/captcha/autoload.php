@@ -8,8 +8,6 @@
 
 namespace Phacil\Framework;
 
-use Exception;
-
 /** @package Phacil\Framework */
 class Captcha {
 	protected $code;

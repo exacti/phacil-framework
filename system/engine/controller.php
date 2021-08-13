@@ -12,7 +12,6 @@ use TypeError;
 use Mustache_Exception_UnknownTemplateException;
 use RuntimeException;
 use SmartyException;
-use Exception;
 
 /** 
  * Extend this class to create interation with your module controller to Phacil engine controller.

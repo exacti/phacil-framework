@@ -8,9 +8,6 @@
 
 namespace Phacil\Framework;
 
-use Exception;
-use TypeError;
-
 /**
  * 
  * @package Phacil\Framework

@@ -8,7 +8,7 @@
 
 namespace Phacil\Framework;
 
-use Exception;
+//use Exception;
 
 /** @package Phacil\Framework */
 final class Image {

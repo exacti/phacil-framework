@@ -8,10 +8,9 @@
 
 namespace Phacil\Framework\Databases;
 
-use Exception;
 use Phacil\Framework\Interfaces\Databases;
 use \SQLite3;
-use stdClass;
+use \stdClass;
 
 final class Sqlite3_db implements Databases {
     /**

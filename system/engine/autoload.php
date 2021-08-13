@@ -75,7 +75,8 @@ spl_autoload_register(function ($class) {
 		'interfaces\\loader',
 		'interfaces\\action',
 		'traits\\action',
-		'interfaces\\databases'
+		'interfaces\\databases',
+		'exception'
 	];
 
 	if($namespace[0] == "Phacil" && in_array($classNative, $allowed)){

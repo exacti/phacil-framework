@@ -8,9 +8,7 @@
 
 namespace Phacil\Framework\Databases;
 
-use Exception;
 use Phacil\Framework\Interfaces\Databases;
-use stdClass;
 
 /**
  * Oracle driver connector

@@ -8,10 +8,9 @@
 
 namespace Phacil\Framework\Databases;
 
-use Exception;
 use MySQLi as GlobalMysqli;
 use Phacil\Framework\Interfaces\Databases;
-use stdClass;
+use \stdClass;
 
 /** 
  * Default driver to connect a MySQL/MariaDB databases.

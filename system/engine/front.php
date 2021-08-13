@@ -10,7 +10,7 @@ namespace Phacil\Framework;
 
 use Phacil\Framework\Interfaces\Front as frontinterface;
 
-use Exception;
+//use Exception;
 
 /** @package Phacil\Framework */
 final class Front implements frontinterface {
