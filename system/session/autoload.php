@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
  * GPLv3 General License.
@@ -15,7 +14,8 @@ use Phacil\Framework\Credis;
  * The session manipulation class
  * 
  * @since 1.0.0
- * @package Phacil\Framework */
+ * @package Phacil\Framework 
+ */
 final class Session {
     /**
      * 
@@ -23,6 +23,10 @@ final class Session {
      */
     public $data = array();
 
+    /**
+     * Redis object
+     * @var Credis
+     */
     public $redis = null;
 
     /**
@@ -32,8 +36,18 @@ final class Session {
      */
     public $name;
 
+    /**
+     * Redis prefix
+     * 
+     * @var string
+     */
     private $redisPrefix = "phacil_";
 
+    /**
+     * Redis Key
+     * 
+     * @var string
+     */
     public $redisKey;
 
     /** @return void  */
@@ -55,7 +69,11 @@ final class Session {
 
     }
 
-    /** @return void  */
+    /** 
+     * Open the PHP session
+     * 
+     * @return void  
+     */
     private function openSession() {
 
         $this->closeSession();
@@ -73,6 +91,12 @@ final class Session {
 
     }
 
+    /**
+     * Check and iniciate the Redis connection
+     * 
+     * @since 2.0.0
+     * @return false|Credis 
+     */
     private function redis(){
         global $engine;
 
@@ -82,26 +106,49 @@ final class Session {
         $this->redisExpire = ($engine->config->get('session_redis_expire')) ?: session_cache_expire()*60;
         $this->redisPrefix = ($engine->config->get('session_redis_prefix')) ?: 'phacil_';
         $this->redisKey = $this->redisPrefix.session_name().session_id();
-        $this->redis = new Credis();
+
+        /**
+         * Instanciate the Credis object
+         * 
+         * @var \Phacil\Framework\Credis
+         */
+        $this->redis = new Credis((($engine->config->get('session_redis_dsn')) ?: '127.0.0.1'), (($engine->config->get('session_redis_port')) ?: '6379'), (($engine->config->get('session_redis_password')) ?: null));
+
         $_SESSION = json_decode($this->redis->get($this->redisKey), true);
 
         return $this->redis;
     }
 
-    /** @return void  */
-    private function closeSession() {
-        if (session_status() == PHP_SESSION_ACTIVE) {
+    /**
+     * Close sessions
+     * 
+     * @param bool $force 
+     * @return void 
+     */
+    private function closeSession($force = false) {
+        if (session_status() == PHP_SESSION_ACTIVE || $force) {
             session_unset();
             session_destroy();
         }
+        if($this->redis && $force){
+            $this->redis->close();
+            unset($this->redis);
+        }
     }
 
-    /** @return bool  */
+    /** 
+     * Check if is secure (SSL) connection
+     * @return bool  
+     */
     private function isSecure() {
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 
-
+    /**
+     * Set the Redis session data
+     * @return void 
+     * @since 2.0.0
+     */
     public function __destruct()
     {
         if($this->redis){
@@ -109,5 +156,17 @@ final class Session {
             
             $this->redis->expire($this->redisKey, ($this->redisExpire));
         }
+    }
+
+    /**
+     * Flush all session data
+     * @return void 
+     * @since 2.0.0
+     */
+    public function flushAll(){
+        if($this->redis){
+            ($this->redis->flushAll());
+        }
+        $this->closeSession(true);
     }
 }

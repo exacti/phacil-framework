@@ -120,13 +120,13 @@ final class startEngineExacTI {
 
     /** @return bool  */
     private function checkConstantsRequired () {
-        $dbConsts = ['DB_DRIVER' => 'nullStatement', 'DB_HOSTNAME' => NULL, 'DB_USERNAME' => NULL, 'DB_PASSWORD' => NULL, 'DB_DATABASE' => NULL];
+        /* $dbConsts = ['DB_DRIVER' => 'nullStatement', 'DB_HOSTNAME' => NULL, 'DB_USERNAME' => NULL, 'DB_PASSWORD' => NULL, 'DB_DATABASE' => NULL];
 
-        foreach ($dbConsts as $constDB => $value) {
+         foreach ($dbConsts as $constDB => $value) {
             if (!defined($constDB)) {
                 define($constDB, $value);
             }
-        }
+        } */
 
         if (!defined('DIR_APPLICATION') || !defined('DIR_SYSTEM') || !defined('DIR_PUBLIC') || !defined('DIR_TEMPLATE') || !defined('USE_DB_CONFIG')) {
             return(false);
@@ -242,6 +242,11 @@ final class startEngineExacTI {
 		// Translate
 		if(!isset($this->registry->$key) && $key == 'translate'){
 			$this->translate = new Translate();
+		}
+
+		// Session
+		if(!isset($this->registry->$key) && $key == 'session'){
+			$this->session = new Session();
 		}
 
         return (isset($this->registry->$key)) ? $this->registry->$key : NULL;

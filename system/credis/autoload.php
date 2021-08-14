@@ -328,12 +328,12 @@ class Credis_Client {
      *
      * @param string $host The hostname of the Redis server
      * @param integer $port The port number of the Redis server
+     * @param string $password The authentication password of the Redis server
      * @param float $timeout  Timeout period in seconds
      * @param string $persistent  Flag to establish persistent connection
      * @param int $db The selected datbase of the Redis server
-     * @param string $password The authentication password of the Redis server
      */
-    public function __construct($host = '127.0.0.1', $port = 6379, $timeout = null, $persistent = '', $db = 0, $password = null)
+    public function __construct($host = '127.0.0.1', $port = 6379, $password = null, $timeout = null, $persistent = '', $db = 0)
     {
         $this->host = (string) $host;
         $this->port = (int) $port;

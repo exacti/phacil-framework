@@ -37,7 +37,7 @@ class login {
 	private $session;
 	
 	/**
-	 * @param arrray $authorizedUsers 
+	 * @param array $authorizedUsers 
 	 * @return void 
 	 */
 	public function __construct($authorizedUsers){
