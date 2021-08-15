@@ -8,10 +8,19 @@
 
 namespace Phacil\Framework;
 
-use Phacil\Framework\Credis; 
+use Phacil\Framework\Credis;
 
 /** 
  * The session manipulation class
+ * 
+ * You can activate the Redis session instead use the default PHP session manipulation.
+ * 
+ * @param bool $redis Active or not the Redis session
+ * @param string|null $redisDSN (optional) Redis DSN like unix:///path/to/redis.sock, tcp://host[:port][/persistence_identifier] or tls://host[:port][/persistence_identifier]. If not specified, the default value is connect to localhost in 6379 port.
+ * @param int|null $redisPort (optional) If is not in the DSN specification, we can pass as separated value. The default is 6379.
+ * @param string|null $redisPass (optional) Redis conection password
+ * @param int|null $redis_expire (optional) Redis session expiration, the defaul is your session_cache_expire configurated in PHP *60.
+ * @param string $redis_prefix (optional) The default prefis is 'phacil_'.
  * 
  * @since 1.0.0
  * @package Phacil\Framework 
@@ -50,15 +59,25 @@ final class Session {
      */
     public $redisKey;
 
-    /** @return void  */
-    public function __construct() {
+    /**
+     * 
+     * @param bool $redis 
+     * @param string|null $redisDSN 
+     * @param int|null $redisPort 
+     * @param string|null $redisPass 
+     * @param int|null $redis_expire 
+     * @param string $redis_prefix 
+     * @return void 
+     */
+    public function __construct($redis = false, $redisDSN = null, $redisPort = null, $redisPass = null, $redis_expire = null, $redis_prefix = 'phacil_')
+    {
         $this->name = ((defined('SESSION_PREFIX')) ? SESSION_PREFIX : 'SESS').(isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
         if (!session_id()) {
             $this->openSession();
         }
 
-        $this->redis();
+        $this->redis($redis, $redisDSN, $redisPort, $redisPass, $redis_expire, $redis_prefix);
 
         if(session_name() === $this->name) {
             $this->data =& $_SESSION;
@@ -94,17 +113,23 @@ final class Session {
     /**
      * Check and iniciate the Redis connection
      * 
+     * @param bool $redis 
+     * @param string|null $redisDSN 
+     * @param string|null $redisPort 
+     * @param string|null $redisPass 
+     * @param int|null $redis_expire 
+     * @param string $redis_prefix 
+     * 
      * @since 2.0.0
      * @return false|Credis 
      */
-    private function redis(){
-        global $engine;
+    private function redis($redis = false, $redisDSN = null, $redisPort = null, $redisPass = null, $redis_expire = null, $redis_prefix = 'phacil_'){
 
-        if(!$engine->config->get('session_redis'))
+        if(!$redis)
             return false;
         
-        $this->redisExpire = ($engine->config->get('session_redis_expire')) ?: session_cache_expire()*60;
-        $this->redisPrefix = ($engine->config->get('session_redis_prefix')) ?: 'phacil_';
+        $this->redisExpire = ($redis_expire) ?: session_cache_expire()*60;
+        $this->redisPrefix = ($redis_prefix) ?: 'phacil_';
         $this->redisKey = $this->redisPrefix.session_name().session_id();
 
         /**
@@ -112,9 +137,9 @@ final class Session {
          * 
          * @var \Phacil\Framework\Credis
          */
-        $this->redis = new Credis((($engine->config->get('session_redis_dsn')) ?: '127.0.0.1'), (($engine->config->get('session_redis_port')) ?: '6379'), (($engine->config->get('session_redis_password')) ?: null));
+        $this->redis = new Credis((($redisDSN) ?: '127.0.0.1'), (($redisPort) ?: '6379'), (($redisPass) ?: null));
 
-        $_SESSION = json_decode($this->redis->get($this->redisKey), true);
+        $_SESSION = unserialize($this->redis->get($this->redisKey));
 
         return $this->redis;
     }
@@ -152,7 +177,7 @@ final class Session {
     public function __destruct()
     {
         if($this->redis){
-            $this->redis->set($this->redisKey, json_encode($_SESSION));
+            $this->redis->set($this->redisKey, serialize($_SESSION));
             
             $this->redis->expire($this->redisKey, ($this->redisExpire));
         }
