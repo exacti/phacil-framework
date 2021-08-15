@@ -108,7 +108,16 @@ abstract class Controller {
      * @param \Phacil\Framework\Registry $registry 
      * @return void 
      */
-    public function __construct(\Phacil\Framework\Registry $registry) {
+    public function __construct(\Phacil\Framework\Registry $registry = null) {
+        if (!$registry) {
+
+            /**
+             * @global \Phacil\Framework\startEngineExacTI $engine
+             */
+            global $engine;
+
+            $registry = $engine->registry;
+        }
         $this->registry = $registry;
     }
 

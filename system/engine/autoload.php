@@ -97,9 +97,9 @@ spl_autoload_register(function ($class) {
 		}
 	}
 
-	$value = DIR_SYSTEM . $classNative.'/autoload.php';
+	$value = DIR_SYSTEM . str_replace('\\', "/", $classNative) .'/autoload.php';
 
-	if($namespace[0] == "Phacil" && in_array($value, $this->dirs)){
+	if($namespace[0] == "Phacil" && file_exists($value)){
 		try {
 			if(is_readable($value)) {
 				require_once $value;
@@ -114,6 +114,22 @@ spl_autoload_register(function ($class) {
 		}
 	}
 
+	$value = DIR_SYSTEM . str_replace('\\', "/", $classNative) . '.php';
+
+	if ($namespace[0] == "Phacil" && file_exists($value) ) {
+		try {
+			if (is_readable($value)) {
+				require_once $value;
+				return;
+			} else {
+				throw new \Exception("I can't load '$value' file! Please check system permissions.");
+			}
+		} catch (\Exception $e) {
+			$log = new \Phacil\Framework\Log("exception.log");
+			$log->write($class . ' not loaded!');
+			exit($e->getMessage());
+		}
+	}
 	
 	if(file_exists($tryMagicOne = DIR_APP_MODULAR. implode("/", $namespace).".php")){
 		try {

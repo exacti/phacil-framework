@@ -25,7 +25,8 @@ use Phacil\Framework\Credis;
  * @since 1.0.0
  * @package Phacil\Framework 
  */
-final class Session {
+final class Session
+{
     /**
      * 
      * @var array
@@ -71,7 +72,7 @@ final class Session {
      */
     public function __construct($redis = false, $redisDSN = null, $redisPort = null, $redisPass = null, $redis_expire = null, $redis_prefix = 'phacil_')
     {
-        $this->name = ((defined('SESSION_PREFIX')) ? SESSION_PREFIX : 'SESS').(isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
+        $this->name = ((defined('SESSION_PREFIX')) ? SESSION_PREFIX : 'SESS') . (isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
         if (!session_id()) {
             $this->openSession();
@@ -79,13 +80,12 @@ final class Session {
 
         $this->redis($redis, $redisDSN, $redisPort, $redisPass, $redis_expire, $redis_prefix);
 
-        if(session_name() === $this->name) {
+        if (session_name() === $this->name) {
             $this->data =& $_SESSION;
-        }else {
+        } else {
             $this->openSession();
             $this->data =& $_SESSION;
         }
-
     }
 
     /** 
@@ -93,21 +93,21 @@ final class Session {
      * 
      * @return void  
      */
-    private function openSession() {
+    private function openSession()
+    {
 
         $this->closeSession();
 
         ini_set('session.use_cookies', 'On');
         ini_set('session.use_trans_sid', 'Off');
         ini_set('session.cookie_httponly', 1);
-        if($this->isSecure())
+        if ($this->isSecure())
             ini_set('session.cookie_secure', 1);
 
         session_set_cookie_params(0, '/');
         //session_id(md5());
         session_name($this->name);
         session_start();
-
     }
 
     /**
@@ -123,14 +123,15 @@ final class Session {
      * @since 2.0.0
      * @return false|Credis 
      */
-    private function redis($redis = false, $redisDSN = null, $redisPort = null, $redisPass = null, $redis_expire = null, $redis_prefix = 'phacil_'){
+    private function redis($redis = false, $redisDSN = null, $redisPort = null, $redisPass = null, $redis_expire = null, $redis_prefix = 'phacil_')
+    {
 
-        if(!$redis)
+        if (!$redis)
             return false;
-        
-        $this->redisExpire = ($redis_expire) ?: session_cache_expire()*60;
+
+        $this->redisExpire = ($redis_expire) ?: session_cache_expire() * 60;
         $this->redisPrefix = ($redis_prefix) ?: 'phacil_';
-        $this->redisKey = $this->redisPrefix.session_name().session_id();
+        $this->generateRedisKey();
 
         /**
          * Instanciate the Credis object
@@ -144,18 +145,32 @@ final class Session {
         return $this->redis;
     }
 
+    /** 
+     * Generate the Redis Session KEY
+     * 
+     * @return void  
+     */
+    private function generateRedisKey()
+    {
+        if (session_id())
+            $this->redisKey = $this->redisPrefix . session_name() . session_id();
+
+        return $this->redisKey;
+    }
+
     /**
      * Close sessions
      * 
      * @param bool $force 
      * @return void 
      */
-    private function closeSession($force = false) {
+    private function closeSession($force = false)
+    {
         if (session_status() == PHP_SESSION_ACTIVE || $force) {
             session_unset();
             session_destroy();
         }
-        if($this->redis && $force){
+        if ($this->redis && $force) {
             $this->redis->close();
             unset($this->redis);
         }
@@ -165,7 +180,8 @@ final class Session {
      * Check if is secure (SSL) connection
      * @return bool  
      */
-    private function isSecure() {
+    private function isSecure()
+    {
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 
@@ -176,9 +192,11 @@ final class Session {
      */
     public function __destruct()
     {
-        if($this->redis){
+        if ($this->redis) {
+            $this->generateRedisKey();
+
             $this->redis->set($this->redisKey, serialize($_SESSION));
-            
+
             $this->redis->expire($this->redisKey, ($this->redisExpire));
         }
     }
@@ -188,10 +206,37 @@ final class Session {
      * @return void 
      * @since 2.0.0
      */
-    public function flushAll(){
-        if($this->redis){
+    public function flushAll()
+    {
+        $this->data = [];
+        if ($this->redis) {
             ($this->redis->flushAll());
         }
         $this->closeSession(true);
+    }
+
+    /**
+     * Flush current session data
+     * @return void 
+     * @since 2.0.0
+     */
+    public function flush()
+    {
+        $this->data = [];
+        if ($this->redis) {
+            ($this->redis->del($this->generateRedisKey()));
+        }
+        $this->closeSession(true);
+    }
+
+    /**
+     * Return the current session ID
+     * 
+     * @since 2.0.0
+     * @return string|false 
+     */
+    public function getSessionId()
+    {
+        return session_id();
     }
 }
