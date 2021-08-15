@@ -8,7 +8,14 @@
 
 namespace Phacil\Framework;
 
-/** @package Phacil\Framework */
+/** 
+ * Login class
+ * 
+ * You can extend if need.
+ * 
+ * @since 1.0.0
+ * @package Phacil\Framework 
+ */
 class Login implements \Phacil\Framework\Login\Interfaces\Login {
 	
 	/**
@@ -30,8 +37,7 @@ class Login implements \Phacil\Framework\Login\Interfaces\Login {
 	private $engine = null;
 	
 	/**
-	 * @param array $authorizedUsers 
-	 * @return void 
+	 * @inheritdoc
 	 */
 	public function __construct($authorizedUsers, \Phacil\Framework\Registry $registry = null){
 		$this->MM_authorizedUsers = $authorizedUsers;
@@ -81,6 +87,7 @@ class Login implements \Phacil\Framework\Login\Interfaces\Login {
 	/**
 	 * @param string $restrictGoTo 
 	 * @return void 
+	 * @inheritdoc
 	 */
 	public function check($restrictGoTo) {
 				
@@ -97,28 +104,28 @@ class Login implements \Phacil\Framework\Login\Interfaces\Login {
 			exit;
 		}
 	}
-	
-	/** @return bool  */
+
+	/** @inheritdoc  */
 	public function isLogged () {
 		$lgged = $this->isAuthorized("",$this->MM_authorizedUsers, $this->engine->session->data['MM_Username'], $this->engine->session->data['MM_UserGroup']);
 		
 		return($lgged);
 	}
-	
-	/** @return void  */
+
+	/** @inheritdoc  */
 	public function logout() {
 		unset($this->engine->session->data['MM_Username']);
 		unset($this->engine->session->data['MM_UserGroup']);
 		
 		session_destroy();
   	}
-	
-	/** @return string  */
+
+	/** @inheritdoc  */
 	public function getUserName() {
     	return $this->engine->session->data['MM_Username'];
   	}
 
-	/** @return string  */
+	/** @inheritdoc  */
 	public function getUserGroup() {
     	return $this->engine->session->data['MM_UserGroup'];
   	}
