@@ -146,7 +146,7 @@ final class startEngineExacTI {
      * @throws TypeError 
      */
     private function loadengine () {
-        $this->dirs = glob(DIR_SYSTEM.'*/autoload.php', GLOB_BRACE);
+        //$this->dirs = glob(DIR_SYSTEM.'*/autoload.php', GLOB_BRACE);
         
         //require_once (DIR_SYSTEM.'database/autoload.php');
 
