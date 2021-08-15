@@ -20,15 +20,18 @@ interface Action {
 	/** 
 	 * Return the controller file path
 	 * 
-	 * @return string  */
+	 * @since 1.0.0
+	 * @return string  
+	 */
 	public function getFile();
 
 	/** 
 	 * Return the class of controller
 	 * 
-	 * @deprecated 2.0.0 This method return only legacy class. user getClassAlt instead.
+	 * @deprecated 2.0.0 This method return only legacy class. Use getClassAlt instead.
 	 * @see \Phacil\Framework\Interfaces\Action::getClassAlt()
 	 * 
+	 * @since 1.0.0
 	 * @return string  */
 	public function getClass();
 
@@ -41,7 +44,9 @@ interface Action {
 	public function setClass($class);
 
 	/** 
-	 * Get all classes for the new 2.0 framework version
+	 * Get all possible classes for controller in the new 2.0 framework version
+	 * 
+	 * @since 2.0.0
 	 * 
 	 * @return array  
 	 */

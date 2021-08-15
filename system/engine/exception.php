@@ -13,6 +13,10 @@ namespace Phacil\Framework;
 class Exception extends \Exception
 {
 
+	/**
+	 * Save the exceptions in the exceptions log file
+	 * @return void 
+	 */
 	public function __destruct()
 	{
 		$log = new \Phacil\Framework\Log("exception.log");

@@ -18,32 +18,38 @@ namespace Phacil\Framework\Traits;
 trait Action {
 
 	/**
+	 * Storage the file to be loaded
 	 * 
 	 * @var string
 	 */
 	protected $file;
 	
 	/**
+	 * Storage the class to be loaded
 	 * 
 	 * @var string
 	 */
 	protected $class;
 	
 	/**
+	 * Storage the method to be called
 	 * 
 	 * @var string
 	 */
 	protected $method;
 	
 	/**
+	 * Storage the method args
 	 * 
 	 * @var array
 	 */
 	protected $args = array();
 
 	/**
+	 * Storage the all possible controller classes
 	 * 
-	 * @var (string[]|string|null)[]
+	 * @since 2.0.0
+	 * @var (string[]|string|array|null)[]
 	 */
 	private $classAlt = [];
 
@@ -53,7 +59,7 @@ trait Action {
 	}
 	
 	/** 
-	 * @deprecated 2.0.0 This method return only legacy class. user getClassAlt instead.
+	 * @deprecated 2.0.0 This method return only legacy class. Use getClassAlt instead.
 	 * @inheritdoc */
 	public function getClass() {
 		return $this->class;

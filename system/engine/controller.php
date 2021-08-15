@@ -57,47 +57,58 @@ abstract class Controller {
     protected $layout;
 
     /**
+     * The template path
      * 
      * @var string
      */
     protected $template;
 
     /**
+     * The childrens parts of the controller
      * 
      * @var array
      */
     protected $children = array();
 
     /**
+     * The variables of controller
      * 
      * @var array
      */
     protected $data = array();
 
     /**
+     * The twig aditional funcions created by your!
      * 
      * @var array
      */
     protected $twig = array();
 
     /**
+     * The errors array
      * 
      * @var array
      */
     protected $error = array();
     
     /**
+     * The rendered output 
      * 
      * @var string
      */
     protected $output;
 
     /**
+     * Allowed template types
      * 
      * @var string[]
      */
     public $templateTypes = ["tpl", "twig", "mustache", "smarty", "phtml"];
 
+    /**
+     * The original route of childrens
+     * @var string
+     */
     public $routeOrig;
 
     /**
@@ -116,9 +127,9 @@ abstract class Controller {
              */
             global $engine;
 
-            $registry = $engine->registry;
+            $registry =& $engine->registry;
         }
-        $this->registry = $registry;
+        $this->registry =& $registry;
     }
 
     /**
@@ -153,18 +164,22 @@ abstract class Controller {
     }
 
     /**
+     * Send redirect HTTP header to specified URL
+     * 
+     * Use the \Phacil\Framework\Response::redirect() registered object.
+     * 
      * @param string $url 
      * @param int $status 
      * @return never 
      * @final
      */
-    final protected function redirect($url, $status = 302) {
-        header('Status: ' . $status);
-        header('Location: ' . str_replace('&amp;', '&', $url));
-        exit();
+    final protected function redirect($url, int $status = 302) {
+        $this->registry->response->redirect($url, $status);
     }
 
     /**
+     * Get and load the childrens controller classes
+     * 
      * @final
      * @param string $child 
      * @param array $args 
@@ -199,8 +214,9 @@ abstract class Controller {
 
             return $controller->output;
         } else {
-            trigger_error('Error: Could not load controller ' . $child . '!');
-            exit();
+            throw new Exception("Could not load controller " . $child . '!', 1);
+            
+            //exit();
         }
     }
 

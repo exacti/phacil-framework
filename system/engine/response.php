@@ -47,10 +47,15 @@ final class Response {
 	}
 
 	/**
+	 * Send redirect HTTP header to specified URL
+	 * 
 	 * @param string $url 
+	 * @param int $status 
 	 * @return never 
 	 */
-	public function redirect($url) {
+	public function redirect($url, int $status = 302) 
+	{
+		header('Status: ' . $status);
 		header('Location: ' . $url);
 		exit;
 	}
