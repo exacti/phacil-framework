@@ -9,12 +9,15 @@
 namespace Phacil\Framework;
 
 /**
+ * Start engine class
  * 
+ * @since 1.0.0
  * @package Phacil\Framework
  */
 final class startEngineExacTI {
 
     /**
+     * Storage the PHP version
      * 
      * @var string|false
      */
@@ -22,20 +25,29 @@ final class startEngineExacTI {
     //protected $includes;
 
     /**
+     * Loaded paths to autoload. 
      * 
+     * @see engine/autoload.php
+     * @since 1.3.0
+     * @deprecated 2.0.0
      * @var array
      */
-    protected $dirs;
+    protected $dirs = [];
     
     /**
+     * Instance of all engine elements
      * 
      * @var Registry
+     * 
+     * @since 1.0.0
      */
     public $registry;
 
     /**
+     * System pre actions loader
      * 
-     * @var false|ActionSystem
+     * @var false|ActionSystem|\Phacil\Framework\Interfaces\Action
+     * @since 1.5.1
      */
     private $preActions = false;
 
@@ -45,9 +57,6 @@ final class startEngineExacTI {
      * @throws TypeError 
      */
     public function __construct () {
-        //$this->constants = get_defined_constants(true);
-        //$this->userConstants = $this->constants['user'];
-        //$this->includes = get_included_files();
 
         // Check Version
         $this->phpversion = $this->checkPHPversion();
@@ -87,16 +96,24 @@ final class startEngineExacTI {
         $this->registry->set($key, $value);
     }
 
-    /** @return string|false  */
+    /** 
+     * Check if system have a minimum PHP requirement
+     * @since 1.0.0
+     * @return string|false 
+     */
     private function checkPHPversion() {
         if (version_compare(phpversion(), '5.4.40', '>') == false) {
-            exit('PHP 5.4+ Required');
+            trigger_error('PHP 5.4.40+ Required', E_ERROR);
         } else {
             return phpversion();
         }
     }
 
-    /** @return true|void  */
+    /**
+     * Check if config file is present loadable
+     * @return true|void  
+     * @since 1.0.0
+     */
     private function checkConfigFile() {
 
         if (!$this->checkConstantsRequired()) {
@@ -118,7 +135,11 @@ final class startEngineExacTI {
 
     }
 
-    /** @return bool  */
+    /** 
+     * Check if have the required minimum configurations
+     * @return bool  
+     * @since 1.0.0
+     */
     private function checkConstantsRequired () {
         /* $dbConsts = ['DB_DRIVER' => 'nullStatement', 'DB_HOSTNAME' => NULL, 'DB_USERNAME' => NULL, 'DB_PASSWORD' => NULL, 'DB_DATABASE' => NULL];
 
@@ -135,15 +156,21 @@ final class startEngineExacTI {
         }
     }
 
-    /** @return void  */
+    /** 
+     * Define compatibility constants
+     * @return void  
+     * @since 1.0.0
+     */
     private function defineAuxConstants () {
         (defined('HTTP_URL')) ? define('HTTP_SERVER', HTTP_URL) : '';
         (defined('HTTPS_URL')) ? define('HTTPS_SERVER', HTTPS_URL) : '';
     }
 
     /**
+     * Load the autoload SPL engine
      * @return void 
-     * @throws TypeError 
+     * @throws Exception 
+     * @since 1.0.0
      */
     private function loadengine () {
         //$this->dirs = glob(DIR_SYSTEM.'*/autoload.php', GLOB_BRACE);
@@ -154,8 +181,10 @@ final class startEngineExacTI {
     }
 
     /**
+     * Define the timezone
      * @param string $utc 
      * @return void 
+     * @since 1.2.1
      */
     public function setTimezone($utc) {
 
@@ -172,42 +201,68 @@ final class startEngineExacTI {
 
     }
 
-    /** @return string  */
+    /** 
+     * Get the timezone
+     * @since 1.2.1
+     * @return string  
+     */
     public function getTimezone(){
         return date_default_timezone_get();
     }
 
-    /** @return array|false  */
+    /** 
+     * List system available timezones
+     * @since 1.2.1
+     * @return array|false  
+     */
     public function listTimezones() {
         return \DateTimeZone::listIdentifiers(\DateTimeZone::ALL);
     }
 
-    /** @return string|false  */
+    /** 
+     * Return Phacil Framework version
+     * @since 1.3.1
+     * @return string|false  
+     */
     public function version() {
         return file_get_contents(DIR_SYSTEM."engine/VERSION");
     }
 
-    /** @return void  */
+    /** 
+     * Include extra registration file
+     * @since 1.3.2
+     * @return void  
+     */
     public function extraRegistrations() {
 
         if(file_exists(DIR_SYSTEM."registrations.php"))
             include(DIR_SYSTEM."registrations.php");
     }
 
-    /** @return array  */
+    /** 
+     * Return the defined constants
+     * @return array 
+     * @since 1.5.0
+     */
     public function constants(){
         return get_defined_constants(true);
     }
 
-    /** @return array  */
+    /** 
+     * Return only user defined constants
+     * @return array  
+     * @since 1.5.0
+     */
     public function userConstants() {
         return $this->constants()['user'];
     }
 
     /**
+     * Return defined constant based as group
      * @param string $constant 
      * @param string $group 
      * @return mixed 
+     * @since 1.5.0
      */
     public function constantName($constant, $group = 'user') {
 
@@ -219,11 +274,22 @@ final class startEngineExacTI {
         return $constant;
     }
 
-    /** @return array  */
+    /** 
+     * Add controller system pre-actions
+     * @return array 
+     * @since 1.5.1
+     */
     public function controllerPreActions() {
         return (isset($this->preActions) && is_array($this->preActions)) ? $this->preActions : [];
     }
 
+    /**
+     * Check the registry element
+     * 
+     * @since 2.0.0
+     * @param string $key 
+     * @return true|null 
+     */
     public function checkRegistry($key){
         //mail
 		if(!isset($this->registry->$key) && $key == 'mail'){
@@ -249,7 +315,7 @@ final class startEngineExacTI {
 			$this->session = new Session();
 		}
 
-        return (isset($this->registry->$key)) ? $this->registry->$key : NULL;
+        return (isset($this->registry->$key)) ?: NULL;
     }
 
 }
@@ -420,7 +486,7 @@ $frontController = new Front($engine->registry);
 // SEO URL's
 $frontController->addPreAction(new ActionSystem((string) 'url/seo_url'));
 
-//extraPreactions
+//extraPreActions
 if($engine->controllerPreActions()){
     foreach ($engine->controllerPreActions() as $action){
         $frontController->addPreAction(new Action($action));

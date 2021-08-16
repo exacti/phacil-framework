@@ -8,6 +8,12 @@
 
 namespace Phacil\Framework\Interfaces;
 
+/**
+ * Action interface.
+ * 
+ * @since 2.0.0
+ * @package Phacil\Framework\Interfaces
+ */
 interface Action {
 
 	/**
@@ -56,6 +62,7 @@ interface Action {
 	 * Return the method to be loaded
 	 * 
 	 * @return string  
+	 * @since 1.0.0
 	 */
 	public function getMethod();
 
@@ -63,6 +70,7 @@ interface Action {
 	 * Return the args
 	 * 
 	 * @return array  
+	 * @since 1.0.0
 	 */
 	public function getArgs();
 }
