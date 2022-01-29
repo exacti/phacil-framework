@@ -55,6 +55,8 @@ final class Front implements frontinterface {
   	 */
   	public function dispatch(\Phacil\Framework\Interfaces\Action $action, $error) {
 		$this->error = $error;
+
+		$this->registry->set('route', $action->getRoute());
 			
 		foreach ($this->pre_action as $pre_action) {
 			$result = $this->execute($pre_action);

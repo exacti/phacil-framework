@@ -30,6 +30,8 @@ final class Action implements ActionInterface {
 		$pathC = "";
 		
 		$parts = explode('/', str_replace('../', '', (string)$route));
+
+		$this->route = $route;
 		
 		foreach ($parts as $part) { 
 			$pathNew = $path;

@@ -112,6 +112,13 @@ abstract class Controller {
     public $routeOrig;
 
     /**
+     * The output content type
+     * 
+     * @var string
+     */
+    public $contentType = 'text/html; charset=utf-8';
+
+    /**
      * Implements constructor.
      * 
      * If you use this, don't forget the parent::__construct($registry);
@@ -437,6 +444,8 @@ abstract class Controller {
                     break;
 
             }
+
+            $this->registry->response->addHeader('Content-Type', $this->contentType);
 
             return $this->output;
 

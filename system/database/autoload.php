@@ -47,7 +47,6 @@ final class Database {
             $this->createDriver(new $driverClass($hostname, $username, $password, $database));
         } catch (Exception $th) {
             throw new Exception('Error: Could not load database file ' . $driver . '!');
-            //exit('Error: Could not load database file ' . $driver . '!');
         }		
 		
 	}
@@ -68,7 +67,8 @@ final class Database {
 
 	/** 
 	 * Check is connected on database
-	 * @return bool  */
+	 * @return bool  
+	 **/
 	public function isConnected() { 
 		return $this->driver->isConnected();
 	}
@@ -76,7 +76,8 @@ final class Database {
 	/** 
 	 * Destroy the connection
 	 * 
-	 * @return void  */
+	 * @return void  
+	 */
 	public function __destruct() {
 		unset($this->driver);
 	 }
@@ -115,7 +116,8 @@ final class Database {
   	/** 
 	 * Gets the number of rows affected by the last operation
 	 * 
-	 * @return int  */
+	 * @return int 
+	 */
   	public function countAffected() {
 		return $this->driver->countAffected();
   	}
@@ -123,7 +125,8 @@ final class Database {
   	/** 
 	 * Gets the ID of the last inserted row or sequence of values
 	 * 
-	 * @return int|string  */
+	 * @return int  
+	 */
   	public function getLastId() {
 		return $this->driver->getLastId();
   	}
@@ -133,7 +136,7 @@ final class Database {
      * @param int $pageNum_exibe 
      * @param int $maxRows_exibe 
      * @param bool $cache 
-     * @param mixed|null $sqlTotal 
+     * @param string|null $sqlTotal 
      * @return object 
      * @throws PhpfastcacheInvalidArgumentException 
      */

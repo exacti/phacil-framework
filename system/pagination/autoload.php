@@ -9,7 +9,7 @@
 namespace Phacil\Framework;
 
 /** @package Phacil\Framework */
-final class Pagination {
+class Pagination {
 
 	/**
 	 * 

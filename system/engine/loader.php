@@ -181,7 +181,10 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 	 * @param string $language 
 	 * @return mixed 
 	 */
-	public function language($language) {
+	public function language($language = null) {
+		
+		$language = ($language) ?: $this->registry->route;
+		
 		return $this->language->load($language);
 	}
 } 

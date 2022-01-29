@@ -29,6 +29,12 @@ final class Registry {
 	public $routeOrig;
 
 	/**
+	 * 
+	 * @var string
+	 */
+	public $route;
+
+	/**
 	 * @param string $key 
 	 * @return mixed 
 	 */

@@ -23,6 +23,12 @@ trait Action {
 	 * @var string
 	 */
 	protected $file;
+
+	/**
+	 * 
+	 * @var string
+	 */
+	private $route;
 	
 	/**
 	 * Storage the class to be loaded
@@ -90,5 +96,9 @@ trait Action {
 	/** @inheritdoc  */
 	public function getArgs() {
 		return $this->args;
+	}
+
+	public function getRoute() {
+		return $this->route;
 	}
 }
