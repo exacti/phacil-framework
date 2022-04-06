@@ -179,8 +179,17 @@ spl_autoload_register(function ($class) {
 		}
 	}
 
+	
+	
 	return;
 		
 });
 
-require_once(DIR_SYSTEM . 'engine/action.php'); 
+require_once(DIR_SYSTEM . 'engine/action.php');
+
+$composer = defined('DIR_VENDOR') ? DIR_VENDOR : DIR_SYSTEM . 'vendor/autoload.php';
+
+if (file_exists($composer)) {
+	$autoloadComposer = (include_once $composer);
+	//return;
+}
