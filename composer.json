@@ -3,6 +3,10 @@
     "vendor-dir": "./system/vendor/"
   },
   "require": {
-    "php": ">=5.4.20"
+    "php": ">=5.4.20",
+    "colinmollenhour/credis": "^1.13",
+    "twig/twig": "^3.0",
+    "mustache/mustache": "^2.0",
+    "smarty/smarty": "^3.0"
   }
 }

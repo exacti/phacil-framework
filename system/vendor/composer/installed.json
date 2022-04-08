@@ -1,0 +1,405 @@
+[
+    {
+        "name": "colinmollenhour/credis",
+        "version": "v1.13.0",
+        "version_normalized": "1.13.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/colinmollenhour/credis.git",
+            "reference": "afec8e58ec93d2291c127fa19709a048f28641e5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/afec8e58ec93d2291c127fa19709a048f28641e5",
+            "reference": "afec8e58ec93d2291c127fa19709a048f28641e5",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.6.0"
+        },
+        "suggest": {
+            "ext-redis": "Improved performance for communicating with redis"
+        },
+        "time": "2022-04-07T14:57:22+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "Client.php",
+                "Cluster.php",
+                "Sentinel.php",
+                "Module.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Colin Mollenhour",
+                "email": "colin@mollenhour.com"
+            }
+        ],
+        "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
+        "homepage": "https://github.com/colinmollenhour/credis",
+        "support": {
+            "issues": "https://github.com/colinmollenhour/credis/issues",
+            "source": "https://github.com/colinmollenhour/credis/tree/v1.13.0"
+        }
+    },
+    {
+        "name": "mustache/mustache",
+        "version": "v2.14.1",
+        "version_normalized": "2.14.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/bobthecow/mustache.php.git",
+            "reference": "579ffa5c96e1d292c060b3dd62811ff01ad8c24e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/bobthecow/mustache.php/zipball/579ffa5c96e1d292c060b3dd62811ff01ad8c24e",
+            "reference": "579ffa5c96e1d292c060b3dd62811ff01ad8c24e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.4"
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "~1.11",
+            "phpunit/phpunit": "~3.7|~4.0|~5.0"
+        },
+        "time": "2022-01-21T06:08:36+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Mustache": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Justin Hileman",
+                "email": "justin@justinhileman.info",
+                "homepage": "http://justinhileman.com"
+            }
+        ],
+        "description": "A Mustache implementation in PHP.",
+        "homepage": "https://github.com/bobthecow/mustache.php",
+        "keywords": [
+            "mustache",
+            "templating"
+        ]
+    },
+    {
+        "name": "smarty/smarty",
+        "version": "v3.1.44",
+        "version_normalized": "3.1.44.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/smarty-php/smarty.git",
+            "reference": "99085d8dc65eeb5e55ae3cba74d3dc6b3bb0205e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/99085d8dc65eeb5e55ae3cba74d3dc6b3bb0205e",
+            "reference": "99085d8dc65eeb5e55ae3cba74d3dc6b3bb0205e",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^7.5 || ^6.5 || ^5.7 || ^4.8",
+            "smarty/smarty-lexer": "^3.1"
+        },
+        "time": "2022-01-17T23:12:04+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "libs/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-3.0"
+        ],
+        "authors": [
+            {
+                "name": "Monte Ohrt",
+                "email": "monte@ohrt.com"
+            },
+            {
+                "name": "Uwe Tews",
+                "email": "uwe.tews@googlemail.com"
+            },
+            {
+                "name": "Rodney Rehm",
+                "email": "rodney.rehm@medialize.de"
+            }
+        ],
+        "description": "Smarty - the compiling PHP template engine",
+        "homepage": "http://www.smarty.net",
+        "keywords": [
+            "templating"
+        ]
+    },
+    {
+        "name": "symfony/polyfill-ctype",
+        "version": "v1.25.0",
+        "version_normalized": "1.25.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/polyfill-ctype.git",
+            "reference": "30885182c981ab175d4d034db0f6f469898070ab"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/30885182c981ab175d4d034db0f6f469898070ab",
+            "reference": "30885182c981ab175d4d034db0f6f469898070ab",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.1"
+        },
+        "provide": {
+            "ext-ctype": "*"
+        },
+        "suggest": {
+            "ext-ctype": "For best performance"
+        },
+        "time": "2021-10-20T20:35:02+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-main": "1.23-dev"
+            },
+            "thanks": {
+                "name": "symfony/polyfill",
+                "url": "https://github.com/symfony/polyfill"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "bootstrap.php"
+            ],
+            "psr-4": {
+                "Symfony\\Polyfill\\Ctype\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Gert de Pagter",
+                "email": "BackEndTea@gmail.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony polyfill for ctype functions",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "compatibility",
+            "ctype",
+            "polyfill",
+            "portable"
+        ],
+        "support": {
+            "source": "https://github.com/symfony/polyfill-ctype/tree/v1.25.0"
+        },
+        "funding": [
+            {
+                "url": "https://symfony.com/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                "type": "tidelift"
+            }
+        ]
+    },
+    {
+        "name": "symfony/polyfill-mbstring",
+        "version": "v1.25.0",
+        "version_normalized": "1.25.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/polyfill-mbstring.git",
+            "reference": "0abb51d2f102e00a4eefcf46ba7fec406d245825"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/0abb51d2f102e00a4eefcf46ba7fec406d245825",
+            "reference": "0abb51d2f102e00a4eefcf46ba7fec406d245825",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.1"
+        },
+        "provide": {
+            "ext-mbstring": "*"
+        },
+        "suggest": {
+            "ext-mbstring": "For best performance"
+        },
+        "time": "2021-11-30T18:21:41+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-main": "1.23-dev"
+            },
+            "thanks": {
+                "name": "symfony/polyfill",
+                "url": "https://github.com/symfony/polyfill"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "bootstrap.php"
+            ],
+            "psr-4": {
+                "Symfony\\Polyfill\\Mbstring\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony polyfill for the Mbstring extension",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "compatibility",
+            "mbstring",
+            "polyfill",
+            "portable",
+            "shim"
+        ],
+        "support": {
+            "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.25.0"
+        },
+        "funding": [
+            {
+                "url": "https://symfony.com/sponsor",
+                "type": "custom"
+            },
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                "type": "tidelift"
+            }
+        ]
+    },
+    {
+        "name": "twig/twig",
+        "version": "v3.3.10",
+        "version_normalized": "3.3.10.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/twigphp/Twig.git",
+            "reference": "8442df056c51b706793adf80a9fd363406dd3674"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/twigphp/Twig/zipball/8442df056c51b706793adf80a9fd363406dd3674",
+            "reference": "8442df056c51b706793adf80a9fd363406dd3674",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.2.5",
+            "symfony/polyfill-ctype": "^1.8",
+            "symfony/polyfill-mbstring": "^1.3"
+        },
+        "require-dev": {
+            "psr/container": "^1.0",
+            "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0"
+        },
+        "time": "2022-04-06T06:47:41+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.3-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Twig\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com",
+                "homepage": "http://fabien.potencier.org",
+                "role": "Lead Developer"
+            },
+            {
+                "name": "Twig Team",
+                "role": "Contributors"
+            },
+            {
+                "name": "Armin Ronacher",
+                "email": "armin.ronacher@active-4.com",
+                "role": "Project Founder"
+            }
+        ],
+        "description": "Twig, the flexible, fast, and secure template language for PHP",
+        "homepage": "https://twig.symfony.com",
+        "keywords": [
+            "templating"
+        ],
+        "support": {
+            "issues": "https://github.com/twigphp/Twig/issues",
+            "source": "https://github.com/twigphp/Twig/tree/v3.3.10"
+        },
+        "funding": [
+            {
+                "url": "https://github.com/fabpot",
+                "type": "github"
+            },
+            {
+                "url": "https://tidelift.com/funding/github/packagist/twig/twig",
+                "type": "tidelift"
+            }
+        ]
+    }
+]

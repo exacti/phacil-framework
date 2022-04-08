@@ -53,7 +53,7 @@ final class Response {
 	 * @param int $status 
 	 * @return never 
 	 */
-	public function redirect($url, int $status = 302) 
+	public function redirect($url, $status = 302) 
 	{
 		header('Status: ' . $status);
 		header('Location: ' . $url);

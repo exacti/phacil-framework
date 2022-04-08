@@ -108,7 +108,7 @@ final class Log {
 	 * @return false|string 
 	 * @since 2.0.0
 	 */
-	public function tail($filepath = null, int $lines = 10, bool $adaptive = true)
+	public function tail($filepath = null, $lines = 10, $adaptive = true)
 	{
 
 		// Open file
@@ -173,7 +173,7 @@ final class Log {
 	 * @return false|string 
 	 * @since 2.0.0
 	 */
-	public function head($filepath = null, int $lines = 10, bool $adaptive = true)
+	public function head($filepath = null, $lines = 10, $adaptive = true)
 	{
 
 		// Open file

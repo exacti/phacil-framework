@@ -22,7 +22,8 @@ spl_autoload_register(function ($class) {
 		'Request',
 		'Mail',
 		'Translate'.
-		'Encryption'
+		'Encryption',
+		'Render'
 	];
 
 	if(in_array($class, $legacy)){
@@ -76,7 +77,8 @@ spl_autoload_register(function ($class) {
 		'interfaces\\action',
 		'traits\\action',
 		'interfaces\\databases',
-		'exception'
+		'exception',
+		'render'
 	];
 
 	if($namespace[0] == "Phacil" && in_array($classNative, $allowed)){
@@ -190,6 +192,22 @@ require_once(DIR_SYSTEM . 'engine/action.php');
 $composer = defined('DIR_VENDOR') ? DIR_VENDOR : DIR_SYSTEM . 'vendor/autoload.php';
 
 if (file_exists($composer)) {
+	/**
+	 * fix for Polyfill Mbstring in older PHP versions
+	 */
+	if (!function_exists('mb_convert_variables')) {
+		function mb_convert_variables($toEncoding, $fromEncoding, &$a = null, &$b = null, &$c = null, &$d = null, &$e = null, &$f = null)
+		{
+			return Symfony\Polyfill\Mbstring\Mbstring::mb_convert_variables($toEncoding, $fromEncoding, $v0, $a, $b, $c, $d, $e, $f);
+		}
+	}
+	if (extension_loaded('mbstring')) {
+		$GLOBALS['__composer_autoload_files']['0e6d7bf4a5811bfa5cf40c5ccd6fae6a'] = 'noLoad';
+	}
+	/**
+	 * End fix
+	 */
+
 	$autoloadComposer = (include_once $composer);
 	//return;
 }
