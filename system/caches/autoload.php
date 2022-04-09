@@ -6,7 +6,7 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-if(defined('USE_PHPFASTCACHE') && USE_PHPFASTCACHE == true && version_compare(phpversion(), '7.0.0', '>'))
-    require_once DIR_SYSTEM."caches/phpfastcache.php";
+if(\Phacil\Framework\Config::USE_PHPFASTCACHE() && version_compare(phpversion(), '7.0.0', '>'))
+    require_once \Phacil\Framework\Config::DIR_SYSTEM()."caches/phpfastcache.php";
 else
-    require_once DIR_SYSTEM."caches/caches.php";
+    require_once \Phacil\Framework\Config::DIR_SYSTEM()."caches/caches.php";

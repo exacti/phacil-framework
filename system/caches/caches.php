@@ -23,12 +23,12 @@ final class Caches {
 
     /** @return void  */
     public function __construct() {
-        $this->dirCache = DIR_CACHE."caches/";
+        $this->dirCache = \Phacil\Framework\Config::DIR_CACHE()."caches/";
 
         if (!file_exists($this->dirCache)) {
             mkdir($this->dirCache, 0760, true);
         }
-        $this->expire = (defined('CACHE_EXPIRE')) ? CACHE_EXPIRE : 3600;
+        $this->expire = (defined('CACHE_EXPIRE')) ? \Phacil\Framework\Config::CACHE_EXPIRE() : 3600;
 
     }
 
@@ -200,7 +200,7 @@ final class Caches {
         $bytestotal = 0;
         $path = realpath($path);
         if($path!==false){
-            foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object){
+            foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)) as $object){
                 $bytestotal += $object->getSize();
             }
         }

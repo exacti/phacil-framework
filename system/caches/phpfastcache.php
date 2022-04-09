@@ -2,7 +2,7 @@
 
 namespace Phacil\Framework;
 
-require_once __DIR__."/Phpfastcache/autoload.php";
+//require_once __DIR__."/Phpfastcache/autoload.php";
 
 use Phpfastcache\CacheManager;
 use Phpfastcache\Config\ConfigurationOption;
@@ -14,6 +14,7 @@ use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
 use Phpfastcache\Exceptions\PhpfastcacheDriverException;
 use Phpfastcache\Exceptions\PhpfastcacheInstanceNotFoundException;
 use stdClass;
+use Phacil\Framework\Config;
 
 /** @package Phacil\Framework */
 final class Caches
@@ -50,14 +51,14 @@ final class Caches
         if (!file_exists($this->dirCache)) {
             mkdir($this->dirCache, 0755, true);
         }
-        $this->expire = (defined('CACHE_EXPIRE')) ? CACHE_EXPIRE : 3600;
+        $this->expire = Config::CACHE_EXPIRE() ?: 3600;
 
-        (defined('CACHE_SETTINGS') && is_array(CACHE_SETTINGS)) ? CacheManager::setDefaultConfig(new ConfigurationOption(CACHE_SETTINGS)) : CacheManager::setDefaultConfig(new ConfigurationOption(array('path' => $this->dirCache)));
+        (Config::CACHE_SETTINGS() && is_array(Config::CACHE_SETTINGS())) ? CacheManager::setDefaultConfig(new ConfigurationOption(Config::CACHE_SETTINGS())) : CacheManager::setDefaultConfig(new ConfigurationOption(array('path' => $this->dirCache)));
 
         $instancias = ((CacheManager::getInstances()));
 
         if(count($instancias) < 1)
-            $this->phpfastcache = (defined('CACHE_DRIVER')) ? CacheManager::getInstance(CACHE_DRIVER) : CacheManager::getInstance('files');
+            $this->phpfastcache = (Config::CACHE_DRIVER()) ? CacheManager::getInstance(Config::CACHE_DRIVER()) : CacheManager::getInstance('files');
         else
             $this->phpfastcache = CacheManager::getInstanceById(array_keys($instancias)[0]);
 
