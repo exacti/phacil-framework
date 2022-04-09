@@ -242,6 +242,8 @@ abstract class Controller {
             $this->data[basename($child)] = $this->getChild($child);
         }
 
+        $tpl = new \Phacil\Framework\Render($this->registry);
+
         $pegRout = explode("/", ($this->registry->routeOrig)?: $this->request->get['route']);
         $pegRoutWithoutLast = $pegRout;
         array_pop($pegRoutWithoutLast);
@@ -252,8 +254,9 @@ abstract class Controller {
 
             $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
 
-            $structure = [];
-            foreach($this->templateTypes as $extensionTemplate) {
+            
+            foreach($tpl->getTemplateTypes() as $extensionTemplate) {
+                $structure = [];
 
                 $structure[] =  $thema.'/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
                 $structure[] = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
@@ -293,7 +296,7 @@ abstract class Controller {
             $templateFileInfo = pathinfo($templatePath .$this->template);
             $templateType = $templateFileInfo['extension'];
 
-            $tpl = new \Phacil\Framework\Render($templateType, $templatePath, $this->template, $this->data, $this->twig);
+            $tpl->setTemplate($templateType, $templatePath, $this->template, $this->data, $this->twig);
 
             $this->registry->response->addHeader('Content-Type', $this->contentType);
 

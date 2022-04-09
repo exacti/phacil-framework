@@ -22,8 +22,7 @@ spl_autoload_register(function ($class) {
 		'Request',
 		'Mail',
 		'Translate'.
-		'Encryption',
-		'Render'
+		'Encryption'
 	];
 
 	if(in_array($class, $legacy)){
@@ -78,7 +77,8 @@ spl_autoload_register(function ($class) {
 		'traits\\action',
 		'interfaces\\databases',
 		'exception',
-		'render'
+		'render',
+		'debug'
 	];
 
 	if($namespace[0] == "Phacil" && in_array($classNative, $allowed)){

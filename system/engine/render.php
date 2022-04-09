@@ -9,23 +9,66 @@
  namespace Phacil\Framework;
 
  use Phacil\Framework\Translate;
+ use Phacil\Framework\Registry;
 
  /**
   * 
   * @package Phacil\Framework
   */
  class Render {
+	 /**
+	  * 
+	  * @var mixed
+	  */
 	 private $data;
 
+	 /**
+	  * 
+	  * @var string
+	  */
 	 private $template;
 
+	 /**
+	  * 
+	  * @var string
+	  */
 	 private $templatePath;
 
+	 /**
+	  * 
+	  * @var string
+	  */
 	 private $templateType;
 
+	 /**
+	  * 
+	  * @var mixed
+	  */
 	 private $output;
 
+	 /**
+	  * 
+	  * @var mixed
+	  */
 	 private $extras;
+
+	 /**
+	  * 
+	  * @var array
+	  */
+	 protected $templateTypes = ["tpl", "twig", "mustache", "smarty", "phtml"];
+
+	/**
+	 * 
+	 * @var Registry
+	 */
+	 private $registry;
+
+	 /**
+	  * 
+	  * @var \Phacil\Framework\Config
+	  */
+	 private $config;
 	 
 	 /**
 	  * 
@@ -36,7 +79,31 @@
 	  * @param mixed $extras 
 	  * @return void 
 	  */
-	function __construct($templateType, $templatePath, $template, $data, $extras) {
+	function __construct(Registry $registry = null) {
+		if (!$registry) {
+
+			/**
+			 * @global \Phacil\Framework\startEngineExacTI $engine
+			 */
+			global $engine;
+
+			$registry = &$engine->registry;
+		}
+		$this->registry = &$registry;
+
+		$this->config =& $this->registry->config;
+	}
+
+	/**
+	 * 
+	 * @param mixed $templateType 
+	 * @param mixed $templatePath 
+	 * @param mixed $template 
+	 * @param mixed $data 
+	 * @param mixed $extras 
+	 * @return $this 
+	 */
+	public function setTemplate($templateType, $templatePath, $template, $data, $extras) {
 		$this->data = $data;
 
 		$this->template = $template;
@@ -46,6 +113,8 @@
 		$this->templateType = $templateType;
 
 		$this->extras = $extras;
+
+		return $this;
 	}
 
 	/**
@@ -59,6 +128,36 @@
 			$this->$templateFunc();
 
 		return $this->output;
+	}
+
+	/**
+	 * 
+	 * @return array 
+	 */
+	public function getTemplateTypes(){
+		return $this->templateTypes;
+	}
+
+	/**
+	 * 
+	 * @param array $templateTypes 
+	 * @return array 
+	 */
+	public function setTemplateTypes(array $templateTypes){
+		$this->templateTypes = $templateTypes;
+
+		return $this->templateTypes;
+	}
+
+	/**
+	 * 
+	 * @param string $type 
+	 * @return array 
+	 */
+	public function addTemplateType(string $type){
+		$this->templateTypes[] = $type;
+
+		return $this->templateTypes;
 	}
 
 	/**
@@ -190,7 +289,14 @@
 		
 		$smarty->setCacheDir(DIR_CACHE . "Smarty/cache/");
 
-		$smarty->registerPlugin("block", "translate", "translate");
+		$smarty->registerPlugin("block", "translate", function ($text) {
+			if (class_exists('Phacil\Framework\Translate')) {
+				$trans = new Translate();
+				return ($trans->translation($text));
+			} else {
+				return $text;
+			} // do something translate here...
+		});
 
 		$smarty->assign($this->data);
 

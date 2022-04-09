@@ -41,12 +41,43 @@ final class Config {
     	return isset($this->data[$key]);
   	}
 
+	/**
+	 * 
+	 * @param string $key 
+	 * @param mixed $value 
+	 * @return mixed 
+	 */
+	static public function __callStatic ($key, $value){
+		try {
+			return (defined($key)) ? constant($key) : self::setConstant($key, $value);
+		} catch (\Phacil\Framework\Exception $th) {
+			throw new \Phacil\Framework\Exception($th->getMessage());
+		}
+	}
+
+	/**
+	 * 
+	 * @param string $key 
+	 * @param mixed $value 
+	 * @return mixed 
+	 */
+	static private function setConstant($key, $value){
+		if(is_array($value) && count($value) == 1){
+			$value = end($value);
+		}
+		$php = version_compare(phpversion(), '7.0', '>=');
+		if(is_array($value) && !$php){
+			throw new \Phacil\Framework\Exception('Array is not supported on constant value in PHP <7');
+		}
+		return (define($key, $value)) ? $value : null;
+	}
+
   	/**
   	 * @param string $filename 
   	 * @return void 
   	 */
   	public function load($filename) {
-		$file = DIR_CONFIG . $filename . '.php';
+		$file = self::DIR_CONFIG() . $filename . '.php';
 		
     	if (file_exists($file)) { 
 	  		$cfg = array();
