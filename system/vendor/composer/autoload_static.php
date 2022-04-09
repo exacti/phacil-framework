@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit7e317f01bc8a34d224e1b16b9d2ff721
+class ComposerStaticInit7bc5673f1c1ff265570d44e4bc291db0
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -67,6 +67,7 @@ class ComposerStaticInit7e317f01bc8a34d224e1b16b9d2ff721
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'CredisException' => __DIR__ . '/..' . '/colinmollenhour/credis/Client.php',
         'Credis_Client' => __DIR__ . '/..' . '/colinmollenhour/credis/Client.php',
         'Credis_Cluster' => __DIR__ . '/..' . '/colinmollenhour/credis/Cluster.php',
@@ -250,10 +251,10 @@ class ComposerStaticInit7e317f01bc8a34d224e1b16b9d2ff721
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit7e317f01bc8a34d224e1b16b9d2ff721::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit7e317f01bc8a34d224e1b16b9d2ff721::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit7e317f01bc8a34d224e1b16b9d2ff721::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit7e317f01bc8a34d224e1b16b9d2ff721::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7bc5673f1c1ff265570d44e4bc291db0::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7bc5673f1c1ff265570d44e4bc291db0::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit7bc5673f1c1ff265570d44e4bc291db0::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit7bc5673f1c1ff265570d44e4bc291db0::$classMap;
 
         }, null, ClassLoader::class);
     }

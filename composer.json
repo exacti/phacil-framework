@@ -1,6 +1,7 @@
 {
   "config": {
-    "vendor-dir": "./system/vendor/"
+    "vendor-dir": "./system/vendor/",
+    "platform-check": false
   },
   "require": {
     "php": ">=5.4.20",
