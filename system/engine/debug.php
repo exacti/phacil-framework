@@ -35,8 +35,8 @@ class Debug
 	public static function getRootPath()
 	{
 		if (self::$_filePath === null) {
-			if (defined('DIR_APPLICATION')) {
-				self::$_filePath = DIR_APPLICATION;
+			if (\Phacil\Framework\Config::DIR_APPLICATION()) {
+				self::$_filePath = \Phacil\Framework\Config::DIR_APPLICATION();
 			} else {
 				self::$_filePath = dirname(__DIR__);
 			}

@@ -28,7 +28,7 @@ final class Caches {
         if (!file_exists($this->dirCache)) {
             mkdir($this->dirCache, 0760, true);
         }
-        $this->expire = (defined('CACHE_EXPIRE')) ? \Phacil\Framework\Config::CACHE_EXPIRE() : 3600;
+        $this->expire = \Phacil\Framework\Config::CACHE_EXPIRE() ?: 3600;
 
     }
 
@@ -39,14 +39,7 @@ final class Caches {
     public function verify($key) {
         $files = $this->valid($key);
 
-        if ($files) {
-
-            return true;
-
-        } else {
-
-            return false;
-        }
+        return ($files) ? true : false;
     }
 
     /**
