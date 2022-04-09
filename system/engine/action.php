@@ -10,6 +10,7 @@ namespace Phacil\Framework;
 
 use \Phacil\Framework\Interfaces\Action as ActionInterface;
 use \Phacil\Framework\Traits\Action as ActionTrait;
+use \Phacil\Framework\Config;
 
 /** 
  * Action class to route all user controllers
@@ -37,19 +38,19 @@ final class Action implements ActionInterface {
 			$pathNew = $path;
 			$path .= $part;
 			
-			if (is_dir(DIR_APP_MODULAR . $path)) {
+			if (is_dir(Config::DIR_APP_MODULAR() . $path)) {
 				$path = $path.'/';
 				
 				array_shift($parts);
 				
 				continue;
-			}elseif (is_dir(DIR_APP_MODULAR . ucfirst($path))) {
+			}elseif (is_dir(Config::DIR_APP_MODULAR() . ucfirst($path))) {
 				$path = ucfirst($path).'/';
 				
 				array_shift($parts);
 				
 				continue;
-			}elseif (is_dir(DIR_APPLICATION . 'controller/' . $path)) {
+			}elseif (is_dir(Config::DIR_APPLICATION() . 'controller/' . $path)) {
 				$path .= '/';
 				
 				array_shift($parts);
@@ -63,8 +64,8 @@ final class Action implements ActionInterface {
 			$pregReplaceOnPath = preg_replace('/[^a-zA-Z0-9]/', '', $path);
 			$pregReplaceOnPart = preg_replace('/[^a-zA-Z0-9]/', '', $part);
 			
-			if (is_file(DIR_APP_MODULAR  . $strReplaceOnPathNew  . 'Controller/' . $strReplaceOnPart . '.php')) {
-				$this->file = DIR_APP_MODULAR . $strReplaceOnPathNew  . 'Controller/' . $strReplaceOnPart . '.php';
+			if (is_file(Config::DIR_APP_MODULAR()  . $strReplaceOnPathNew  . 'Controller/' . $strReplaceOnPart . '.php')) {
+				$this->file = Config::DIR_APP_MODULAR() . $strReplaceOnPathNew  . 'Controller/' . $strReplaceOnPart . '.php';
 				
 				$this->class = 'Controller' . $pregReplaceOnPath;
 
@@ -78,8 +79,8 @@ final class Action implements ActionInterface {
 				array_shift($parts);
 				
 				break;
-			} elseif (is_file(DIR_APP_MODULAR  . $strReplaceOnPathNew  . 'Controller/' . ucfirst($strReplaceOnPart) . '.php')) {
-				$this->file = DIR_APP_MODULAR . $strReplaceOnPathNew  . 'Controller/' . ucfirst($strReplaceOnPart) . '.php';
+			} elseif (is_file(Config::DIR_APP_MODULAR()  . $strReplaceOnPathNew  . 'Controller/' . ucfirst($strReplaceOnPart) . '.php')) {
+				$this->file = Config::DIR_APP_MODULAR() . $strReplaceOnPathNew  . 'Controller/' . ucfirst($strReplaceOnPart) . '.php';
 				
 				$this->class = 'Controller' . $pregReplaceOnPath;
 
@@ -93,8 +94,8 @@ final class Action implements ActionInterface {
 				array_shift($parts);
 				
 				break;
-			} elseif (is_file(DIR_APPLICATION . 'controller/' . $strReplaceOnPath . '.php')) {
-				$this->file = DIR_APPLICATION . 'controller/' . $strReplaceOnPath . '.php';
+			} elseif (is_file(Config::DIR_APPLICATION() . 'controller/' . $strReplaceOnPath . '.php')) {
+				$this->file = Config::DIR_APPLICATION() . 'controller/' . $strReplaceOnPath . '.php';
 				
 				$this->class = 'Controller' . $pregReplaceOnPath;
 
@@ -150,7 +151,7 @@ final class ActionSystem implements ActionInterface {
 		foreach ($parts as $part) { 
 			$path .= $part;
 			
-			if (is_dir(DIR_SYSTEM . '' . $path)) {
+			if (is_dir(Config::DIR_SYSTEM() . '' . $path)) {
 				$path .= '/';
 				
 				array_shift($parts);
@@ -158,8 +159,8 @@ final class ActionSystem implements ActionInterface {
 				continue;
 			}
 			
-			if (is_file(DIR_SYSTEM . '' . str_replace('../', '', $path) . '.php')) {
-				$this->file = DIR_SYSTEM . '' . str_replace('../', '', $path) . '.php';
+			if (is_file(Config::DIR_SYSTEM() . '' . str_replace('../', '', $path) . '.php')) {
+				$this->file = Config::DIR_SYSTEM() . '' . str_replace('../', '', $path) . '.php';
 				
 				$this->class = 'System' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
 

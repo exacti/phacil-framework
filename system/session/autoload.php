@@ -9,6 +9,7 @@
 namespace Phacil\Framework;
 
 use Phacil\Framework\Credis;
+use Phacil\Framework\Config;
 
 /** 
  * The session manipulation class
@@ -72,7 +73,7 @@ final class Session
      */
     public function __construct($redis = false, $redisDSN = null, $redisPort = null, $redisPass = null, $redis_expire = null, $redis_prefix = 'phacil_')
     {
-        $this->name = ((defined('SESSION_PREFIX')) ? SESSION_PREFIX : 'SESS') . (isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
+        $this->name = (Config::SESSION_PREFIX() ?: 'SESS') . (isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
         if (!session_id()) {
             $this->openSession();

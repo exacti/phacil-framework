@@ -8,6 +8,8 @@
 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Config;
+
 class Url {
 
 	/**
@@ -48,11 +50,7 @@ class Url {
 	public function __construct($url, $ssl) {
 		$this->url = $url;
 		$this->ssl = $ssl;
-        if(defined('CDN')) {
-            $this->cdn = CDN;
-        } else {
-            $this->cdn = false;
-        }
+		$this->cdn = Config::CDN() ?: false;
 		
 		if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
 			$this->baseurl = $ssl;

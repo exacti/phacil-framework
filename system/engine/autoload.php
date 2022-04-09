@@ -187,9 +187,9 @@ spl_autoload_register(function ($class) {
 		
 });
 
-require_once(DIR_SYSTEM . 'engine/action.php');
+require_once(\Phacil\Framework\Config::DIR_SYSTEM() . 'engine/action.php');
 
-$composer = defined('DIR_VENDOR') ? DIR_VENDOR : DIR_SYSTEM . 'vendor/autoload.php';
+$composer = \Phacil\Framework\Config::DIR_VENDOR() ?: \Phacil\Framework\Config::DIR_VENDOR(\Phacil\Framework\Config::DIR_SYSTEM() . 'vendor/autoload.php');
 
 if (file_exists($composer)) {
 	/**

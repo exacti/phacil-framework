@@ -10,6 +10,7 @@
 use Phacil\Framework\Action;
 use Phacil\Framework\Controller as ControllerController;
 use Phacil\Framework\Registry;
+use Phacil\Framework\Config;
 
 class SystemUrlSeoUrl extends ControllerController {
 
@@ -37,9 +38,8 @@ class SystemUrlSeoUrl extends ControllerController {
     {
         parent::__construct($registry);
 
-        if(defined("NOT_FOUND")) {
-            $this->notfound = NOT_FOUND;
-        }
+        $this->notfound = Config::NOT_FOUND() ?: $this->notfound;
+        
     }
 
     /** @return Action|void  */
@@ -57,7 +57,7 @@ class SystemUrlSeoUrl extends ControllerController {
             $parts = array($this->request->get['_route_']);
 
             foreach ($parts as $part) {
-                if(defined('USE_DB_CONFIG') && USE_DB_CONFIG == true)
+                if(Config::USE_DB_CONFIG())
                     $query = $this->db->query("SELECT * FROM url_alias WHERE keyword = '" . $this->db->escape($part) . "'");
 
                 if (isset($query) && $query != false && $query->num_rows === 1) {
@@ -75,8 +75,8 @@ class SystemUrlSeoUrl extends ControllerController {
 
                     $this->request->get['route'] = $query->row['query'];
 
-                } elseif (defined('ROUTES') && is_array(ROUTES)) {
-                    $rotas = ROUTES;
+                } elseif (Config::ROUTES() && is_array(Config::ROUTES())) {
+                    $rotas = Config::ROUTES();
 
                     if(isset($rotas[$part])){
                         $this->request->get['route'] = $rotas[$part];
@@ -147,13 +147,13 @@ class SystemUrlSeoUrl extends ControllerController {
             foreach ($data as $key => $value) {
 
                 if (isset($data['route'])) {
-                    if(defined('USE_DB_CONFIG') && USE_DB_CONFIG == true)
+                    if(Config::USE_DB_CONFIG())
                         $query = $this->db->query("SELECT * FROM url_alias WHERE `query` = '" . $this->db->escape($value) . "'");
                     if (isset($query) && $query->num_rows && $query->num_rows != NULL) {
                         $url .= '/' . $query->row['keyword'];
-                    } elseif (defined('ROUTES') && is_array(ROUTES)) {
+                    } elseif (Config::ROUTES() && is_array(Config::ROUTES())) {
                         //$arV = array_search($value, ROUTES);
-                        foreach(ROUTES as $query => $page) {
+                        foreach(Config::ROUTES() as $query => $page) {
                             if($page == $value){
                                 if(isRegularExpression($query)){
                                     unset($data['route']);

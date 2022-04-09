@@ -8,7 +8,18 @@
 
 namespace Phacil\Framework;
 
-/** @package Phacil\Framework */
+/** 
+ * Captcha module.
+ * 
+ * Declare new Captcha($width, $height, $numChar, $background) on a variable, use $variable->getCode() to obtain a plain text captcha code (prefer pass thos code to a SESSION) and return $variable->showImage(\'format\').
+ * 
+ * Formats: bmp, jpg, png, wbmp and gif.
+ * 
+ * @example $captcha = new Captcha($width, $height, $numChar, $background);
+ * 
+ * @since 1.0.2
+ * @package Phacil\Framework 
+ */
 class Captcha {
 	protected $code;
 	public $height = 40;
@@ -52,19 +63,6 @@ class Captcha {
 		$this->height = ($height != NULL) ? $height : $this->height;
 
 	}
-
-	/** @return void  */
-	public function __help() {
-	    $helpTxt =
-            array(
-                "version" => "1.0",
-                "Description" => "Captcha module.",
-                "Use" => 'Declare new Captcha($width, $height, $numChar, $background) on a variable, use $variable->getCode() to obtain a plain text captcha code (prefer pass thos code to a SESSION) and return $variable->showImage(\'format\').',
-                "Formats" => "bmp, jpg, png, wbmp and gif."
-            );
-
-	    var_dump($helpTxt, true);
-    }
 
 	/** @return string  */
 	function getCode(){

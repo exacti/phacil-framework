@@ -26,8 +26,8 @@ class Exception extends \Exception
 	 */
 	public function __destruct()
 	{
-		$debugging = (defined('DEBUG')) ? DEBUG : false;
-		$this->errorFormat = defined('DEBUG_FORMAT') ? constant('DEBUG_FORMAT') : $this->errorFormat;
+		$debugging = (\Phacil\Framework\Config::DEBUG()) ?: false;
+		$this->errorFormat = \Phacil\Framework\Config::DEBUG_FORMAT() ?: $this->errorFormat;
 
 		$log = new \Phacil\Framework\Log("exception.log");
 

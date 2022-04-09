@@ -9,6 +9,7 @@
 namespace Phacil\Framework;
 
 use Phacil\Framework\Interfaces\Databases as DatabaseInterface;
+use Phacil\Framework\Config;
 
 /** 
  * Principal class to load databases drivers
@@ -92,7 +93,7 @@ final class Database {
   	 */
   	public function query($sql, $cacheUse = true) {
 		
-		if(defined('SQL_CACHE') && SQL_CACHE == true && $cacheUse == true) {
+		if(Config::SQL_CACHE() && $cacheUse == true) {
 			
 			return $this->Cache($sql);
 			

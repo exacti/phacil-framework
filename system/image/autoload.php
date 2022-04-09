@@ -61,7 +61,7 @@ final class Image {
 
     /**
      * @param string $image 
-     * @return GdImage|false|void 
+     * @return \GdImage|false|void 
      */
     private function create($image) {
         $info = getimagesize($image);

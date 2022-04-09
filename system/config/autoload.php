@@ -49,7 +49,7 @@ final class Config {
 	 */
 	static public function __callStatic ($key, $value){
 		try {
-			return (defined($key)) ? constant($key) : self::setConstant($key, $value);
+			return (defined($key)) ? constant($key) : ($value ? self::setConstant($key, $value) : null);
 		} catch (\Phacil\Framework\Exception $th) {
 			throw new \Phacil\Framework\Exception($th->getMessage());
 		}

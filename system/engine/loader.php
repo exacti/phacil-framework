@@ -8,6 +8,8 @@
 
  namespace Phacil\Framework;
 
+ use Phacil\Framework\Config;
+
 /** @package Phacil\Framework */
 final class Loader implements \Phacil\Framework\Interfaces\Loader {
 	protected $registry;
@@ -33,7 +35,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 	 * @return bool 
 	 */
 	public function library($library) {
-		$file = DIR_SYSTEM . 'library/' . $library . '.php';
+		$file = Config::DIR_SYSTEM() . 'library/' . $library . '.php';
 		
 		if (file_exists($file)) {
 			return include_once($file);
@@ -55,7 +57,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 
 		$path = str_replace('../', '', implode("/", $parts) );
 
-		$file = DIR_APP_MODULAR.$path."/model/". $lastPart.".php";
+		$file = Config::DIR_APP_MODULAR().$path."/model/". $lastPart.".php";
 
 		if(file_exists($file)){
 			include_once($file);
@@ -64,7 +66,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 			$this->registry->set('model_' . str_replace('/', '_', $model), new $class($this->registry));
 		} else {
 
-			$file  = DIR_APPLICATION . 'model/' . $model . '.php';
+			$file  = Config::DIR_APPLICATION() . 'model/' . $model . '.php';
 			$class = 'Model' . preg_replace('/[^a-zA-Z0-9]/', '', $model);
 			
 			if (file_exists($file)) {
@@ -91,7 +93,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 
 		$path = str_replace('../', '', implode("/", $parts) );
 
-		$file = DIR_APP_MODULAR.$path."/helper/". $lastPart.".php";
+		$file = Config::DIR_APP_MODULAR().$path."/helper/". $lastPart.".php";
 
 		if(file_exists($file)){
 			include_once($file);
@@ -122,7 +124,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 	 * @return void 
 	 */
 	public function controller($control) {
-		$file  = DIR_APPLICATION . 'controller/' . $control . '.php';
+		$file  = Config::DIR_APPLICATION() . 'controller/' . $control . '.php';
 		$class = 'Controller' . preg_replace('/[^a-zA-Z0-9]/', '', $control);
 		
 		if (file_exists($file)) {
@@ -146,7 +148,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 	 * @return string[]|string|null 
 	 */
 	public function database($driver, $hostname, $username, $password, $database, $port = NULL, $charset = NULL) {
-		$file  = DIR_SYSTEM . 'database/database/' . $driver . '.php';
+		$file  = Config::DIR_SYSTEM() . 'database/database/' . $driver . '.php';
 		$class = ($driver);
 
 		$replace = [

@@ -97,7 +97,7 @@ final class Front implements frontinterface {
 						
 						break;
 					}
-				} catch (\Exception $th) {
+				} catch (Exception $th) {
 					//throw $th;
 				}
 			}
@@ -109,15 +109,15 @@ final class Front implements frontinterface {
 					$action = new Action($this->error);
 				
 					$this->error = '';
-					throw new \Exception("The controller can't be loaded", 1);
+					throw new Exception("The controller can't be loaded", 1);
 				}
-			} catch (\Exception $th) {
+			} catch (Exception $th) {
 				//throw $th;
 				$action = new Action($this->error);
 			
 				$this->error = '';
 
-				throw new \Exception("The controller can't be loaded", 1);
+				throw new Exception("The controller can't be loaded", 1);
 				
 			}
 			

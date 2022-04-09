@@ -235,7 +235,7 @@ final class startEngineExacTI {
      */
     public function extraRegistrations() {
 
-        if(file_exists(DIR_SYSTEM."registrations.php"))
+        if(file_exists(\Phacil\Framework\Config::DIR_SYSTEM()."registrations.php"))
             include(DIR_SYSTEM."registrations.php");
     }
 
@@ -345,7 +345,7 @@ $engine->load = new Loader($engine->registry);
 $engine->config = new Config();
 
 if(defined('DB_DRIVER'))
-    $engine->db = new Database(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+    $engine->db = new Database(\Phacil\Framework\Config::DB_DRIVER(), \Phacil\Framework\Config::DB_HOSTNAME(), \Phacil\Framework\Config::DB_USERNAME(), \Phacil\Framework\Config::DB_PASSWORD(), \Phacil\Framework\Config::DB_DATABASE());
 
 // Settings
 if(!empty($configs)){
@@ -354,9 +354,9 @@ if(!empty($configs)){
     }
 }
 
-if(USE_DB_CONFIG === true) {
+if(\Phacil\Framework\Config::USE_DB_CONFIG() === true) {
 
-    $query = (defined('CUSTOM_DB_CONFIG')) ? $engine->db->query(CUSTOM_DB_CONFIG) : $engine->db->query("SELECT * FROM settings ORDER BY setting_id ASC");
+    $query = (\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) ? $engine->db->query(\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) : $engine->db->query("SELECT * FROM settings ORDER BY setting_id ASC");
 
     foreach ($query->rows as $setting) {
         if (!$setting['serialized']) {
@@ -368,8 +368,8 @@ if(USE_DB_CONFIG === true) {
 }
 
 
-$engine->config->set('config_url', HTTP_URL);
-$engine->config->set('config_ssl', HTTPS_URL);
+$engine->config->set('config_url', \Phacil\Framework\Config::HTTP_URL());
+$engine->config->set('config_ssl', \Phacil\Framework\Config::HTTPS_URL());
 
 //timezone
 if($engine->config->get('date_timezone')){
@@ -497,13 +497,13 @@ if($engine->controllerPreActions()){
 if (isset($engine->request->get['route'])) {
     $action = new Action($engine->request->get['route']);
 } else {
-    $default = (defined('DEFAULT_ROUTE')) ? DEFAULT_ROUTE : 'common/home';
+    $default = (\Phacil\Framework\Config::DEFAULT_ROUTE()) ? \Phacil\Framework\Config::DEFAULT_ROUTE() : \Phacil\Framework\Config::DEFAULT_ROUTE('common/home');
     $engine->request->get['route'] = $default;
     $action = new Action($default);
 }
 
 // Dispatch
-$not_found = (defined('NOT_FOUND')) ? NOT_FOUND : 'error/not_found';
+$not_found = (\Phacil\Framework\Config::NOT_FOUND()) ? \Phacil\Framework\Config::NOT_FOUND() : \Phacil\Framework\Config::NOT_FOUND('error/not_found');
 $frontController->dispatch($action, ($not_found));
 
 // Output

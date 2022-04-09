@@ -12,6 +12,7 @@ use TypeError;
 use Mustache_Exception_UnknownTemplateException;
 use RuntimeException;
 use SmartyException;
+use \Phacil\Framework\Config;
 
 /** 
  * Extend this class to create interation with your module controller to Phacil engine controller.
@@ -266,28 +267,27 @@ abstract class Controller {
 
 
                 foreach($structure as $themefile){
-                    if(file_exists(DIR_APP_MODULAR .$themefile)){
+                    if(file_exists(Config::DIR_APP_MODULAR() .$themefile)){
                         $this->template = $themefile;
-                        $templatePath = DIR_APP_MODULAR;
+                        $templatePath = Config::DIR_APP_MODULAR();
                         break;
                     }
-                    if(file_exists(DIR_TEMPLATE .$themefile)){
+                    if(file_exists(Config::DIR_TEMPLATE() .$themefile)){
                         $this->template = $themefile;
-                        $templatePath = DIR_TEMPLATE;
+                        $templatePath = Config::DIR_TEMPLATE();
                         break;
                     }
                 }
                 
             }
         } else {
-            //$teste = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template;
-            if(file_exists(DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/" .$this->template)){
-                $templatePath = DIR_APP_MODULAR.implode("/", $pegRoutWithoutLast)."/View/";
-            } elseif(file_exists(DIR_APP_MODULAR.implode("/", $pegRoutWithoutPenultimate)."/View/" .$this->template)){
-                $templatePath = DIR_APP_MODULAR.implode("/", $pegRoutWithoutPenultimate)."/View/";
+            if(file_exists(Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutLast)."/View/" .$this->template)){
+                $templatePath = Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutLast)."/View/";
+            } elseif(file_exists(Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutPenultimate)."/View/" .$this->template)){
+                $templatePath = Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutPenultimate)."/View/";
             }
-            if(file_exists(DIR_TEMPLATE .$this->template)){
-                $templatePath = DIR_TEMPLATE;
+            if(file_exists(Config::DIR_TEMPLATE() .$this->template)){
+                $templatePath = Config::DIR_TEMPLATE();
             }
         }
 

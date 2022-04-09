@@ -2,6 +2,7 @@
 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Config;
 /**
  * @since 2.0.0
  * @package Phacil\Framework
@@ -23,7 +24,7 @@ final class Language
 
 	public function load($filename)
 	{
-		$file = DIR_LANGUAGE . $this->directory . '/' . $filename . '.php';
+		$file = Config::DIR_LANGUAGE() . $this->directory . '/' . $filename . '.php';
 
 		if (file_exists($file)) {
 			$_ = array();

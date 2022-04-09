@@ -8,6 +8,8 @@
 
 namespace Phacil\Framework\Traits;
 
+use Phacil\Framework\Config;
+
 /**
  * Trait for the Action class
  * 
@@ -72,7 +74,7 @@ trait Action {
 	}
 
 	private function mountClass($namespace, $class) {
-		return (defined('NAMESPACE_PREFIX') ? NAMESPACE_PREFIX."\\" : "").str_replace("/", "\\", (string) $namespace)."Controller\\".(string) $class;
+		return (Config::NAMESPACE_PREFIX() ? Config::NAMESPACE_PREFIX()."\\" : "").str_replace("/", "\\", (string) $namespace)."Controller\\".(string) $class;
 	}
 
 	/**

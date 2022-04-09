@@ -8,6 +8,8 @@
 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Config;
+
 /** @package Phacil\Framework */
 class Document {
 	private $title;
@@ -23,8 +25,8 @@ class Document {
 	 * @return void 
 	 */
 	public function setTitle($title) {
-		if(PATTERSITETITLE != false) {
-			$this->title =  sprintf($title, PATTERSITETITLE);
+		if(Config::PATTERSITETITLE()) {
+			$this->title =  sprintf($title, Config::PATTERSITETITLE());
 		} else {
 			$this->title = $title;
 		}
@@ -84,9 +86,9 @@ class Document {
 	 */
 	private function checkCDN( $var) {
 
-        if(defined('CDN')) {
+        if(Config::CDN()) {
             if($this->checkLocal($var)){
-                $var = CDN.$var;
+                $var = Config::CDN().$var;
             }
         }
 
@@ -178,9 +180,9 @@ class Document {
 	private function cacheMinify($ref, $type) {
 
         $dir = "css-js-cache/";
-	    $dirCache = DIR_PUBLIC. $dir;
+	    $dirCache = Config::DIR_PUBLIC(). $dir;
         $newName = str_replace("/", "_", $ref);
-        $file = DIR_PUBLIC.$ref;
+        $file = Config::DIR_PUBLIC().$ref;
         $cachedFile = $dirCache.$newName;
         $cacheFile = $dir.$newName;
 
@@ -192,19 +194,19 @@ class Document {
             mkdir($dirCache, 0755, true);
         }
 
-        if (file_exists($file) and defined('CACHE_MINIFY') and CACHE_MINIFY == true) {
+        if (file_exists($file) and Config::CACHE_MINIFY()) {
             if($type == "js") {
-                if(file_exists($cachedFile) and defined('CACHE_JS_CSS') and CACHE_JS_CSS == true) {
+                if(file_exists($cachedFile) and Config::CACHE_JS_CSS()) {
                     return $cacheFile;
                 } else {
 
-                    include_once DIR_SYSTEM."ecompress/JSMin.php";
+                    include_once Config::DIR_SYSTEM()."ecompress/JSMin.php";
 
                     $buffer = file_get_contents($file);
 
                     $buffer = preg_replace('/<!--(.*)-->/Uis', '', $buffer);
 
-                    $buffer = JSMin::minify($buffer);
+                    $buffer = \JSMin::minify($buffer);
 
                     file_put_contents($cachedFile, $buffer);
 
@@ -214,11 +216,11 @@ class Document {
 
 
             }elseif($type == "css") {
-                if(file_exists($cachedFile) and defined('CACHE_JS_CSS') and CACHE_JS_CSS == true) {
+                if(file_exists($cachedFile) && Config::CACHE_JS_CSS()) {
                     return $cacheFile;
                 } else {
 
-                    include_once DIR_SYSTEM."ecompress/cssMin.php";
+                    include_once Config::DIR_SYSTEM()."ecompress/cssMin.php";
 
                     $buffer = file_get_contents($file);
 

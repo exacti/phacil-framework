@@ -10,6 +10,7 @@
 
  use Phacil\Framework\Translate;
  use Phacil\Framework\Registry;
+ use Phacil\Framework\Config;
 
  /**
   * 
@@ -188,15 +189,15 @@
 	 * @return void 
 	 */
 	protected function twig () {
-		require_once(DIR_SYSTEM . "templateEngines/Twig/autoload.php");
+		require_once(Config::DIR_SYSTEM() . "templateEngines/Twig/autoload.php");
 
 		/**
 		 * @var array
 		 */
 		$config = array(
 			'autoescape' => false,
-			'cache'		 => DIR_CACHE . "twig/",
-			'debug'      => (defined('DEBUG')) ? DEBUG : false
+			'cache'		 => Config::DIR_CACHE() . "twig/",
+			'debug'      => Config::DEBUG()?: false
 		);
 		$TwigLoaderFilesystem = constant('\TwigLoaderFilesystem');
 		$Twig_Environment = constant('\TwigEnvironment');
@@ -255,7 +256,7 @@
 		 * @var \Mustache_Engine
 		 */
 		$mustache = new \Mustache_Engine(array(
-			'cache' => DIR_CACHE . 'mustache',
+			'cache' => Config::DIR_CACHE() . 'mustache',
 			'cache_file_mode' => 0666,
 			'loader' => new \Mustache_Loader_FilesystemLoader($this->templatePath),
 			'helpers' => array('translate' => function ($text) {
@@ -285,9 +286,9 @@
 		$smarty = new \Smarty();
 
 		$smarty->setTemplateDir($this->templatePath);
-		$smarty->setCompileDir(DIR_CACHE . "Smarty/compile/");
+		$smarty->setCompileDir(Config::DIR_CACHE() . "Smarty/compile/");
 		
-		$smarty->setCacheDir(DIR_CACHE . "Smarty/cache/");
+		$smarty->setCacheDir(Config::DIR_CACHE() . "Smarty/cache/");
 
 		$smarty->registerPlugin("block", "translate", function ($text) {
 			if (class_exists('Phacil\Framework\Translate')) {
@@ -302,7 +303,7 @@
 
 		$smarty->caching = \Smarty::CACHING_LIFETIME_CURRENT;
 		
-		$smarty->debugging = (defined('DEBUG')) ? DEBUG : false;
+		$smarty->debugging = Config::DEBUG() ?: false;
 
 		$this->output = $smarty->display($this->template);
 	}
