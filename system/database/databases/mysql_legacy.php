@@ -63,8 +63,7 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 				return true;
 			}
 		} else {
-			trigger_error('Error: ' . mysql_error($this->connection) . '<br />Error No: ' . mysql_errno($this->connection) . '<br />' . $sql);
-			exit();
+			throw new \Phacil\Framework\Exception('Error: ' . mysql_error($this->connection) . '<br />Error No: ' . mysql_errno($this->connection) . '<br />' . $sql);
     	}
   	}
 	

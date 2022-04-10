@@ -40,8 +40,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 		if (file_exists($file)) {
 			return include_once($file);
 		} else {
-			return trigger_error('Error: Could not load library ' . $library . '!');
-			exit();					
+			throw new \Phacil\Framework\Exception('Error: Could not load library ' . $library . '!');	
 		}
 	}
 	
@@ -74,8 +73,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 				
 				$this->registry->set('model_' . str_replace('/', '_', $model), new $class($this->registry));
 			} else {
-				trigger_error('Error: Could not load model ' . $model . '!');
-				exit();					
+				throw new \Phacil\Framework\Exception('Error: Could not load model ' . $model . '!');
 			}
 		}
 		
@@ -101,8 +99,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 			
 			$this->registry->set('model_' . str_replace('/', '_', $model), new $class($this->registry)); */
 		} else {
-			trigger_error('Error: Could not load Helper ' . $helper . '!');
-			exit();					
+			throw new \Phacil\Framework\Exception('Error: Could not load Helper ' . $helper . '!');	
 		}
 		
 	}
@@ -132,8 +129,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 			
 			$this->registry->set('controller_' . str_replace('/', '_', $control), new $class($this->registry));
 		} else {
-			trigger_error('Error: Could not load model ' . $control . '!');
-			exit();					
+			throw new \Phacil\Framework\Exception('Error: Could not load model ' . $control . '!');				
 		}
 	}
 	 
@@ -166,8 +162,7 @@ final class Loader implements \Phacil\Framework\Interfaces\Loader {
 
 			return $database_name;
 		} else {
-			trigger_error('Error: Could not load database ' . $driver . '!');
-			exit();				
+			throw new \Phacil\Framework\Exception('Error: Could not load database ' . $driver . '!');
 		}
 	}
 	

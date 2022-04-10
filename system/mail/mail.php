@@ -182,28 +182,23 @@ final class Mail {
 	/** @return void  */
 	public function send() {
 		if (!$this->to) {
-			trigger_error('Error: E-Mail to required!');
-			exit();			
+			throw new \Phacil\Framework\Exception('Error: E-Mail to required!');
 		}
 
 		if (!$this->from) {
-			trigger_error('Error: E-Mail from required!');
-			exit();					
+			throw new \Phacil\Framework\Exception('Error: E-Mail from required!');
 		}
 
 		if (!$this->sender) {
-			trigger_error('Error: E-Mail sender required!');
-			exit();					
+			throw new \Phacil\Framework\Exception('Error: E-Mail sender required!');
 		}
 
 		if (!$this->subject) {
-			trigger_error('Error: E-Mail subject required!');
-			exit();					
+			throw new \Phacil\Framework\Exception('Error: E-Mail subject required!');
 		}
 
 		if ((!$this->text) && (!$this->html)) {
-			trigger_error('Error: E-Mail message required!');
-			exit();					
+			throw new \Phacil\Framework\Exception('Error: E-Mail message required!');
 		}
 
 		if (is_array($this->to)) {
@@ -288,8 +283,7 @@ final class Mail {
 			$handle = fsockopen($this->hostname, $this->port, $errno, $errstr, $this->timeout);
 
 			if (!$handle) {
-				trigger_error('Error: ' . $errstr . ' (' . $errno . ')');
-				exit();					
+				throw new \Phacil\Framework\Exception('Error: ' . $errstr . ' (' . $errno . ')');
 			} else {
 				if (substr(PHP_OS, 0, 3) != 'WIN') {
 					socket_set_timeout($handle, $this->timeout, 0);
@@ -313,8 +307,7 @@ final class Mail {
 					}
 
 					if (substr($reply, 0, 3) != 220) {
-						trigger_error('Error: STARTTLS not accepted from server!');
-						exit();								
+						throw new \Phacil\Framework\Exception('Error: STARTTLS not accepted from server!');
 					}
 				}
 
@@ -332,8 +325,7 @@ final class Mail {
 					}
 
 					if (substr($reply, 0, 3) != 250) {
-						trigger_error('Error: EHLO not accepted from server!');
-						exit();								
+						throw new \Phacil\Framework\Exception('Error: EHLO not accepted from server!');
 					}
 
 					fputs($handle, 'AUTH LOGIN' . $this->crlf);
@@ -349,8 +341,7 @@ final class Mail {
 					}
 
 					if (substr($reply, 0, 3) != 334) {
-						trigger_error('Error: AUTH LOGIN not accepted from server!');
-						exit();						
+						throw new \Phacil\Framework\Exception('Error: AUTH LOGIN not accepted from server!');
 					}
 
 					fputs($handle, base64_encode($this->username) . $this->crlf);
@@ -366,8 +357,7 @@ final class Mail {
 					}
 
 					if (substr($reply, 0, 3) != 334) {
-						trigger_error('Error: Username not accepted from server!');
-						exit();								
+						throw new \Phacil\Framework\Exception('Error: Username not accepted from server!');
 					}
 
 					fputs($handle, base64_encode($this->password) . $this->crlf);
@@ -383,8 +373,7 @@ final class Mail {
 					}
 
 					if (substr($reply, 0, 3) != 235) {
-						trigger_error('Error: Password not accepted from server!');
-						exit();								
+						throw new \Phacil\Framework\Exception('Error: Password not accepted from server!');
 					}
 				} else {
 					fputs($handle, 'HELO ' . getenv('SERVER_NAME') . $this->crlf);
@@ -400,8 +389,7 @@ final class Mail {
 					}
 
 					if (substr($reply, 0, 3) != 250) {
-						trigger_error('Error: HELO not accepted from server!');
-						exit();							
+						throw new \Phacil\Framework\Exception('Error: HELO not accepted from server!');
 					}
 				}
 
@@ -422,8 +410,7 @@ final class Mail {
 				}
 
 				if (substr($reply, 0, 3) != 250) {
-					trigger_error('Error: MAIL FROM not accepted from server!');
-					exit();							
+					throw new \Phacil\Framework\Exception('Error: MAIL FROM not accepted from server!');
 				}
 
 				if (!is_array($this->to)) {
@@ -440,8 +427,7 @@ final class Mail {
 					}
 
 					if ((substr($reply, 0, 3) != 250) && (substr($reply, 0, 3) != 251)) {
-						trigger_error('Error: RCPT TO not accepted from server!');
-						exit();							
+						throw new \Phacil\Framework\Exception('Error: RCPT TO not accepted from server!');
 					}
 				} else {
 					foreach ($this->to as $recipient) {
@@ -458,8 +444,7 @@ final class Mail {
 						}
 
 						if ((substr($reply, 0, 3) != 250) && (substr($reply, 0, 3) != 251)) {
-							trigger_error('Error: RCPT TO not accepted from server!');
-							exit();								
+							throw new \Phacil\Framework\Exception('Error: RCPT TO not accepted from server!');
 						}
 					}
 				}
@@ -477,8 +462,7 @@ final class Mail {
 				}
 
 				if (substr($reply, 0, 3) != 354) {
-					trigger_error('Error: DATA not accepted from server!');
-					exit();						
+					throw new \Phacil\Framework\Exception('Error: DATA not accepted from server!');
 				}
             	
 				// According to rfc 821 we should not send more than 1000 including the CRLF
@@ -512,8 +496,7 @@ final class Mail {
 				}
 
 				if (substr($reply, 0, 3) != 250) {
-					trigger_error('Error: DATA not accepted from server!');
-					exit();						
+					throw new \Phacil\Framework\Exception('Error: DATA not accepted from server!');
 				}
 				
 				fputs($handle, 'QUIT' . $this->crlf);
@@ -529,8 +512,7 @@ final class Mail {
 				}
 
 				if (substr($reply, 0, 3) != 221) {
-					trigger_error('Error: QUIT not accepted from server!');
-					exit();						
+					throw new \Phacil\Framework\Exception('Error: QUIT not accepted from server!');
 				}
 
 				fclose($handle);

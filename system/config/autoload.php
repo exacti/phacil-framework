@@ -86,8 +86,7 @@ final class Config {
 	  
 	  		$this->data = array_merge($this->data, $cfg);
 		} else {
-			trigger_error('Error: Could not load config ' . $filename . '!');
-			exit();
+			throw new \Phacil\Framework\Exception('Could not load config ' . $filename. '!');
 		}
   	}
 }

@@ -1,6 +1,6 @@
 <?php
 namespace {
-    if (version_compare(phpversion(), '7.0.0', '>') == false) {
+    if (version_compare(phpversion(), '7.2.5', '>') == false) {
         define('TwigFolderLoad', 'Twig1x');
         define('TwigLoaderFilesystem', 'Twig_Loader_Filesystem');
         define('TwigEnvironment', 'Twig_Environment');
@@ -13,15 +13,11 @@ namespace {
         define('TwigSimpleFilter', '\Twig\TwigFilter');
         define('TwigExtensionDebug', '\Twig\Extension\DebugExtension');
 
-        if (version_compare(phpversion(), '7.2.5', '>') == false) {
-            define('TwigFolderLoad', 'Twig2x');
-        } else {
-            //define('TwigFolderLoad', 'Twig3x');
-        }
+       
     }
 
     if(defined('TwigFolderLoad')){
-        include_once TwigFolderLoad."/autoload.php";
+        include_once TwigFolderLoad."/vendor/autoload.php";
     }
 
 

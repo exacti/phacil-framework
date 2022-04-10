@@ -80,7 +80,7 @@ final class MYSQL_PDO implements Databases
                 $this->dbh->exec($this->options['PDO::MYSQL_ATTR_INIT_COMMAND']);
             }
         } catch (\PDOException $exception) {
-            trigger_error($exception->getMessage());
+            throw new \Phacil\Framework\Exception($exception->getMessage());
         }
     }
     /**

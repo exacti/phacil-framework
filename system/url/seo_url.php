@@ -172,7 +172,7 @@ class SystemUrlSeoUrl extends ControllerController {
                                         break;
                                     }
                                 } else {
-                                    $url .= '/' . (array_search($value, ROUTES));
+                                    $url .= '/' . (array_search($value, Config::ROUTES()));
                                 }
 
                             }

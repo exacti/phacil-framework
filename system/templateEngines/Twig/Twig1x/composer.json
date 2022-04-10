@@ -1,0 +1,8 @@
+{
+    "config": {
+        "platform-check": false
+    },
+    "require": {
+        "twig/twig": "1.41.*"
+    }
+}

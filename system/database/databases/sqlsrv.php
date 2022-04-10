@@ -88,8 +88,7 @@ final class SQLSRV implements Databases {
                 return true;
             }
         } else {
-            trigger_error('Error: <br />' . $sql);
-            exit();
+            throw new \Phacil\Framework\Exception('Error: <br />' . $sql);
         }
     }
 

@@ -437,6 +437,9 @@ set_exception_handler(function($e) use ($engine) {
         echo '<b>' . get_class($e) . '</b>: ' . $e->getMessage() . ' in <b>' . $e->getFile() . '</b> on line <b>' . $e->getLine() . '</b>';
     }
 
+    $exception = new \Phacil\Framework\Exception();
+    $exception->setObject($e);
+
     if ($engine->config->get('config_error_log')) {
         $engine->log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
     }

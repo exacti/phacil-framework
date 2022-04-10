@@ -62,8 +62,7 @@ final class MSSQL implements \Phacil\Framework\Interfaces\Databases
 				return true;
 			}
 		} else {
-			trigger_error('Error: ' . mssql_get_last_message($this->connection) . '<br />' . $sql);
-			exit();
+			throw new \Phacil\Framework\Exception('Error: ' . mssql_get_last_message($this->connection) . '<br />' . $sql);
 		}
 	}
 

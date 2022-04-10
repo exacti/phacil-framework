@@ -38,7 +38,7 @@ final class Oracle implements Databases {
         if (!$this->connection) {
             $e = oci_error();
             $this->error = $e;
-            throw new \Exception(trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR));
+            throw new \Phacil\Framework\Exception((htmlentities($e['message'], ENT_QUOTES)));
         }
         oci_set_client_info($this->connection, "Administrator");
         //oci_set_module_name($this->connection, $module);
@@ -66,7 +66,7 @@ final class Oracle implements Databases {
 
 
 		} else {
-			throw new \Exception('Error: ' . oci_error()   . '<br />' . $sql);
+			throw new \Phacil\Framework\Exception('Error: ' . oci_error()   . '<br />' . $sql);
 		}
 	}
 	

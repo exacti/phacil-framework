@@ -20,6 +20,21 @@ class Exception extends \Exception
 {
 	public $errorFormat = 'text';
 
+	protected $heritageTrace = false;
+
+	/**
+	 * 
+	 * @param \Exception $object 
+	 * @return $this 
+	 */
+	public function setObject(\Exception $object){
+		$this->message = $object->getMessage();
+		$this->line = $object->getLine();
+		$this->heritageTrace = $object->getTrace();
+		$this->file = $object->getFile();
+		return $this;
+	}
+
 	/**
 	 * Save the exceptions in the exceptions log file
 	 * @return void 
@@ -35,7 +50,7 @@ class Exception extends \Exception
 			'error' => $this->getMessage(),
 			'line' => $this->getLine(),
 			'file' => $this->getFile(),
-			'trace' => ($debugging) ? (($this->errorFormat == 'json') ? $this->getTrace() : Debug::trace($this->getTrace())) : null
+			'trace' => ($debugging) ? (($this->errorFormat == 'json') ? ($this->heritageTrace ?: $this->getTrace()) : Debug::trace(($this->heritageTrace ?: $this->getTrace()))) : null
 		];
 		$log->write(($this->errorFormat == 'json') ? json_encode($errorStamp) : implode(PHP_EOL, array_map(
 			['self','convertArray'],
