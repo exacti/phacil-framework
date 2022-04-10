@@ -422,7 +422,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($engine){
     }
 
     if ($engine->config->get('config_error_display')) {
-        echo '<b>' . $error . '</b>: ' . $errstr . ' in <b>' . $errfile . '</b> on line <b>' . $errline . '</b>';
+        echo '<p><strong>' . $error . '</strong>: ' . $errstr . ' in <em>' . str_replace(\Phacil\Framework\Config::DIR_APPLICATION(), "", $errfile) . '</em> on line <strong>' . $errline . '</strong></p>';
     }
 
     if ($engine->config->get('config_error_log')) {
@@ -434,11 +434,14 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($engine){
 
 set_exception_handler(function($e) use ($engine) {
     if ($engine->config->get('config_error_display')) {
-        echo '<b>' . get_class($e) . '</b>: ' . $e->getMessage() . ' in <b>' . $e->getFile() . '</b> on line <b>' . $e->getLine() . '</b>';
+        echo '<p><strong>' . get_class($e) . '</strong>: ' . $e->getMessage() . ' in <strong><em>' .str_replace(\Phacil\Framework\Config::DIR_APPLICATION(), '', $e->getFile()) . '</em></strong> on line <strong>' . $e->getLine() . '</strong></p>';
     }
 
-    $exception = new \Phacil\Framework\Exception();
-    $exception->setObject($e);
+    if(get_class($e) != 'Phacil\Framework\Exception'){
+        $exception = new \Phacil\Framework\Exception();
+        $exception->setObject($e);
+    }
+   
 
     if ($engine->config->get('config_error_log')) {
         $engine->log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());

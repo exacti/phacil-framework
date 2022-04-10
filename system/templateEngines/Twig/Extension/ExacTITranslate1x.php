@@ -179,7 +179,7 @@ function traduzir() {
     $body = array_shift($params);
 
     if (class_exists('Translate')) {
-        $trans = new Phacil\Framework\Translate();
+        $trans = new \Phacil\Framework\Translate();
         echo ($trans->translation($body));
     } else {
         echo $body;
