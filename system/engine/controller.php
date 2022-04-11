@@ -211,7 +211,7 @@ abstract class Controller {
 					
 					    break;
                     }
-				} catch (\Throwable $th) {
+				} catch (Exception $th) {
 					//throw $th;
 				}
 			}

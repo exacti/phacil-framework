@@ -47,7 +47,7 @@ final class Database {
 		try {
             $this->createDriver(new $driverClass($hostname, $username, $password, $database));
         } catch (Exception $th) {
-            throw new Exception('Error: Could not load database file ' . $driver . '!');
+            throw new \Phacil\Framework\Exception($driver. ' not loaded. '.$th->getMessage(), $th->getCode());
         }		
 		
 	}

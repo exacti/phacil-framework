@@ -29,34 +29,28 @@ spl_autoload_register(function ($class) {
 		try {
 			class_alias("\\Phacil\\Framework\\".$class, $class);
 		} catch (\Exception $th) {
-			$log = new \Phacil\Framework\Log("exception.log");
-			$log->write($class.' not loaded!');
+			throw new \Phacil\Framework\Exception ($th->getMessage());
 		}
 		
-		//eval("class ".$class." extends \\Phacil\\Framework\\".$class." {}");
 		return;
 	}
 
 	$classNative = ($namespace[0] == "Phacil") ? str_replace('phacil\\framework\\', '', strtolower( $class)) : $class;
 
 	if($namespace[0] == 'Phacil' && isset($namespace[2]) && $namespace[2] == 'Databases'){
-		if(!defined('DIR_DATABASE'))
-    		define('DIR_DATABASE', DIR_SYSTEM."database/");
 
-
-		$fileDB = DIR_DATABASE . str_replace("\\", "/", $classNative).'.php';
+		$fileDB = \Phacil\Framework\Config::DIR_DATABASE(\Phacil\Framework\Config::DIR_SYSTEM() . "database/") . str_replace("\\", "/", $classNative).'.php';
 
 		try {
-			if (!file_exists($fileDB))
-				throw new Exception ($fileDB.' does not exist');
-			else
+			if (!file_exists($fileDB)){
+				throw new \Phacil\Framework\Exception($fileDB.' does not exist', 2);
+			}else{
 				require_once($fileDB);
 
-			return;
+				return;
+			}
 		} catch (Exception $th) {
-			$log = new \Phacil\Framework\Log("exception.log");
-			$log->write($th->getMessage());
-			
+			throw new \Phacil\Framework\Exception($th->getMessage(), $th->getCode(), $th);
 		}
 	}
 

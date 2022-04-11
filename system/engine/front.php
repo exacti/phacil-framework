@@ -117,7 +117,7 @@ final class Front implements frontinterface {
 			
 				$this->error = '';
 
-				throw new Exception("The controller can't be loaded", 1);
+				throw new Exception("The controller can't be loaded: ".$th->getMessage(), $th->getCode(), $th);
 				
 			}
 			

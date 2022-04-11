@@ -344,6 +344,23 @@ $engine->load = new Loader($engine->registry);
 /** @var Config */
 $engine->config = new Config();
 
+// Exception Handler
+set_exception_handler(function ($e) use (&$engine) {
+    if ($engine->config->get('config_error_display')) {
+        echo '<p><strong>' . get_class($e) . '</strong>: ' . $e->getMessage() . ' in <strong><em>' . str_replace(\Phacil\Framework\Config::DIR_APPLICATION(), '', $e->getFile()) . '</em></strong> on line <strong>' . $e->getLine() . '</strong></p>';
+    }
+
+    if (get_class($e) != 'Phacil\Framework\Exception') {
+        $exception = new \Phacil\Framework\Exception();
+        $exception->setObject($e);
+    }
+
+
+    if ($engine->config->get('config_error_log')) {
+        $engine->log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+    }
+});
+
 if(defined('DB_DRIVER'))
     $engine->db = new Database(\Phacil\Framework\Config::DB_DRIVER(), \Phacil\Framework\Config::DB_HOSTNAME(), \Phacil\Framework\Config::DB_USERNAME(), \Phacil\Framework\Config::DB_PASSWORD(), \Phacil\Framework\Config::DB_DATABASE());
 
@@ -397,7 +414,7 @@ if(!$engine->config->get('config_error_filename')){
 $engine->log = new Log($engine->config->get('config_error_filename'));
 
 // Error Handler
-set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($engine){
+set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$engine){
 
     switch ($errno) {
         case E_NOTICE:
@@ -430,22 +447,6 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($engine){
     }
 
     return true;
-});
-
-set_exception_handler(function($e) use ($engine) {
-    if ($engine->config->get('config_error_display')) {
-        echo '<p><strong>' . get_class($e) . '</strong>: ' . $e->getMessage() . ' in <strong><em>' .str_replace(\Phacil\Framework\Config::DIR_APPLICATION(), '', $e->getFile()) . '</em></strong> on line <strong>' . $e->getLine() . '</strong></p>';
-    }
-
-    if(get_class($e) != 'Phacil\Framework\Exception'){
-        $exception = new \Phacil\Framework\Exception();
-        $exception->setObject($e);
-    }
-   
-
-    if ($engine->config->get('config_error_log')) {
-        $engine->log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
-    }
 });
 
 /**
