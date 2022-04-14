@@ -26,7 +26,7 @@ abstract class Model {
 		if (!$registry) {
 
 			/**
-			 * @var \Phacil\Framework\startEngineExacTI $engine
+			 * @var \Phacil\Framework\Registry
 			 */
 			$registry = \Phacil\Framework\Registry::getInstance();
 		}
