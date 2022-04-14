@@ -84,11 +84,9 @@
 		if (!$registry) {
 
 			/**
-			 * @global \Phacil\Framework\startEngineExacTI $engine
+			 * @var \Phacil\Framework\Registry $registry
 			 */
-			global $engine;
-
-			$registry = &$engine->registry;
+			$registry = \Phacil\Framework\Registry::getInstance();
 		}
 		$this->registry = &$registry;
 

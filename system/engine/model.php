@@ -23,23 +23,46 @@ abstract class Model {
 	 * @return void 
 	 */
 	public function __construct(Registry $registry = NULL) {
-		if(!$registry){
-			
-			/**
-			 * @global \Phacil\Framework\startEngineExacTI $engine
-			 */
-			global $engine;
+		if (!$registry) {
 
-			$registry = $engine->registry;
+			/**
+			 * @var \Phacil\Framework\startEngineExacTI $engine
+			 */
+			$registry = \Phacil\Framework\Registry::getInstance();
 		}
-		$this->registry = $registry;
+		$this->registry = &$registry;
+	}
+
+	/** @return void  */
+	final private function __getRegistryClass()
+	{
+		$this->registry = \Phacil\Framework\startEngineExacTI::getRegistry();
 	}
 	
+	/**
+	 * 
+	 * @param mixed $key 
+	 * @return mixed 
+	 */
 	public function __get($key) {
+		if (!$this->registry) {
+			$this->__getRegistryClass();
+		}
+
 		return $this->registry->get($key);
 	}
 	
+	/**
+	 * 
+	 * @param mixed $key 
+	 * @param mixed $value 
+	 * @return void 
+	 */
 	public function __set($key, $value) {
+		if (!$this->registry) {
+			$this->__getRegistryClass();
+		}
+
 		$this->registry->set($key, $value);
 	}
 }

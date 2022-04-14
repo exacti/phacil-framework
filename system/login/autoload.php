@@ -41,10 +41,14 @@ class Login implements \Phacil\Framework\Login\Interfaces\Login {
 	 */
 	public function __construct($authorizedUsers, \Phacil\Framework\Registry $registry = null){
 		$this->MM_authorizedUsers = $authorizedUsers;
-		if(!$registry){
-			global $engine;
-			$registry =& $engine->registry;
+		if (!$registry) {
+
+			/**
+			 * @var \Phacil\Framework\Registry
+			 */
+			$registry = \Phacil\Framework\Registry::getInstance();
 		}
+		$this->registry = &$registry;
 		$this->engine =& $registry;
 		
 	}

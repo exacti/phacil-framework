@@ -19,7 +19,8 @@ namespace Phacil\Framework;
  * @uses Classes()->exists('class') to check if a class exists.
  * 
  * @package Phacil\Framework
- * @since 1.5.0 */
+ * @since 1.5.0 
+ */
 final class Classes {
 	
 	/**
@@ -67,7 +68,6 @@ final class Classes {
 				
 			}
 		}
-		
 		
 		return($pegaClass);
 	}

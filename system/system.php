@@ -44,12 +44,31 @@ final class startEngineExacTI {
     public $registry;
 
     /**
+     * 
+     * @var \Phacil\Framework\Registry
+     */
+    static private $RegistryAlt;
+
+    /**
      * System pre actions loader
      * 
      * @var false|ActionSystem|\Phacil\Framework\Interfaces\Action
      * @since 1.5.1
      */
     private $preActions = false;
+
+    /**
+     * Composer object
+     * 
+     * @var \Composer\Autoload\ClassLoader|false
+     */
+    private $composer = false;
+
+    /**
+     * 
+     * @var \Phacil\Framework\startEngineExacTI
+     */
+    static private $instance;
 
     /**
      * @return void 
@@ -77,6 +96,28 @@ final class startEngineExacTI {
 
         // Registry
         $this->registry = new Registry();
+
+        self::$RegistryAlt = &$this->registry;
+
+        if($this->composer) {
+            $this->registry->set('composer', $this->composer);
+        }
+    }
+
+    /**
+     * 
+     * @return \Phacil\Framework\startEngineExacTI 
+     */
+    static public function getInstance() {
+        return self::$instance;
+    }
+
+    /**
+     * @param \Phacil\Framework\startEngineExacTI $instance 
+     * @return void 
+     */
+    static public function setInstance(startEngineExacTI $instance) {
+        self::$instance = &$instance;
     }
 
     /**
@@ -178,6 +219,10 @@ final class startEngineExacTI {
         //require_once (DIR_SYSTEM.'database/autoload.php');
 
         require_once (DIR_SYSTEM.'engine/autoload.php');
+
+        if(isset($autoloadComposer)) {
+            $this->composer = &$autoloadComposer;
+        }
     }
 
     /**
@@ -318,6 +363,11 @@ final class startEngineExacTI {
         return (isset($this->registry->$key)) ?: NULL;
     }
 
+    /** @return \Phacil\Framework\Registry  */
+    static public function getRegistry() {
+        return self::$instance->registry;
+    }
+
 }
 
 /**
@@ -333,6 +383,7 @@ $engine = new startEngineExacTI();
 // Registry
 /** @var \Phacil\Framework\startEngineExacTI $engine */
 $engine->engine = $engine;
+$engine::setInstance($engine);
 
 // Loader
 /**

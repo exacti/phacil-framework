@@ -73,4 +73,14 @@ final class Registry {
 			unset($this->$key);
 		}
 	}
+
+	/** 
+	 * Try to obtain an iniciated engine instance
+	 * 
+	 * @return \Phacil\Framework\Registry
+	 * @since 2.0.0
+	 */
+	static public function getInstance() {
+		return \Phacil\Framework\startEngineExacTI::getRegistry();
+	}
 }

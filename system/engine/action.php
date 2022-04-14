@@ -135,7 +135,8 @@ final class Action implements ActionInterface {
  * 
  * @since 1.0.1
  * 
- * @package Phacil\Framework */
+ * @package Phacil\Framework 
+ */
 final class ActionSystem implements ActionInterface {
 	
 	use ActionTrait;

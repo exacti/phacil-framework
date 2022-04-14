@@ -131,13 +131,16 @@ abstract class Controller {
         if (!$registry) {
 
             /**
-             * @global \Phacil\Framework\startEngineExacTI $engine
+             * @var \Phacil\Framework\startEngineExacTI $engine
              */
-            global $engine;
-
-            $registry =& $engine->registry;
+            $registry = \Phacil\Framework\Registry::getInstance();
         }
-        $this->registry =& $registry;
+        $this->registry = &$registry;
+    }
+
+    /** @return void  */
+    final private function __getRegistryClass(){
+        $this->registry = \Phacil\Framework\startEngineExacTI::getRegistry();
     }
 
     /**
@@ -147,6 +150,10 @@ abstract class Controller {
      * @final
      */
     final public function __get($key) {
+        if (!$this->registry) {
+            $this->__getRegistryClass();
+        }
+
         return $this->registry->get($key);
     }
 
@@ -158,6 +165,10 @@ abstract class Controller {
      * @final
      */
     final public function __set($key, $value) {
+        if(!$this->registry) {
+            $this->__getRegistryClass();
+        }
+
         $this->registry->set($key, $value);
     }
 

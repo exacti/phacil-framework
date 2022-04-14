@@ -6,7 +6,6 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-
 namespace Phacil\Framework;
 
 /** @package Phacil\Framework */
@@ -23,22 +22,47 @@ abstract class AbstractHelper {
 	 * @return void 
 	 */
 	public function __construct(Registry $registry = NULL) {
-		if(!$registry){
-			
+		if (!$registry) {
 			/**
-			 * @global \Phacil\Framework\startEngineExacTI $engine
+			 * @var \Phacil\Framework\startEngineExacTI $engine
 			 */
-			global $engine;
-			$registry = $engine->registry;
+			$registry = \Phacil\Framework\Registry::getInstance();
 		}
-		$this->registry = $registry;
+		$this->registry = &$registry;
 	}
-	
-	public function __get($key) {
+
+	/** @return void  */
+	final private function __getRegistryClass()
+	{
+		$this->registry = \Phacil\Framework\startEngineExacTI::getRegistry();
+	}
+
+	/**
+	 * 
+	 * @param mixed $key 
+	 * @return mixed 
+	 */
+	public function __get($key)
+	{
+		if (!$this->registry) {
+			$this->__getRegistryClass();
+		}
+
 		return $this->registry->get($key);
 	}
-	
-	public function __set($key, $value) {
+
+	/**
+	 * 
+	 * @param mixed $key 
+	 * @param mixed $value 
+	 * @return void 
+	 */
+	public function __set($key, $value)
+	{
+		if (!$this->registry) {
+			$this->__getRegistryClass();
+		}
+
 		$this->registry->set($key, $value);
 	}
 }
