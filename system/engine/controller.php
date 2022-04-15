@@ -100,13 +100,6 @@ abstract class Controller {
     protected $output;
 
     /**
-     * Allowed template types
-     * 
-     * @var string[]
-     */
-    public $templateTypes = ["tpl", "twig", "mustache", "smarty", "phtml"];
-
-    /**
      * The original route of childrens
      * @var string
      */
