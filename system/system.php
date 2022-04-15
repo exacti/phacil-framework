@@ -412,7 +412,7 @@ set_exception_handler(function ($e) use (&$engine) {
     }
 });
 
-if(defined('DB_DRIVER'))
+if(\Phacil\Framework\Config::DB_DRIVER())
     $engine->db = new Database(\Phacil\Framework\Config::DB_DRIVER(), \Phacil\Framework\Config::DB_HOSTNAME(), \Phacil\Framework\Config::DB_USERNAME(), \Phacil\Framework\Config::DB_PASSWORD(), \Phacil\Framework\Config::DB_DATABASE());
 
 // Settings
@@ -552,11 +552,11 @@ if($engine->controllerPreActions()){
 }
 
 // Router
-if (isset($engine->request->get['route'])) {
-    $action = new Action($engine->request->get['route']);
+if (Request::GET('route')) {
+    $action = new Action(Request::GET('route'));
 } else {
     $default = (\Phacil\Framework\Config::DEFAULT_ROUTE()) ? \Phacil\Framework\Config::DEFAULT_ROUTE() : \Phacil\Framework\Config::DEFAULT_ROUTE('common/home');
-    $engine->request->get['route'] = $default;
+    Request::GET('route', $default);
     $action = new Action($default);
 }
 

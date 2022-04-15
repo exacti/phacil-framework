@@ -99,10 +99,10 @@ class Login implements \Phacil\Framework\Login\Interfaces\Login {
 		
 		if (!((isset($this->engine->session->data['MM_Username'])) && ($this->isAuthorized("",$this->MM_authorizedUsers, $this->engine->session->data['MM_Username'], $this->engine->session->data['MM_UserGroup'])))) {
 			$MM_qsChar = "?";
-			$MM_referrer = $this->engine->request->server['PHP_SELF'];
+			$MM_referrer = Request::SERVER('PHP_SELF');
 			if (strpos($MM_restrictGoTo, "?")) $MM_qsChar = "&";
-			if (isset($this->engine->request->server['QUERY_STRING']) && strlen($this->engine->request->server['QUERY_STRING']) > 0) 
-				$MM_referrer .= "?" . $this->engine->request->server['QUERY_STRING'];
+			if (Request::SERVER('QUERY_STRING') && strlen(Request::SERVER('QUERY_STRING')) > 0) 
+				$MM_referrer .= "?" . Request::SERVER('QUERY_STRING');
 			$MM_restrictGoTo = $MM_restrictGoTo. $MM_qsChar . "accesscheck=" . urlencode($MM_referrer);
 			header("Location: ". $MM_restrictGoTo); 
 			exit;

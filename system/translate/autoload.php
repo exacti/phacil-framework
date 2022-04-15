@@ -9,6 +9,7 @@
 namespace Phacil\Framework;
 
 use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
+use Phacil\Framework\Registry;
 
 /** @package Phacil\Framework */
 
@@ -22,38 +23,37 @@ final class Translate {
 
 	/**
 	 * 
-	 * @var Request
-	 */
-	private $request;
-
-	/**
-	 * 
-	 * @var Session
+	 * @var \Phacil\Framework\Session
 	 */
 	private $session;
 
 	/**
 	 * 
-	 * @var Caches
+	 * @var \Phacil\Framework\Database
+	 */
+	private $db;
+
+	/**
+	 * 
+	 * @var \Phacil\Framework\Caches
 	 */
 	protected $cache;
 	
 	public function __construct(){
 		
-		$this->request = new Request();
-		
-		$this->session = new Session();
+		$this->session = Registry::getInstance()->session;
 		
 		$this->autoLang = (isset($this->session->data['lang'])) ? $this->session->data['lang'] : NULL;
 				
-		$this->cookie = (isset($this->request->cookie['lang'])) ? $this->request->cookie['lang'] : NULL;
+		$this->cookie = (Request::COOKIE(['lang'])) ?: NULL;
 		
-		$this->cache = new Caches();
+		$this->cache = Registry::getInstance()->cache;
+
+		$this->db = Registry::getInstance()->db;
 				
 		if($this->autoLang != NULL) {
 			setcookie("lang", ($this->autoLang), strtotime( '+90 days' ));
 		}
-
 		
 	}
 	
@@ -64,19 +64,15 @@ final class Translate {
 	 * @throws PhpfastcacheInvalidArgumentException 
 	 */
 	public function translation ($value, $lang = NULL) {
-		
-		global $db;
-		
-		//$cache = new Caches();
-				
+
 		$lang = ($lang != NULL) ? $lang : $this->autoLang;
 		
 		if($this->cache->check("lang_".$lang."_".md5($value))) {
 			return $this->cache->get("lang_".$lang."_".md5($value));
 			
 		} else {
-			$sql = "SELECT * FROM translate WHERE text = '".$db->escape($value)."'";
-			$result = $db->query($sql, false);
+			$sql = "SELECT * FROM translate WHERE text = '".$this->db->escape($value)."'";
+			$result = $this->db->query($sql, false);
 
 			if ($result->num_rows == 1) {
 				if(isset($result->row[$lang]) and $result->row[$lang] != "") {
@@ -101,9 +97,7 @@ final class Translate {
 	 * @param string $value 
 	 * @return void 
 	 */
-	public function insertBaseText ($value){
-		global $db;
-		
-		$db->query("INSERT INTO translate SET text='".$db->escape($value)."'");
+	public function insertBaseText ($value){		
+		$this->db->query("INSERT INTO translate SET text='".$this->db->escape($value)."'");
 	}
 }

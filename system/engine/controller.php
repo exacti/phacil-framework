@@ -256,7 +256,7 @@ abstract class Controller {
 
         $tpl = new \Phacil\Framework\Render($this->registry);
 
-        $pegRout = explode("/", ($this->registry->routeOrig)?: $this->request->get['route']);
+        $pegRout = explode("/", ($this->registry->routeOrig)?: Request::GET('route'));
         $pegRoutWithoutLast = $pegRout;
         array_pop($pegRoutWithoutLast);
         $pegRoutWithoutPenultimate = $pegRoutWithoutLast;
@@ -328,7 +328,7 @@ abstract class Controller {
      * @throws Exception 
      * @final
      */
-    final protected function out ($commonChildren = true) {
+    protected function out ($commonChildren = true) {
         if($commonChildren === true){
             $this->children = array_merge(array(
                 'common/footer',

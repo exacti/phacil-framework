@@ -11,6 +11,7 @@ use Phacil\Framework\Action;
 use Phacil\Framework\Controller as ControllerController;
 use Phacil\Framework\Registry;
 use Phacil\Framework\Config;
+use Phacil\Framework\Request;
 
 class SystemUrlSeoUrl extends ControllerController {
 
@@ -52,9 +53,9 @@ class SystemUrlSeoUrl extends ControllerController {
         $match = array();
 
         // Decode URL
-        if (isset($this->request->get['_route_'])) {
-            $parts_count = explode('/', $this->request->get['_route_']);
-            $parts = array($this->request->get['_route_']);
+        if (Request::GET('_route_')) {
+            $parts_count = explode('/', Request::GET('_route_'));
+            $parts = array(Request::GET('_route_'));
 
             foreach ($parts as $part) {
                 if(Config::USE_DB_CONFIG())
@@ -73,13 +74,13 @@ class SystemUrlSeoUrl extends ControllerController {
                         }
                     }
 
-                    $this->request->get['route'] = $query->row['query'];
+                    Request::GET('route', $query->row['query']);
 
                 } elseif (Config::ROUTES() && is_array(Config::ROUTES())) {
                     $rotas = Config::ROUTES();
 
                     if(isset($rotas[$part])){
-                        $this->request->get['route'] = $rotas[$part];
+                        Request::GET('route', $rotas[$part]);
                     } else {
 
                         foreach($rotas as $key => $page) {
@@ -110,20 +111,20 @@ class SystemUrlSeoUrl extends ControllerController {
                         }
 
                         if(isset($pagina)) {
-                            $this->request->get['route'] = $pagina;
+                            Request::GET('route', $pagina);
                         } else {
-                            $this->request->get['route'] = $this->notfound;
+                            Request::GET('route', $this->notfound);
                         }
                     }
 
                 } else {
-                    $this->request->get['route'] = $this->notfound;
+                    Request::GET('route', $this->notfound);
                 }
             }
 
 
-            if (isset($this->request->get['route'])) {
-                return $this->forward($this->request->get['route'], $match);
+            if (Request::GET('route')) {
+                return $this->forward(Request::GET('route'), $match);
             }
         }
     }
