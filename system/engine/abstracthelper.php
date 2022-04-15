@@ -32,7 +32,7 @@ abstract class AbstractHelper {
 	}
 
 	/** @return void  */
-	final private function __getRegistryClass()
+	private function __getRegistryClass()
 	{
 		$this->registry = \Phacil\Framework\startEngineExacTI::getRegistry();
 	}
