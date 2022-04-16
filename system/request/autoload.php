@@ -95,6 +95,12 @@ final class Request {
 
     /**
      * 
+     * @var array|string
+     */
+    static protected  $_HEADERS = [];
+
+    /**
+     * 
      * @var array|string|false
      */
     static protected  $_METHOD;
@@ -107,6 +113,7 @@ final class Request {
         self::$_COOKIE = $this->clean($_COOKIE);
         self::$_FILES = $this->clean($_FILES);
         self::$_SERVER = $this->clean($_SERVER);
+        self::$_HEADERS = $this->clean(getallheaders());
         self::$_METHOD = (isset(self::$_SERVER['REQUEST_METHOD'])) ? $this->clean(self::$_SERVER['REQUEST_METHOD']) : false;
 
         $this->get =& self::$_GET;
@@ -124,12 +131,12 @@ final class Request {
      * 
      * @since 1.0.0
      */
-    public function clean($data) {
+    static public function clean($data) {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 unset($data[$key]);
 
-                $data[$this->clean($key)] = $this->clean($value);
+                $data[self::clean($key)] = self::clean($value);
             }
         } else {
             $data = htmlspecialchars($data, ENT_COMPAT);
@@ -152,6 +159,22 @@ final class Request {
             self::$_POST[$key] = $value;
 
         return $key ? (isset(self::$_POST[$key]) ? self::$_POST[$key] : null) : self::$_POST;
+    }
+
+    /**
+     * Return php://input from POST or PUT requests.
+     * 
+     * @param string $key (optional)
+     * @return string|array 
+     * 
+     * @since 2.0.0
+     */
+    static public function INPUT($key = null){
+        if (self::HEADER("Content-Type") == 'application/json'){
+            $data = (JSON::decode(file_get_contents('php://input')));
+        }
+
+        return (self::HEADER("Content-Type") == 'application/json') ? (($key) ? $data[$key] : $data) : self::clean(file_get_contents('php://input'));
     }
 
     /**
@@ -232,6 +255,22 @@ final class Request {
             self::$_SERVER[$key] = $value;
         
         return $key ? (isset(self::$_SERVER[$key]) ? self::$_SERVER[$key] : null) : self::$_SERVER;
+    }
+
+    /**
+     * Return HEADERS values from getallheaders().
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return mixed 
+     * 
+     * @since 2.0.0
+     */
+    static public function HEADER($key = null, $value = null){
+        if ($value !== null)
+            self::$_HEADERS[$key] = $value;
+        
+        return $key ? (isset(self::$_HEADERS[$key]) ? self::$_HEADERS[$key] : null) : self::$_HEADERS;
     }
 
     /**

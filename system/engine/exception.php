@@ -27,8 +27,8 @@ class Exception extends \Exception
 	 * @param \Exception $object 
 	 * @return $this 
 	 */
-	public function setObject(\Exception $object){
-		$this->message = $object->getMessage();
+	public function setObject($object){
+		$this->message = get_class($object).": ".$object->getMessage();
 		$this->line = $object->getLine();
 		$this->heritageTrace = $object->getTrace();
 		$this->file = $object->getFile();

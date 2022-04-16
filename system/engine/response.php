@@ -162,7 +162,7 @@ final class Response {
 	 * @param string|null $description 
 	 * @return void 
 	 */
-	public function code(int $code, string $description = null){
+	public function code($code, $description = null){
 		$this->addHeader("HTTP/1.1 ".$code.(($description) ? " ". $description : ""));
         $this->addHeader("Status: ".$code."");
 	}
