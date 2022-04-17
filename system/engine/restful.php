@@ -115,13 +115,13 @@ class RESTful extends Controller {
 
 							if(is_array($type)){
 								foreach ($type as $avalType) {
-									if(call_user_func("is_" . $avalType, $data)) {
+									if(self::__testType( $avalType, $data)) {
 										$invalidDataType = false;
 										break;
 									}
 								}
 							} else {
-								if(call_user_func("is_" . $type, $data)) {
+								if(self::__testType($type, $data)) {
 									$invalidDataType = false;
 								}
 							}
@@ -159,6 +159,35 @@ class RESTful extends Controller {
 		} else {
 			$this->__callNotFound($method);
 		}
+	}
+
+	static function __testType($type, $data){ 
+
+		switch ($type) {
+			case 'mixed':
+				return true;
+				break;
+				
+			case 'int':
+			case 'string':
+			case 'array':
+			case 'integer':
+			case 'bool':
+			case 'double':
+			case 'float':
+			case 'long':
+			case 'null':
+			case 'numeric':
+			case 'scalar':
+			case 'real':
+				return call_user_func("is_" . $type, $data);
+				break;
+			
+			default:
+				return false;
+				break;
+		}
+
 	}
 
 	/**
