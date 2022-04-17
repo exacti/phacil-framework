@@ -161,6 +161,13 @@ class RESTful extends Controller {
 		}
 	}
 
+	/**
+	 * Return true or false for data type
+	 * 
+	 * @param string $type Type to test
+	 * @param string $data Data to test
+	 * @return bool 
+	 */
 	static function __testType($type, $data){ 
 
 		switch ($type) {
