@@ -139,7 +139,7 @@ final class Request {
                 $data[self::clean($key)] = self::clean($value);
             }
         } else {
-            $data = htmlspecialchars($data, ENT_COMPAT);
+            $data = (gettype($data) == 'string') ? trim(htmlspecialchars($data, ENT_COMPAT)) : $data;
         }
 
         return $data;
@@ -171,10 +171,16 @@ final class Request {
      */
     static public function INPUT($key = null){
         if (self::HEADER("Content-Type") == 'application/json'){
-            $data = (JSON::decode(file_get_contents('php://input')));
+            try{
+                $data = self::clean(JSON::decode(file_get_contents('php://input')));
+            } catch (\Exception $e){
+                throw new \UnexpectedValueException($e->getMessage(), $e->getCode());
+            }
+        } else {
+            $data = self::clean(file_get_contents('php://input'));
         }
 
-        return (self::HEADER("Content-Type") == 'application/json') ? (($key) ? $data[$key] : $data) : self::clean(file_get_contents('php://input'));
+        return (self::HEADER("Content-Type") == 'application/json') ? (($key) ? (isset($data[$key]) ? $data[$key] : null) : $data) : ($data ?: null);
     }
 
     /**

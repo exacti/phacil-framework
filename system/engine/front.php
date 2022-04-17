@@ -8,12 +8,10 @@
 
 namespace Phacil\Framework;
 
-use Phacil\Framework\Interfaces\Front as frontinterface;
-
-//use Exception;
+use Phacil\Framework\Interfaces\Front as frontInterface;
 
 /** @package Phacil\Framework */
-final class Front implements frontinterface {
+final class Front implements frontInterface {
 
 	/**
 	 * 
@@ -75,7 +73,7 @@ final class Front implements frontinterface {
     
 	/**
 	 * @param object $action 
-	 * @return \Phacil\Framework\Interfaces\Action 
+	 * @return \Phacil\Framework\Interfaces\Action|\Phacil\Framework\Controller
 	 * @throws Exception 
 	 */
 	private function execute($action) {
@@ -87,7 +85,7 @@ final class Front implements frontinterface {
 
 		unset($action);
 
-		if (file_exists($file)) {
+		if ($file && file_exists($file)) {
 			require_once($file);
 
 			foreach($classAlt as $classController){
@@ -95,6 +93,10 @@ final class Front implements frontinterface {
 					if(class_exists($classController)){
 						$controller = new $classController($this->registry);
 						
+						if(!is_subclass_of($controller, 'Phacil\Framework\Controller')){
+							throw new Exception('PHACIL ERROR: Controller '. get_class($controller) . ' doesn\'t have Phacil\Framework\Controller implemented');
+						}
+
 						break;
 					}
 				} catch (Exception $th) {
@@ -121,7 +123,27 @@ final class Front implements frontinterface {
 				
 			}
 			
-		} else {
+		} elseif(!$file && isset($classAlt['class'])) {
+			try {
+				$controller = new $classAlt['class']($this->registry);
+
+				if (!is_subclass_of($controller, 'Phacil\Framework\Controller')) {
+					throw new Exception('PHACIL ERROR: Controller ' . get_class($controller) . '  doesn\'t have Phacil\Framework\Controller implemented');
+				}
+
+				if(!is_callable(array($controller, $method))) {
+					$action = new Action($this->error);
+
+					$this->error = '';
+
+					new Exception("PHACIL ERROR: Controller class " . get_class($controller) . "->".$method."() is not a callable function");
+				} else {
+					$action = call_user_func_array(array($controller, $method), $args);
+				}
+			} catch (Exception $th) {
+				throw new Exception("The controller can't be loaded: " . $th->getMessage(), $th->getCode(), $th);
+			}
+		}else {
 			$action = new Action($this->error);
 			
 			$this->error = '';

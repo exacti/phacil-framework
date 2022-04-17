@@ -8,10 +8,6 @@
 
 namespace Phacil\Framework;
 
-use TypeError;
-use Mustache_Exception_UnknownTemplateException;
-use RuntimeException;
-use SmartyException;
 use \Phacil\Framework\Config;
 
 /** 
@@ -233,11 +229,10 @@ abstract class Controller {
     }
 
     /**
+     * Render template
+     * 
      * @return string 
      * @throws TypeError 
-     * @throws Mustache_Exception_UnknownTemplateException 
-     * @throws RuntimeException 
-     * @throws SmartyException 
      * @throws Exception 
      * @final
      */
@@ -316,10 +311,10 @@ abstract class Controller {
     }
 
     /**
-     * @param bool $commonChildren 
+     * @param bool $commonChildren (optional) Whether to include the common children
      * @return \Phacil\Framework\Response 
      * @throws Exception 
-     * @final
+     * @since 1.1.0
      */
     protected function out ($commonChildren = true) {
         if($commonChildren === true){

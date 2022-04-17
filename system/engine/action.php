@@ -124,6 +124,27 @@ final class Action implements ActionInterface {
 			$this->method = 'index';
 		}
 
+		if (!$this->classAlt) {
+
+			$lastTry = explode('/', $this->route, 2);
+
+			$class1 = $this->mountClass($lastTry[0] . "\\", str_replace("/", "\\", end($lastTry)));
+			$class2 = implode("\\", explode("\\", $class1, -1));
+
+			if(class_exists($class1)){
+				$this->classAlt = [
+					'class' => $class1
+				];
+				$this->method = 'index';
+			} elseif(class_exists($class2)){
+				$this->classAlt = [
+					'class' => $class2
+				];
+				$this->method = $method;
+			}
+
+		}
+
 	}
 	
 	
