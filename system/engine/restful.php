@@ -66,7 +66,7 @@ class RESTful extends Controller {
 	function index() {
 		$method = (Request::METHOD());
 
-		if (array_search($method, $this->HTTPMETHODS) && is_callable(array($this, $method))) {
+		if (in_array($method, $this->HTTPMETHODS) && is_callable(array($this, $method))) {
 			$r = new ReflectionMethod($this, $method);
 			$params = [];
 			/* $requiredParamsTotal = $r->getNumberOfRequiredParameters();
@@ -110,7 +110,7 @@ class RESTful extends Controller {
 				if($data !== null && $phpDocParams && isset($phpDocParams['param']) && is_array($phpDocParams['param'])){
 					$type = (isset($phpDocParams['param']['$'.$value->getName()])) ? $phpDocParams['param']['$' . $value->getName()]['type']: false;
 					if($type){
-						if((is_array($type) && !array_search(gettype($data), $type)) || (gettype($data) != $type)){
+						if((is_array($type) && !in_array(gettype($data), $type)) || (gettype($data) != $type)){
 							$invalidDataType = true;
 
 							if(is_array($type)){
