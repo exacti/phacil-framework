@@ -16,8 +16,10 @@ use Phacil\Framework\Controller;
  * 
  * @package Phacil\Framework
  * @since 2.0.0
+ * @abstract
+ * @api
  */
-class RESTful extends Controller {
+abstract class RESTful extends Controller {
 
 	/**
 	 * The output content type
@@ -69,11 +71,6 @@ class RESTful extends Controller {
 		if (in_array($method, $this->HTTPMETHODS) && is_callable(array($this, $method))) {
 			$r = new ReflectionMethod($this, $method);
 			$params = [];
-			/* $requiredParamsTotal = $r->getNumberOfRequiredParameters();
-
-			$requiredParams = $r->getRequiredParameters();
-
-			$vondc = $r->getParameters(); */
 
 			$comment_string = $r->getDocCommentParse();
 
@@ -125,7 +122,6 @@ class RESTful extends Controller {
 									$invalidDataType = false;
 								}
 							}
-
 							
 							if($invalidDataType){
 								return $this->__callInterrupt($value->getName() . " need to be: ".(is_array($type) ? implode(', ', $type) : $type).". You give: ".gettype($data).".");
@@ -155,7 +151,6 @@ class RESTful extends Controller {
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage(), $e->getCode());
 			}
-			//$this->$method();
 		} else {
 			$this->__callNotFound($method);
 		}

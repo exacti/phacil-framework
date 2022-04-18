@@ -9,7 +9,15 @@
 
 namespace Phacil\Framework;
 
-/** @package Phacil\Framework */
+/** 
+ * The default model class.
+ * 
+ * @example class MyModel extends \Phacil\Framework\Model
+ * 
+ * @package Phacil\Framework 
+ * @abstract
+ * @api
+ */
 abstract class Model {
 	
 	/**

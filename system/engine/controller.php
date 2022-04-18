@@ -33,6 +33,7 @@ use \Phacil\Framework\Config;
  * @abstract
  * @package Phacil\Framework 
  * @since 0.1.0
+ * @api
  */
 abstract class Controller {
     /**

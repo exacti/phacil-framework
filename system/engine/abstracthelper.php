@@ -8,7 +8,13 @@
 
 namespace Phacil\Framework;
 
-/** @package Phacil\Framework */
+/** 
+ * Abstract class for helpers
+ * 
+ * @package Phacil\Framework 
+ * @abstract
+ * @api
+ */
 abstract class AbstractHelper {
 	
 	/**

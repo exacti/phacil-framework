@@ -13,8 +13,10 @@ namespace Phacil\Framework;
 
 /**
  * Exception extended for log on destruct
+ * 
  * @since 2.0.0
  * @package Phacil\Framework
+ * @api
  */
 class Exception extends \Exception
 {

@@ -13,7 +13,9 @@ namespace Phacil\Framework;
  * 
  * @since 0.0.1
  * 
- * @package Phacil\Framework */
+ * @package Phacil\Framework
+ * @api
+ */
 final class Response {
 
 	/**
