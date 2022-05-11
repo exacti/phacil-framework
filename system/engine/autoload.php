@@ -424,6 +424,14 @@
 
 	}
 
+	/**
+	 * Initite loaders process
+	 * 
+	 * @param string $class 
+	 * @return void 
+	 * @throws \Exception 
+	 * @throws \Phacil\Framework\Exception 
+	 */
 	static public function load($class) {
 		self::$class = $class;
 
