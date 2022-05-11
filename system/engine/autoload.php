@@ -21,10 +21,28 @@
 	 * @var array|null
 	 */
 	private static $namespace = null;
+
+	/**
+	 * 
+	 * @var array|null
+	 */
 	private static $namespaceWithoutPrefix;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	private static $class = null;
+
+	/**
+	 * 
+	 * @var string
+	 */
 	private static $classNative;
 
+	/** 
+	 * Config class
+	 */
 	const CONFIG_CLASS = "Phacil\Framework\Config";
 
 	/**
@@ -33,7 +51,17 @@
 	 */
 	private static $instance = null;
 
+	/**
+	 * 
+	 * @var array
+	 */
 	protected $loadedClasses = array();
+
+	/**
+	 * 
+	 * @var bool
+	 */
+	private static $composerLoaded = false;
 
 	/**
 	 * 
@@ -92,6 +120,20 @@
 		return spl_autoload_register(['self', 'load']);
 	}
 
+	/**
+	 * 
+	 * @return bool 
+	 */
+	static public function checkComposerLoader() {
+		return self::$composerLoaded;
+	}
+
+	/**
+	 * Resolve file path 
+	 * 
+	 * @param string $file 
+	 * @return false|\SplFileInfo 
+	 */
 	static protected function fileResolver($file) {
 		$splFile = new \SplFileInfo($file);
 		if(!$splFile->isReadable()) return false;
@@ -99,6 +141,11 @@
 		return $splFile;
 	}
 
+	/**
+	 * 
+	 * @param string|\SplFileInfo $file 
+	 * @return bool|void 
+	 */
 	static protected function loadClassFile($file){
 		$file = ($file instanceof \SplFileInfo) ? $file : self::fileResolver($file);
 
@@ -112,6 +159,11 @@
 		}
 	}
 
+	/**
+	 * 
+	 * @param \SplFileInfo $file 
+	 * @return mixed 
+	 */
 	static public function required(\SplFileInfo $file) {
 		return require_once($file->getPathname());
 	}
@@ -177,7 +229,7 @@
 	 * @return true|void 
 	 * @throws \Exception 
 	 */
-	public function configIsFirst(){
+	protected function configIsFirst(){
 		try {
 			if(!$this->checkConfigLoaded()) throw new \Exception("Config need to be a first class loaded!");
 
@@ -187,6 +239,10 @@
 		}
 	}
 
+	/**
+	 * 
+	 * @return void 
+	 */
 	private function prepareNamespaces() {
 		self::$namespace = explode("\\", self::$class);
 		self::$namespaceWithoutPrefix = (\Phacil\Framework\Config::NAMESPACE_PREFIX()) ? explode("\\", str_replace(\Phacil\Framework\Config::NAMESPACE_PREFIX() . "\\", "", self::$class)) : self::$namespace;
@@ -214,6 +270,7 @@
 	}
 
 	/**
+	 * Check if class is an Framework Class
 	 * 
 	 * @return bool 
 	 */
@@ -222,6 +279,7 @@
 	}
 
 	/**
+	 * Load /system/engine classes
 	 * 
 	 * @return bool 
 	 */
@@ -245,6 +303,11 @@
 		return false;
 	}
 
+	/**
+	 * Load \Phacil\Framework\Interfaces\Action implemented classes
+	 * 
+	 * @return bool 
+	 */
 	private function loadActionClasses() {
 		if (!self::isPhacil()) return false;
 
@@ -266,8 +329,9 @@
 	}
 
 	/**
+	 * Load database classes
 	 * 
-	 * @return bool|void 
+	 * @return bool
 	 * @throws \Phacil\Framework\Exception 
 	 */
 	private function loadDatabase() {
@@ -289,15 +353,18 @@
 				throw new \Phacil\Framework\Exception($th->getMessage(), $th->getCode(), $th);
 			}
 
-			return false;
+			
 		}
+		
+		return false;
 	}
 
 	/**
+	 * Try to load an framework class with autoload
 	 * 
 	 * @return bool 
 	 */
-	private function loadEngineAutload() {
+	private function loadEngineAutoload() {
 		if (!self::isPhacil()) return false;
 
 		$value = \Phacil\Framework\Config::DIR_SYSTEM() . str_replace('\\', "/", self::$classNative) . '/autoload.php';
@@ -316,7 +383,12 @@
 		
 	}
 
-	private function loadEngineAutload2() {
+	/** 
+	 * Try to load an framework class without autoload
+	 * 
+	 * @return bool  
+	 */
+	private function loadEngineAutoload2() {
 		if (!self::isPhacil()) return false;
 
 		$value = \Phacil\Framework\Config::DIR_SYSTEM() . str_replace('\\', "/", self::$classNative) . '.php';
@@ -335,6 +407,7 @@
 	}
 
 	/**
+	 * Try load modular classes 
 	 * 
 	 * @return bool 
 	 */
@@ -355,6 +428,7 @@
 	}
 
 	/**
+	 * Try load modular class without namespace
 	 * 
 	 * @return bool 
 	 */
@@ -373,6 +447,11 @@
 		return false;
 	}
 
+	/** 
+	 * Try load modular parent class
+	 * 
+	 * @return bool  
+	 */
 	private function loadModularNamespaceShift() {
 		$namespace = self::$namespace;
 		$prefix = array_shift($namespace);
@@ -392,8 +471,14 @@
 		
 	}
 
+	/**
+	 * Load Composer
+	 * 
+	 * @return bool 
+	 * @throws \Phacil\Framework\Exception 
+	 */
 	static public function loadComposer() {
-		if (self::isPhacil()) return false;
+		if (self::isPhacil() || self::checkComposerLoader()) return false;
 
 		$composer = \Phacil\Framework\Config::DIR_VENDOR() ?: \Phacil\Framework\Config::DIR_VENDOR(\Phacil\Framework\Config::DIR_SYSTEM() . 'vendor/autoload.php');
 
@@ -413,7 +498,8 @@
 		 */
 
 		if ($autoloadComposer = self::loadClassFile($composer)) {
-			//$autoloadComposer = (include_once $composer);
+			self::$composerLoaded = $autoloadComposer;
+			
 			return true;
 		} else {
 			$log = new \Phacil\Framework\Log("exception.log");
@@ -451,9 +537,9 @@
 
 		if($autoload->loadEngineClasses()) return;
 
-		if($autoload->loadEngineAutload()) return;
+		if($autoload->loadEngineAutoload()) return;
 
-		if($autoload->loadEngineAutload2()) return;
+		if($autoload->loadEngineAutoload2()) return;
 
 		if($autoload->loadModularFiles()) return;
 
