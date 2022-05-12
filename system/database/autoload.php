@@ -1,9 +1,10 @@
 <?php
-/*
+/**
  * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
  * GPLv3 General License.
  * https://exacti.com.br
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ * @author Bruno O. Notario <bruno@exacti.com.br>
  */
 
 namespace Phacil\Framework;
@@ -14,6 +15,7 @@ use Phacil\Framework\Config;
 /** 
  * Principal class to load databases drivers
  * 
+ * @since 2.0.0
  * @package Phacil\Framework */
 final class Database {
 	/**
@@ -22,6 +24,27 @@ final class Database {
 	 * @var DatabaseInterface
 	 */
 	private $driver;
+
+	/**
+	 * Legacy config drivers correspondent classes
+	 * 
+	 * @var string[]
+	 */
+	static public $legacyDrivers = [
+		'mpdo' 			=> '\Phacil\Framework\Databases\mPDO',
+		'mysql' 		=> '\Phacil\Framework\Databases\MySQL',
+		'dbmysqli' 		=> '\Phacil\Framework\Databases\DBMySQLi',
+		'mssql' 		=> '\Phacil\Framework\Databases\MSSQL',
+		'mysql_legacy' 	=> '\Phacil\Framework\Databases\MySQL_legacy',
+		'mysql_pdo' 	=> '\Phacil\Framework\Databases\MYSQL_PDO',
+		'mysqli' 		=> '\Phacil\Framework\Databases\MySQLi',
+		'nullstatement' => '\Phacil\Framework\Databases\nullStatement',
+		'oracle' 		=> '\Phacil\Framework\Databases\Oracle',
+		'postgre' 		=> '\Phacil\Framework\Databases\Postgre',
+		'sqlite3_db' 	=> '\Phacil\Framework\Databases\Sqlite3_db',
+		'sqlsrv' 		=> '\Phacil\Framework\Databases\SQLSRV',
+		'sqlsrvpdo' 	=> '\Phacil\Framework\Databases\sqlsrvPDO'
+	];
 	
 	/**
 	 * Prefix for query cache
@@ -42,11 +65,11 @@ final class Database {
 	 */
 	public function __construct($driver, $hostname, $username, $password, $database) {
 
-        $driverClass = "\\Phacil\\Framework\\Databases\\".$driver;
+        $driverClass = (isset(self::$legacyDrivers[strtolower($driver)])) ? self::$legacyDrivers[strtolower($driver)] : $driver;
 
 		try {
             $this->createDriver(new $driverClass($hostname, $username, $password, $database));
-        } catch (Exception $th) {
+        } catch (\Exception $th) {
             throw new \Phacil\Framework\Exception($driver. ' not loaded. '.$th->getMessage(), $th->getCode());
         }		
 		
@@ -62,7 +85,7 @@ final class Database {
 		try {
             $this->driver = $driverObject;
         } catch (Exception $th) {
-            throw new Exception('Error: Could not create the driver!');
+            throw new Exception('Error: Could not create the driver! '.$th->getMessage());
         }
 	}
 

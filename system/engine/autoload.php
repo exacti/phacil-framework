@@ -34,6 +34,8 @@
 	 */
 	private static $class = null;
 
+	private static $subCallClass = [];
+
 	/**
 	 * 
 	 * @var string
@@ -151,7 +153,8 @@
 
 		if($file){
 			if(self::required($file)) {
-				self::getInstance()->loadedClasses[] = self::$class;
+				self::getInstance()->loadedClasses[] = count(self::$subCallClass) > 1 ? self::$subCallClass :  self::$class;
+				self::$subCallClass = [];
 				return true;
 			}
 		} else {
@@ -212,7 +215,7 @@
 				}
 			} catch (\Exception $e) {
 				$log = new \Phacil\Framework\Log("exception.log");
-				$log->write($class . ' not loaded!');
+				$log->write(self::$class . ' not loaded!');
 				exit($e->getMessage());
 			}
 		}
@@ -510,6 +513,10 @@
 
 	}
 
+	protected function checkIsLoadedClass($class) {
+		return in_array($class, $this->loadedClasses);
+	}
+
 	/**
 	 * Initite loaders process
 	 * 
@@ -521,7 +528,11 @@
 	static public function load($class) {
 		self::$class = $class;
 
+		self::$subCallClass[] = $class;
+
 		$autoload = self::getInstance();
+
+		//if($autoload->checkIsLoadedClass($class)) return;
 
 		if($autoload->loadConfigClass()) return;
 
