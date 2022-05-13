@@ -46,6 +46,17 @@ abstract class Model {
 	{
 		$this->registry = \Phacil\Framework\startEngineExacTI::getRegistry();
 	}
+
+
+	/**
+	 * 
+	 * @return object
+	 */
+	static public function getInstance()
+	{
+		$class = get_called_class();
+		return \Phacil\Framework\Registry::getAutoInstance((new $class()));
+	}
 	
 	/**
 	 * 

@@ -135,6 +135,15 @@ abstract class Controller {
 
     /**
      * 
+     * @return object 
+     */
+    static public function getInstance() {
+        $class = get_called_class();
+        return \Phacil\Framework\Registry::getAutoInstance((new $class()));
+    }
+
+    /**
+     * 
      * @param string $key 
      * @return Registry 
      * @final
