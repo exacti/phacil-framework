@@ -109,6 +109,9 @@ final class startEngineExacTI {
      * @return \Phacil\Framework\startEngineExacTI 
      */
     static public function getInstance() {
+        if(!self::$instance) 
+            self::$instance = new self();
+
         return self::$instance;
     }
 
@@ -170,10 +173,9 @@ final class startEngineExacTI {
                 exit($e->getMessage());
             }
 
-        } else {
-            return true;
-        }
-
+        } 
+        
+        return true;
     }
 
     /** 
@@ -182,19 +184,7 @@ final class startEngineExacTI {
      * @since 1.0.0
      */
     private function checkConstantsRequired () {
-        /* $dbConsts = ['DB_DRIVER' => 'nullStatement', 'DB_HOSTNAME' => NULL, 'DB_USERNAME' => NULL, 'DB_PASSWORD' => NULL, 'DB_DATABASE' => NULL];
-
-         foreach ($dbConsts as $constDB => $value) {
-            if (!defined($constDB)) {
-                define($constDB, $value);
-            }
-        } */
-
-        if (!defined('DIR_APPLICATION') || !defined('DIR_SYSTEM') || !defined('DIR_PUBLIC') || !defined('DIR_TEMPLATE') || !defined('USE_DB_CONFIG')) {
-            return(false);
-        } else {
-            return(true);
-        }
+        return !(!defined('DIR_APPLICATION') || !defined('DIR_SYSTEM') || !defined('DIR_PUBLIC') || !defined('DIR_TEMPLATE') || !defined('USE_DB_CONFIG'));
     }
 
     /** 
@@ -214,10 +204,6 @@ final class startEngineExacTI {
      * @since 1.0.0
      */
     private function loadengine () {
-        //$this->dirs = glob(DIR_SYSTEM.'*/autoload.php', GLOB_BRACE);
-        
-        //require_once (DIR_SYSTEM.'database/autoload.php');
-
         require_once (DIR_SYSTEM.'engine/autoload.php');
 
         if(isset($autoloadComposer)) {
@@ -241,7 +227,7 @@ final class startEngineExacTI {
         } catch (\ErrorException $e) {
             $trace = ($e->getTrace());
 
-            echo PHP_EOL.'Timezone Error: ',  $e->getMessage() ." on ". $trace[0]['file'] ." in line ". $trace[0]['line'].".",  PHP_EOL;
+            throw new Exception('Timezone Error: '.  $e->getMessage() ." on ". $trace[0]['file'] ." in line ". $trace[0]['line'].".");
         }
 
     }
@@ -270,7 +256,7 @@ final class startEngineExacTI {
      * @return string|false  
      */
     public function version() {
-        return file_get_contents(DIR_SYSTEM."engine/VERSION");
+        return file_get_contents(\Phacil\Framework\Config::DIR_SYSTEM()."engine/VERSION");
     }
 
     /** 
@@ -281,7 +267,7 @@ final class startEngineExacTI {
     public function extraRegistrations() {
 
         if(file_exists(\Phacil\Framework\Config::DIR_SYSTEM()."registrations.php"))
-            include(DIR_SYSTEM."registrations.php");
+            include(\Phacil\Framework\Config::DIR_SYSTEM()."registrations.php");
     }
 
     /** 
@@ -329,6 +315,18 @@ final class startEngineExacTI {
     }
 
     /**
+     * Add route to pre actions array
+     * 
+     * @param string $route 
+     * @return void 
+     * @since 2.0.0
+     */
+    public function addControllerPreAction($route) {
+        $this->preActions[] = $route;
+        return;
+    }
+
+    /**
      * Check the registry element
      * 
      * @since 2.0.0
@@ -370,20 +368,14 @@ final class startEngineExacTI {
 
 }
 
-/**
- * @global startEngineExacTI $engine
- */
-global $engine;
-
 /** 
- * @global \Phacil\Framework\startEngineExacTI $engine 
+ * @var \Phacil\Framework\startEngineExacTI $engine 
  * */
-$engine = new startEngineExacTI();
+$engine = startEngineExacTI::getInstance();
 
 // Registry
 /** @var \Phacil\Framework\startEngineExacTI $engine */
 $engine->engine = $engine;
-$engine::setInstance($engine);
 
 // Loader
 /**
@@ -513,9 +505,6 @@ $engine->cache = new Caches();
 $engine->request = new Request();
 
 // Response
-/* $response = new Response();
-$response->addHeader('Content-Type: text/html; charset=utf-8');
-$response->setCompression($engine->config->get('config_compression')); */
 $engine->response = new Response();
 $engine->response->addHeader('Content-Type: text/html; charset=utf-8');
 
@@ -555,13 +544,13 @@ if($engine->controllerPreActions()){
 if (Request::GET('route')) {
     $action = new Action(Request::GET('route'));
 } else {
-    $default = (\Phacil\Framework\Config::DEFAULT_ROUTE()) ? \Phacil\Framework\Config::DEFAULT_ROUTE() : \Phacil\Framework\Config::DEFAULT_ROUTE('common/home');
+    $default = \Phacil\Framework\Config::DEFAULT_ROUTE() ?: \Phacil\Framework\Config::DEFAULT_ROUTE('common/home');
     Request::GET('route', $default);
     $action = new Action($default);
 }
 
 // Dispatch
-$not_found = (\Phacil\Framework\Config::NOT_FOUND()) ? \Phacil\Framework\Config::NOT_FOUND() : \Phacil\Framework\Config::NOT_FOUND('error/not_found');
+$not_found = \Phacil\Framework\Config::NOT_FOUND() ?: \Phacil\Framework\Config::NOT_FOUND('error/not_found');
 $frontController->dispatch($action, ($not_found));
 
 // Output

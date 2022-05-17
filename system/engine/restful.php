@@ -12,7 +12,7 @@ namespace Phacil\Framework;
 use Phacil\Framework\Controller;
 
 /**
- * Create a simple anda faster REST API controller.
+ * Create a simple and faster REST API controller.
  * 
  * @package Phacil\Framework
  * @since 2.0.0
