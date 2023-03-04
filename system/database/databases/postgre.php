@@ -43,9 +43,10 @@ final class Postgre implements Databases {
 	}
 
 	/**
+	 * 
 	 * @param string $sql 
-	 * @return stdClass|true 
-	 * @throws Exception 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+	 * @throws \Exception 
 	 */
 	public function query($sql) {
 		$resource = pg_query($this->link, $sql);
@@ -58,10 +59,10 @@ final class Postgre implements Databases {
 					$i++;
 				}
 				pg_free_result($resource);
-				$query = new \stdClass();
-				$query->row = isset($data[0]) ? $data[0] : array();
-				$query->rows = $data;
-				$query->num_rows = $i;
+				$query = new \Phacil\Framework\Databases\Object\Result();
+				$query->setRow(isset($data[0]) ? $data[0] : array());
+				$query->setRows($data);
+				$query->setNumRows($i);
 				unset($data);
 				return $query;
 			} else {

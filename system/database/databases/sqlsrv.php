@@ -47,8 +47,8 @@ final class SQLSRV implements Databases {
         }
         */
 
-        sqlsrv_query($this->link,"SET NAMES 'utf8'");
-        sqlsrv_query($this->link, "SET CHARACTER SET utf8");
+        \sqlsrv_query($this->link,"SET NAMES 'utf8'");
+        \sqlsrv_query($this->link, "SET CHARACTER SET utf8");
     }
 
     public function isConnected() {
@@ -56,8 +56,10 @@ final class SQLSRV implements Databases {
     }
 
     /**
+     * 
      * @param string $sql 
-     * @return stdClass|true 
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+     * @throws \Phacil\Framework\Exception 
      */
     public function query($sql) {
         $resource = \sqlsrv_query($this->link, $sql);
@@ -76,7 +78,7 @@ final class SQLSRV implements Databases {
 
                 \sqlsrv_free_stmt($resource);
 
-                $query = new \stdClass();
+                $query = new \Phacil\Framework\Databases\Object\Result();
                 $query->row = isset($data[0]) ? $data[0] : array();
                 $query->rows = $data;
                 $query->num_rows = $i;

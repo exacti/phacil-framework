@@ -54,11 +54,10 @@ class MySQLi implements Databases {
 	}
 	
 	/**
-	 * Execute the SQL Query.
-	 * 
+	 * Execute the SQl Query
 	 * @param string $sql 
-	 * @return stdClass|true 
-	 * @throws Exception 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+	 * @throws \Exception 
 	 */
 	public function query($sql) {
 		$query = $this->connection->query($sql);
@@ -68,10 +67,10 @@ class MySQLi implements Databases {
 				while ($row = $query->fetch_assoc()) {
 					$data[] = $row;
 				}
-				$result = new \stdClass();
-				$result->num_rows = $query->num_rows;
-				$result->row = isset($data[0]) ? $data[0] : array();
-				$result->rows = $data;
+				$result = new \Phacil\Framework\Databases\Object\Result();
+				$result->setNumRows($query->num_rows);
+				$result->setRow(isset($data[0]) ? $data[0] : []);
+				$result->setRows($data);
 				$query->close();
 				return $result;
 			} else {

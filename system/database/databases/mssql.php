@@ -50,7 +50,7 @@ final class MSSQL implements \Phacil\Framework\Interfaces\Databases
 
 				mssql_free_result($resource);
 
-				$query = new stdClass();
+				$query = new \Phacil\Framework\Databases\Object\Result();
 				$query->row = isset($data[0]) ? $data[0] : array();
 				$query->rows = $data;
 				$query->num_rows = $i;

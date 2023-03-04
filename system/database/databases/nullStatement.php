@@ -27,8 +27,13 @@ final class nullStatement implements Databases {
         return false;
     }
 
+    /**
+     * 
+     * @param string $sql 
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+     */
     public function query($sql) {
-        $result = new \stdClass();
+        $result = new \Phacil\Framework\Databases\Object\Result();
         $result->num_rows = NULL;
         $result->row = NULL;
         $result->rows = NULL;

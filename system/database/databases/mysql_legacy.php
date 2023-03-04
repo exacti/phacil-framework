@@ -34,6 +34,12 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 
 	public function isConnected() { }
 		
+	/**
+	 * 
+	 * @param string $sql 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+	 * @throws \Phacil\Framework\Exception 
+	 */
   	public function query($sql) {
 		$resource = mysql_query($sql, $this->connection);
 
@@ -51,7 +57,7 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 				
 				mysql_free_result($resource);
 				
-				$query = new stdClass();
+				$query = new \Phacil\Framework\Databases\Object\Result();
 				$query->row = isset($data[0]) ? $data[0] : array();
 				$query->rows = $data;
 				$query->num_rows = $i;

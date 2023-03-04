@@ -105,15 +105,15 @@ final class Database {
 	public function __destruct() {
 		unset($this->driver);
 	 }
-		
-  	/**
+
+	/**
 	 * Execute the SQL Query
 	 * 
-  	 * @param string $sql 
-  	 * @param bool $cacheUse 
-  	 * @return object|\Phacil\Framework\Database::Cache 
-  	 * @throws PhpfastcacheInvalidArgumentException 
-  	 */
+	 * @param string $sql 
+	 * @param bool $cacheUse 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|\Phacil\Framework\Database::Cache 
+	 * @throws PhpfastcacheInvalidArgumentException 
+	 */
   	public function query($sql, $cacheUse = true) {
 		
 		if(Config::SQL_CACHE() && $cacheUse == true) {

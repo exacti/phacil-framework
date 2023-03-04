@@ -22,6 +22,12 @@ final class Oracle implements Databases {
 	 */
 	private $connection;
 
+	/**
+	 * 
+	 * @var array|false
+	 */
+	protected $error;
+
 	
 	/**
 	 * @param string $hostname 
@@ -47,9 +53,10 @@ final class Oracle implements Databases {
 	}
 	
 	/**
+	 * 
 	 * @param string $sql 
-	 * @return stdClass 
-	 * @throws Exception 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+	 * @throws \Phacil\Framework\Exception 
 	 */
 	public function query($sql) {
         $stid = oci_parse($this->connection, $sql);
@@ -57,10 +64,10 @@ final class Oracle implements Databases {
 		if (!$this->connection) {
             oci_fetch_all($stid, $res);
 
-            $result = new \stdClass();
-            $result->num_rows = oci_num_rows($stid);
-            $result->row = isset($res[0]) ? $res[0] : array();
-            $result->rows = $res;
+            $result = new \Phacil\Framework\Databases\Object\Result();
+            $result->setNumRows(oci_num_rows($stid));
+            $result->setRow(isset($res[0]) ? $res[0] : []);
+            $result->setRows($res);
 
             return $result;
 

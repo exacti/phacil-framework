@@ -24,6 +24,12 @@ final class mPDO implements Databases {
 
 	/**
 	 * 
+	 * @var int
+	 */
+	private $rowCount;
+
+	/**
+	 * 
 	 * @var mixed
 	 */
 	private $statement = null;
@@ -89,7 +95,7 @@ final class mPDO implements Databases {
                 // free up resources
                 $this->statement->closeCursor();
                 $this->statement = null;
-				$result = new \stdClass();
+				$result = new \Phacil\Framework\Databases\Object\Result();
 				$result->row = (isset($data[0]) ? $data[0] : array());
 				$result->rows = $data;
 				$result->num_rows = $this->rowCount;
@@ -100,7 +106,7 @@ final class mPDO implements Databases {
 		if ($result) {
 			return $result;
 		} else {
-			$result = new \stdClass();
+			$result = new \Phacil\Framework\Databases\Object\Result();
 			$result->row = array();
 			$result->rows = array();
 			$result->num_rows = 0;

@@ -83,16 +83,17 @@ final class MYSQL_PDO implements Databases
             throw new \Phacil\Framework\Exception($exception->getMessage());
         }
     }
+    
     /**
      * Query the database
-     *
-     * @param string $sql
-     * @return \stdClass
+     * @param string $sql 
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+     * @throws \PDOException 
      */
     public function query($sql = null)
     {
         if ($this->dbh) {
-            $data = new \stdClass;
+            $data = new \Phacil\Framework\Databases\Object\Result();
 			
 			$sth=$this->dbh->prepare($sql);
 			$sth->execute();

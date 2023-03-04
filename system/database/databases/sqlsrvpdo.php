@@ -81,10 +81,11 @@ final class sqlsrvPDO implements Databases {
     }
 
     /**
+     * 
      * @param string $sql 
      * @param array $params 
-     * @return stdClass 
-     * @throws Exception 
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+     * @throws \Exception 
      */
     public function query($sql, $params = array()) {
         $this->statement = $this->connection->prepare($sql);
@@ -99,10 +100,10 @@ final class sqlsrvPDO implements Databases {
                     $data[] = $row;
                 }
 
-                $result = new \stdClass();
-                $result->row = (isset($data[0]) ? $data[0] : array());
-                $result->rows = $data;
-                $result->num_rows = $this->statement->rowCount();
+                $result = new \Phacil\Framework\Databases\Object\Result();
+                $result->setRow((isset($data[0])) ? $data[0] : array());
+                $result->setRows($data);
+                $result->setNumRows($this->statement->rowCount());
             }
         } catch (\PDOException $e) {
             throw new \Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode() . ' <br />' . $sql);
@@ -111,7 +112,7 @@ final class sqlsrvPDO implements Databases {
         if ($result) {
             return $result;
         } else {
-            $result = new \stdClass();
+            $result = new \Phacil\Framework\Databases\Object\Result();
             $result->row = array();
             $result->rows = array();
             $result->num_rows = 0;

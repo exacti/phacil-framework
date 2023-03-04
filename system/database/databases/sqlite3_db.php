@@ -29,9 +29,10 @@ final class Sqlite3_db implements Databases {
     }
 
     /**
+     * 
      * @param string $sql 
-     * @return true|stdClass 
-     * @throws Exception 
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+     * @throws \Exception 
      */
     public function query($sql){
         //$query = $this->connection->query($sql);
@@ -48,10 +49,10 @@ final class Sqlite3_db implements Databases {
             while ($row = $query->fetchArray(SQLITE3_ASSOC)) {
                 $data[] = $row;
             }
-            $result = new \stdClass();
-            $result->num_rows = (!empty($data)) ? count($data) : 0;
-            $result->row = isset($data[0]) ? $data[0] : array();
-            $result->rows = $data;
+            $result = new \Phacil\Framework\Databases\Object\Result();
+            $result->setNumRows((!empty($data)) ? count($data) : 0);
+            $result->setRow(isset($data[0]) ? $data[0] : array());
+            $result->setRows($data);
             $query->finalize();
             return $result;
 
