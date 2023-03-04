@@ -10,6 +10,8 @@
 namespace Phacil\Framework;
 
 use Phacil\Framework\Controller;
+use Phacil\Framework\Request;
+use Phacil\Framework\ReflectionMethod;
 
 /**
  * Create a simple and faster REST API controller.
@@ -86,6 +88,7 @@ abstract class RESTful extends Controller {
 						$data = Request::HEADER($value->getName());
 						break;
 					
+					case 'POST':
 					default:
 						try {
 							$data = (Request::POST($value->getName())) ?: Request::INPUT($value->getName());

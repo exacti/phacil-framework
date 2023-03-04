@@ -69,7 +69,7 @@ final class Registry {
 
 	/**
 	 * @param string $key 
-	 * @param string $value 
+	 * @param mixed $value 
 	 * @return void 
 	 */
 	public function set($key, $value) {

@@ -8,6 +8,8 @@
 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Registry;
+
 /** 
  * Abstract class for helpers
  * 
@@ -15,7 +17,7 @@ namespace Phacil\Framework;
  * @abstract
  * @api
  */
-abstract class AbstractHelper {
+abstract class AbstractHelper implements \Phacil\Framework\Interfaces\Helper {
 	
 	/**
 	 * 
@@ -45,7 +47,7 @@ abstract class AbstractHelper {
 
 	/**
 	 * 
-	 * @return object 
+	 * {@inheritdoc}
 	 */
 	static public function getInstance()
 	{

@@ -240,4 +240,24 @@ final class Session
     {
         return session_id();
     }
+
+    /**
+     * 
+     * @param string $key 
+     * @return mixed|null 
+     */
+    public function getData($key) {
+        return $this->data[$key] ?? null;
+    }
+
+    /**
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return $this 
+     */
+    public function setData($key, $value) {
+        $this->data[$key] = $value;
+        return $this;
+    }
 }

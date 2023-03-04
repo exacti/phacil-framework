@@ -9,6 +9,9 @@
 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Registry;
+use Phacil\Framework\Interfaces\Model as ModelInterface;
+
 /** 
  * The default model class.
  * 
@@ -18,7 +21,7 @@ namespace Phacil\Framework;
  * @abstract
  * @api
  */
-abstract class Model {
+abstract class Model implements ModelInterface {
 	
 	/**
 	 * 
@@ -50,7 +53,7 @@ abstract class Model {
 
 	/**
 	 * 
-	 * @return object
+	 * {@inheritdoc}
 	 */
 	static public function getInstance()
 	{

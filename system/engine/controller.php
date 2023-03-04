@@ -8,7 +8,8 @@
 
 namespace Phacil\Framework;
 
-use \Phacil\Framework\Config;
+use Phacil\Framework\Config;
+use Phacil\Framework\Registry;
 
 /** 
  * Extend this class to create interation with your module controller to Phacil engine controller.
@@ -35,7 +36,7 @@ use \Phacil\Framework\Config;
  * @since 0.1.0
  * @api
  */
-abstract class Controller {
+abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
     /**
      * 
      * @var Registry
@@ -135,7 +136,7 @@ abstract class Controller {
 
     /**
      * 
-     * @return object 
+     * {@inheritdoc}
      */
     static public function getInstance() {
         $class = get_called_class();
@@ -143,9 +144,8 @@ abstract class Controller {
     }
 
     /**
-     * 
      * @param string $key 
-     * @return Registry 
+     * @return object 
      * @final
      */
     final public function __get($key) {
@@ -155,6 +155,20 @@ abstract class Controller {
 
         return $this->registry->get($key);
     }
+
+    /**
+     * @param string $key 
+     * @return object 
+     * @final
+     * @todo Not yet...
+     */
+    /* final public function __call($key, array $arguments) {
+        if (!$this->registry) {
+            $this->__getRegistryClass();
+        }
+
+        return $this->registry->get($key);
+    } */
 
     /**
      * 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Copyright © 2022 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
 
 namespace Phacil\Framework;
 
@@ -7,7 +13,7 @@ use Phacil\Framework\Config;
  * @since 2.0.0
  * @package Phacil\Framework
  */
-final class Language
+class Language
 {
 	public $directory;
 	private $data = array();
