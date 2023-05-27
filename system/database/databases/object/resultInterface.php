@@ -15,7 +15,7 @@ namespace Phacil\Framework\Databases\Object;
  * @property array $rows
  * @package Phacil\Framework\Databases\Object
  */
-interface ResultInterface {
+interface ResultInterface extends \Countable, \IteratorAggregate  {
 	/**
 	 * 
 	 * @param array $rows 
@@ -62,4 +62,16 @@ interface ResultInterface {
 	 * @return array 
 	 */
 	public function getData($numRow = false);
+
+	/**
+	 * 
+	 * @return \Phacil\Framework\Databases\Object\Item[] 
+	 */
+	public function __toObject();
+
+	/**
+	 * 
+	 * @return \Phacil\Framework\Databases\Object\Item[] 
+	 */
+	public function getItems();
 }
