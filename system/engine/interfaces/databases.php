@@ -28,11 +28,11 @@
 	/**
 	 * Execute the SQL Query.
 	 * 
-	 * @param string $sql 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+	 * @param string|null $sql 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|\Phacil\Framework\MagiQL|bool 
 	 * @throws Exception 
 	 */
-	public function query($sql);
+	public function query($sql = null);
 
 	/**
 	 * Important escape to prevent SQL injection.

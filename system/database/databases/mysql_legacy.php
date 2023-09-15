@@ -18,18 +18,18 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 	private $connection;
 	
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
-		if (!$this->connection = mysql_connect($hostname, $username, $password)) {
+		if (!$this->connection = \mysql_connect($hostname, $username, $password)) {
       		exit('Error: Could not make a database connection using ' . $username . '@' . $hostname);
     	}
 
-    	if (!mysql_select_db($database, $this->connection)) {
+    	if (!\mysql_select_db($database, $this->connection)) {
       		exit('Error: Could not connect to database ' . $database);
     	}
 		
-		mysql_query("SET NAMES '".$charset."'", $this->connection);
-		mysql_query("SET CHARACTER SET ".$charset."", $this->connection);
-		mysql_query("SET CHARACTER_SET_CONNECTION=".$charset."", $this->connection);
-		mysql_query("SET SQL_MODE = ''", $this->connection);
+		\mysql_query("SET NAMES '".$charset."'", $this->connection);
+		\mysql_query("SET CHARACTER SET ".$charset."", $this->connection);
+		\mysql_query("SET CHARACTER_SET_CONNECTION=".$charset."", $this->connection);
+		\mysql_query("SET SQL_MODE = ''", $this->connection);
   	}
 
 	public function isConnected() { }
@@ -41,7 +41,7 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 	 * @throws \Phacil\Framework\Exception 
 	 */
   	public function query($sql) {
-		$resource = mysql_query($sql, $this->connection);
+		$resource = \mysql_query($sql, $this->connection);
 
 		if ($resource) {
 			if (is_resource($resource)) {
@@ -49,13 +49,13 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
     	
 				$data = array();
 		
-				while ($result = mysql_fetch_assoc($resource)) {
+				while ($result = \mysql_fetch_assoc($resource)) {
 					$data[$i] = $result;
     	
 					$i++;
 				}
 				
-				mysql_free_result($resource);
+				\mysql_free_result($resource);
 				
 				$query = new \Phacil\Framework\Databases\Object\Result();
 				$query->row = isset($data[0]) ? $data[0] : array();
@@ -69,23 +69,23 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 				return true;
 			}
 		} else {
-			throw new \Phacil\Framework\Exception('Error: ' . mysql_error($this->connection) . '<br />Error No: ' . mysql_errno($this->connection) . '<br />' . $sql);
+			throw new \Phacil\Framework\Exception('Error: ' . \mysql_error($this->connection) . '<br />Error No: ' . mysql_errno($this->connection) . '<br />' . $sql);
     	}
   	}
 	
 	public function escape($value) {
-		return mysql_real_escape_string($value, $this->connection);
+		return \mysql_real_escape_string($value, $this->connection);
 	}
 	
   	public function countAffected() {
-    	return mysql_affected_rows($this->connection);
+    	return \mysql_affected_rows($this->connection);
   	}
 
   	public function getLastId() {
-    	return mysql_insert_id($this->connection);
+    	return \mysql_insert_id($this->connection);
   	}	
 	
 	public function __destruct() {
-		mysql_close($this->connection);
+		\mysql_close($this->connection);
 	}
 }

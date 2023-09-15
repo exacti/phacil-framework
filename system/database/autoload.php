@@ -109,12 +109,15 @@ final class Database {
 	/**
 	 * Execute the SQL Query
 	 * 
-	 * @param string $sql 
+	 * @param string|null $sql 
 	 * @param bool $cacheUse 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|\Phacil\Framework\Database::Cache 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|\Phacil\Framework\Database::Cache|\Phacil\Framework\MagiQL 
 	 * @throws PhpfastcacheInvalidArgumentException 
 	 */
-  	public function query($sql, $cacheUse = true) {
+  	public function query($sql = null, $cacheUse = true) {
+		if(!$sql) {
+			return new \Phacil\Framework\MagiQL($this);
+		}
 		
 		if(Config::SQL_CACHE() && $cacheUse == true) {
 			
