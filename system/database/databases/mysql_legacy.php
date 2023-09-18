@@ -19,11 +19,11 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 	
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
 		if (!$this->connection = \mysql_connect($hostname, $username, $password)) {
-      		exit('Error: Could not make a database connection using ' . $username . '@' . $hostname);
+      		throw new \Phacil\Framework\Exception('Error: Could not make a database connection using ' . $username . '@' . $hostname);
     	}
 
     	if (!\mysql_select_db($database, $this->connection)) {
-      		exit('Error: Could not connect to database ' . $database);
+      		throw new \Phacil\Framework\Exception('Error: Could not connect to database ' . $database);
     	}
 		
 		\mysql_query("SET NAMES '".$charset."'", $this->connection);

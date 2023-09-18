@@ -33,33 +33,33 @@ class MySQLi implements Databases {
 	 * @param string $port 
 	 * @param string $charset 
 	 * @return void 
-	 * @throws Exception 
+	 * @throws \Phacil\Framework\Exception 
 	 */
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8mb4') {
 		try {
 			$this->connection = @new \MySQLi($hostname, $username, $password, $database, $port);
 		} catch (\mysqli_sql_exception $e) {
-			throw new \Exception('Error: ' . $this->connection->error . '<br />Error No: ' . $this->connection->errno);
+			throw new \Phacil\Framework\Exception('Error: ' . $this->connection->error . '<br />Error No: ' . $this->connection->errno);
 		}
 
 		if (!$this->connection->connect_errno) {
 			if(isset($this->connection->report_mode))
 				$this->connection->report_mode = MYSQLI_REPORT_ERROR;
-				
+
 			$this->connection->set_charset($charset);
 			//$this->connection->query("SET SESSION sql_mode = 'NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION'");
 			$this->connection->query("SET SQL_MODE = ''");
 		} else {
-			throw new \Exception('Error: ' . $this->connection->error . '<br />Error No: ' . $this->connection->errno);
+			throw new \Phacil\Framework\Exception('Error: ' . $this->connection->error . '<br />Error No: ' . $this->connection->errno);
 		}
 
 	}
-	
+
 	/**
 	 * Execute the SQl Query
 	 * @param string $sql 
 	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-	 * @throws \Exception 
+	 * @throws \Phacil\Framework\Exception 
 	 */
 	public function query($sql) {
 		$query = $this->connection->query($sql);
@@ -79,7 +79,7 @@ class MySQLi implements Databases {
 				return true;
 			}
 		} else {
-			throw new \Exception('Error: ' . $this->connection->error  . '<br />Error No: ' . $this->connection->errno . '<br />' . $sql);
+			throw new \Phacil\Framework\Exception('Error: ' . $this->connection->error  . '<br />Error No: ' . $this->connection->errno . '<br />' . $sql);
 		}
 	}
 	

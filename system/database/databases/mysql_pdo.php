@@ -90,7 +90,7 @@ final class MYSQL_PDO implements Databases
      * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
      * @throws \PDOException 
      */
-    public function query($sql = null)
+    public function query($sql)
     {
         if ($this->dbh) {
             $data = new \Phacil\Framework\Databases\Object\Result();

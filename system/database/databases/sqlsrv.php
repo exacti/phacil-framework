@@ -9,7 +9,6 @@
 namespace Phacil\Framework\Databases;
 
 use Phacil\Framework\Interfaces\Databases;
-use \stdClass;
 
 final class SQLSRV implements Databases {
     /**
@@ -38,7 +37,7 @@ final class SQLSRV implements Databases {
         );
 
         if (!$this->link = \sqlsrv_connect($hostname, $connectionInfo)) {
-            exit('Error: Could not make a database connection using ' . $username . '@' . $hostname);
+            throw new \Phacil\Framework\Exception('Error: Could not make a database connection using ' . $username . '@' . $hostname);
         }
 
         /*

@@ -20,11 +20,11 @@ final class MSSQL implements \Phacil\Framework\Interfaces\Databases
 	public function __construct($hostname, $username, $password, $database, $port = '1443', $charset = 'utf8')
 	{
 		if (!$this->connection = mssql_connect($hostname, $username, $password)) {
-			exit('Error: Could not make a database connection using ' . $username . '@' . $hostname);
+			throw new \Phacil\Framework\Exception('Error: Could not make a database connection using ' . $username . '@' . $hostname);
 		}
 
 		if (!mssql_select_db($database, $this->connection)) {
-			exit('Error: Could not connect to database ' . $database);
+			throw new \Phacil\Framework\Exception('Error: Could not connect to database ' . $database);
 		}
 
 		mssql_query("SET NAMES 'utf8'", $this->connection);

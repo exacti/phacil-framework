@@ -26,14 +26,14 @@ final class Postgre implements Databases {
 	 * @param string $port 
 	 * @param string $charset 
 	 * @return void 
-	 * @throws Exception 
+	 * @throws \Phacil\Framework\Exception 
 	 */
 	public function __construct($hostname, $username, $password, $database, $port = '5432', $charset = 'UTF8') {
 		if (!$this->link = pg_connect('host=' . $hostname . ' port=' . $port .  ' user=' . $username . ' password='	. $password . ' dbname=' . $database)) {
-			throw new \Exception('Error: Could not make a database link using ' . $username . '@' . $hostname);
+			throw new \Phacil\Framework\Exception('Error: Could not make a database link using ' . $username . '@' . $hostname);
 		}
 		if (!pg_ping($this->link)) {
-			throw new \Exception('Error: Could not connect to database ' . $database);
+			throw new \Phacil\Framework\Exception('Error: Could not connect to database ' . $database);
 		}
 		pg_query($this->link, "SET CLIENT_ENCODING TO '".$charset."'");
 	}
@@ -46,7 +46,7 @@ final class Postgre implements Databases {
 	 * 
 	 * @param string $sql 
 	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-	 * @throws \Exception 
+	 * @throws \Phacil\Framework\Exception
 	 */
 	public function query($sql) {
 		$resource = pg_query($this->link, $sql);
@@ -69,7 +69,7 @@ final class Postgre implements Databases {
 				return true;
 			}
 		} else {
-			throw new \Exception('Error: ' . pg_result_error($this->link) . '<br />' . $sql);
+			throw new \Phacil\Framework\Exception('Error: ' . pg_result_error($this->link) . '<br />' . $sql);
 		}
 	}
 	

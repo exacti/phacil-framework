@@ -24,11 +24,22 @@ final class sqlsrvPDO implements Databases {
      */
     private $statement = null;
 
+    /**
+     * 
+     * @param string $hostname 
+     * @param string $username 
+     * @param string $password 
+     * @param string $database 
+     * @param string $port 
+     * @param string $charset 
+     * @return void 
+     * @throws \Phacil\Framework\Exception 
+     */
     public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
         try {
             $this->connection = new PDONative("sqlsrv:Server=" . $hostname . ";Database=" . $database, $username, $password, array(\PDO::SQLSRV_ATTR_DIRECT_QUERY => true));
         } catch(\PDOException $e) {
-            throw new \Exception('Failed to connect to database. Reason: \'' . $e->getMessage() . '\'');
+            throw new \Phacil\Framework\Exception('Failed to connect to database. Reason: \'' . $e->getMessage() . '\'');
         }
 
 
@@ -85,7 +96,7 @@ final class sqlsrvPDO implements Databases {
      * @param string $sql 
      * @param array $params 
      * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-     * @throws \Exception 
+     * @throws \Phacil\Framework\Exception 
      */
     public function query($sql, $params = array()) {
         $this->statement = $this->connection->prepare($sql);
@@ -106,7 +117,7 @@ final class sqlsrvPDO implements Databases {
                 $result->setNumRows($this->statement->rowCount());
             }
         } catch (\PDOException $e) {
-            throw new \Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode() . ' <br />' . $sql);
+            throw new \Phacil\Framework\Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode() . ' <br />' . $sql);
         }
 
         if ($result) {

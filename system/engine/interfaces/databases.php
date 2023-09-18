@@ -32,7 +32,7 @@
 	 * @return \Phacil\Framework\Databases\Object\ResultInterface|\Phacil\Framework\MagiQL|bool 
 	 * @throws Exception 
 	 */
-	public function query($sql = null);
+	public function query($sql);
 
 	/**
 	 * Important escape to prevent SQL injection.

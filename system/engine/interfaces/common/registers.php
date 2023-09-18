@@ -12,7 +12,7 @@ namespace Phacil\Framework\Interfaces\Common;
 
 /** 
  * @since 2.0.0
- * @property \Phacil\Framework\Interfaces\Databases $db 
+ * @property \Phacil\Framework\Database $db 
  * @property \Phacil\Framework\Session $session
  * @property \Phacil\Framework\Request $request
  * @property \Phacil\Framework\Url $url

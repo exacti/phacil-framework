@@ -19,12 +19,23 @@ final class Sqlite3_db implements Databases {
      */
     private $connection;
 
+    /**
+     * 
+     * @param string $hostname 
+     * @param string $username 
+     * @param string $password 
+     * @param string $database 
+     * @param string $port 
+     * @param string $charset 
+     * @return void 
+     * @throws \Phacil\Framework\Exception 
+     */
     public function __construct($hostname, $username = null, $password = null, $database, $port = '3306', $charset = 'utf8mb4')
     {
         $this->connection = new \SQLite3($hostname.$database, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE, $password);
 
         if (!$this->connection) {
-            throw new \Exception('Error: ' . $this->connection->lastErrorMsg()  . '<br />Error No: ' . $this->connection->lastErrorCode());
+            throw new \Phacil\Framework\Exception('Error: ' . $this->connection->lastErrorMsg()  . '<br />Error No: ' . $this->connection->lastErrorCode());
         }
     }
 
@@ -32,7 +43,7 @@ final class Sqlite3_db implements Databases {
      * 
      * @param string $sql 
      * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-     * @throws \Exception 
+     * @throws \Phacil\Framework\Exception 
      */
     public function query($sql){
         //$query = $this->connection->query($sql);
@@ -57,7 +68,7 @@ final class Sqlite3_db implements Databases {
             return $result;
 
         } else {
-            throw new \Exception('Error: ' . $this->connection->lastErrorMsg()  . '<br />Error No: ' . $this->connection->lastErrorCode() . '<br />' . $sql);
+            throw new \Phacil\Framework\Exception('Error: ' . $this->connection->lastErrorMsg()  . '<br />Error No: ' . $this->connection->lastErrorCode() . '<br />' . $sql);
         }
 
     }

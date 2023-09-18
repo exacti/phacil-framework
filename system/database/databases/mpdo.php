@@ -43,7 +43,7 @@ final class mPDO implements Databases {
 			
 			$this->connection = new \PDO($dsn, $username, $password, $options);
 		} catch(\PDOException $e) {
-			throw new \Exception('Failed to connect to database. Reason: \'' . $e->getMessage() . '\'');
+			throw new \Phacil\Framework\Exception('Failed to connect to database. Reason: \'' . $e->getMessage() . '\'');
 		}
 		$this->connection->exec("SET NAMES 'utf8'");
 		$this->connection->exec("SET CHARACTER SET utf8");
@@ -74,7 +74,7 @@ final class mPDO implements Databases {
 				$result->num_rows = $this->statement->rowCount();
 			}
 		} catch(\PDOException $e) {
-			throw new \Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode());
+			throw new \Phacil\Framework\Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode());
 		}
 	}
 	public function query($sql, $params = array()) {
@@ -101,7 +101,7 @@ final class mPDO implements Databases {
 				$result->num_rows = $this->rowCount;
 			}
 		} catch (\PDOException $e) {
-			throw new \Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode() . ' <br />' . $sql);
+			throw new \Phacil\Framework\Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode() . ' <br />' . $sql);
 		}
 		if ($result) {
 			return $result;
