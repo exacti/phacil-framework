@@ -11,7 +11,19 @@ namespace Phacil\Framework\Databases\Object;
 use Phacil\Framework\Databases\Object\ResultInterface;
 use SplObjectStorage;
 
-class Result implements ResultInterface {
+if (version_compare(phpversion(), "7.1.0", ">=")) {
+	class ComplementResult extends \Phacil\Framework\Databases\Object\Aux\ComplementResult
+	{
+		
+	}
+
+} else {
+	class ComplementResult extends \Phacil\Framework\Databases\Object\Aux\ComplementResultLegacy{
+	
+	}
+}
+
+class Result extends ComplementResult implements ResultInterface {
 
 	/**
 	 * 
@@ -36,14 +48,6 @@ class Result implements ResultInterface {
 	 * @var \Phacil\Framework\Databases\Object\Item[]|\SplObjectStorage|\Iterator|null
 	 */
 	public $data = null;
-
-	/**
-	 * {@inheritdoc}
-	 * @return int<0, \max> 
-	 */
-	public function count(): int { 
-		return (int) $this->getNumRows();
-	}
 
 	/**
 	 * 
@@ -87,7 +91,7 @@ class Result implements ResultInterface {
 	 * {@inheritdoc}
 	 */
 	public function getRow($numRow = false){
-		return $numRow ? ($this->rows[$numRow + 1]?? null ) : $this->row;
+		return $numRow ? (isset($this->rows[$numRow + 1])?$this->rows[$numRow + 1] : null ) : $this->row;
 	}
 
 	/**
@@ -130,16 +134,6 @@ class Result implements ResultInterface {
 		}
 
 		return $this->data;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getIterator(): \Traversable 
-	{
-		$this->loop($this->rows);
-		return $this->data;
-		//return new \ArrayIterator($this->loop($this->rows));
 	}
 	
 }

@@ -11,18 +11,23 @@ namespace Phacil\Framework\Databases\Object;
 use Phacil\Framework\Databases\Object\ItemInterface as ObjectInterface;
 use Traversable;
 
+if (version_compare(phpversion(), "7.1.0", ">=")) {
+	class ComplementItem extends \Phacil\Framework\Databases\Object\Aux\ComplementItem
+	{
+	}
+} else {
+	class ComplementItem extends \Phacil\Framework\Databases\Object\Aux\ComplementItemLegacy
+	{
+	}
+}
+
 /**
  * {@inheritdoc}
  * @method mixed getValue(string $field) 
  * @method mixed getValues(string field, ...) 
  * @package Phacil\Framework\Databases\Object
  */
-class Item implements ObjectInterface {
-	/**
-	 * 
-	 * @var array|null
-	 */
-	protected $__data = null;
+class Item extends ComplementItem implements ObjectInterface {
 
 	/**
 	 * 
@@ -32,14 +37,6 @@ class Item implements ObjectInterface {
 	function __construct($data = null) {
 		$this->__data = $data;
 		return $this;
-	}
-
-	/**
-	 * 
-	 * @return int<0, \max> 
-	 */
-	public function count(): int {
-		return count($this->__data);
 	}
 
 	/**
@@ -62,23 +59,15 @@ class Item implements ObjectInterface {
 	}
 
 	/**
-	 * 
-	 * @return \Traversable<mixed, mixed>|mixed[] 
-	 */
-	public function getIterator(): Traversable {
-		return new \ArrayIterator($this->__data);
-	}
-
-	/**
 	 * @param string $key 
 	 * @return mixed 
 	 */
 	private function _getValue($key){
-		return $this->__data[$key] ?? null;
+		return isset($this->__data[$key]) ? $this->__data[$key] : null;
 	}
 
 	public function __get($key){
-		return $this->__data[$key] ?? null;
+		return isset($this->__data[$key]) ? $this->__data[$key] : null;
 	}
 
 	/**
