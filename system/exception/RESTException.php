@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright © 2023 ExacTI Technology Solutions. All rights reserved.
  * GPLv3 General License.
@@ -7,12 +6,13 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-namespace Phacil\Framework\MagiQL\Manipulation;
+
+namespace Phacil\Framework\Exception;
 
 /**
- * 
- * @package Phacil\Framework\MagiQL\Manipulation
+ * Exception for Rest API.
+ * @package Phacil\Framework\Exception
  */
-class QueryException extends \Phacil\Framework\Exception
-{
+class RESTException extends \Phacil\Framework\Exception\WebApiException {
+
 }

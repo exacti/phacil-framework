@@ -35,6 +35,8 @@ class Login implements \Phacil\Framework\Login\Interfaces\Login {
 	 * @var \Phacil\Framework\Registry|null
 	 */
 	private $engine = null;
+
+	protected $registry;
 	
 	/**
 	 * @inheritdoc

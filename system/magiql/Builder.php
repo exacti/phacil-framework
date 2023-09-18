@@ -209,7 +209,7 @@ class Builder implements \Phacil\Framework\MagiQL\Api\BuilderInterface
      *
      * @return string
      *
-     * @throws \RuntimeException
+     * @throws \Phacil\Framework\MagiQL\Builder\BuilderException
      */
     public function write(QueryInterface $query, $resetPlaceholders = true)
     {
@@ -225,7 +225,7 @@ class Builder implements \Phacil\Framework\MagiQL\Api\BuilderInterface
             return $this->queryWriterInstances[$queryPart]->write($query);
         }
 
-        throw new \RuntimeException('Query builder part not defined.');
+        throw new \Phacil\Framework\MagiQL\Builder\BuilderException('Query builder part not defined.');
     }
 
     /**

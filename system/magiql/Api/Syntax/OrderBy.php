@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright © 2023 ExacTI Technology Solutions. All rights reserved.
  * GPLv3 General License.
@@ -7,12 +6,9 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-namespace Phacil\Framework\MagiQL\Manipulation;
+namespace Phacil\Framework\MagiQL\Api\Syntax;
 
-/**
- * 
- * @package Phacil\Framework\MagiQL\Manipulation
- */
-class QueryException extends \Phacil\Framework\Exception
-{
+interface OrderBy {
+	const ASC = 'ASC';
+	const DESC = 'DESC';
 }

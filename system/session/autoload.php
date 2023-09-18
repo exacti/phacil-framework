@@ -247,7 +247,7 @@ final class Session
      * @return mixed|null 
      */
     public function getData($key) {
-        return $this->data[$key] ?? null;
+        return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
     /**

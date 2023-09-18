@@ -43,7 +43,9 @@ class MySQLi implements Databases {
 		}
 
 		if (!$this->connection->connect_errno) {
-			$this->connection->report_mode = MYSQLI_REPORT_ERROR;
+			if(isset($this->connection->report_mode))
+				$this->connection->report_mode = MYSQLI_REPORT_ERROR;
+				
 			$this->connection->set_charset($charset);
 			//$this->connection->query("SET SESSION sql_mode = 'NO_ZERO_IN_DATE,NO_ENGINE_SUBSTITUTION'");
 			$this->connection->query("SET SQL_MODE = ''");

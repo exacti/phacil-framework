@@ -27,7 +27,7 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
     protected $comment = '';
 
     /**
-     * @var \Phacil\Framework\MagiQL\Builder\BuilderInterface
+     * @var \Phacil\Framework\MagiQL\Api\BuilderInterface
      */
     protected $builder;
 
@@ -80,10 +80,8 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
 
     /**
      * Stores the builder that created this query.
-     *
-     * @param BuilderInterface $builder
-     *
-     * @return $this
+     * @param \Phacil\Framework\MagiQL\Api\BuilderInterface $builder 
+     * @return $this 
      */
     final public function setBuilder(BuilderInterface $builder)
     {
@@ -93,14 +91,14 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
     }
 
     /**
-     * @return BuilderInterface
-     *
-     * @throws \RuntimeException when builder has not been injected
+     * 
+     * @return \Phacil\Framework\MagiQL\Api\BuilderInterface 
+     * @throws \Phacil\Framework\Exception\RuntimeException 
      */
     final public function getBuilder()
     {
         if (!$this->builder) {
-            throw new \RuntimeException('Query builder has not been injected with setBuilder');
+            throw new \Phacil\Framework\Exception\RuntimeException('Query builder has not been injected with setBuilder');
         }
 
         return $this->builder;
@@ -163,7 +161,8 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
     }
 
     /**
-     * @return Table
+     * 
+     * @return \Phacil\Framework\MagiQL\Syntax\Table|null
      */
     public function getTable()
     {
@@ -221,13 +220,13 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
         return $this->where->getConjunction();
     }
 
-    /**
-     * @param string $column
-     * @param string $direction
-     * @param null   $table
-     *
-     * @return $this
-     */
+     /**
+      * 
+      * @param string $column 
+      * @param string $direction 
+      * @param null|Table $table 
+      * @return $this 
+      */
     public function orderBy($column, $direction = OrderBy::ASC, $table = null)
     {
         $newColumn = array($column);

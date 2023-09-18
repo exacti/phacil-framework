@@ -8,6 +8,8 @@
 
 namespace Phacil\Framework\MagiQL\Builder;
 
-class BuilderException extends \Exception
+use Phacil\Framework\Exception;
+
+class BuilderException extends Exception
 {
 }

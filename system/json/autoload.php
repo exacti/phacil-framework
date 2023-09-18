@@ -31,7 +31,7 @@ class Json implements Serializer
 	 */
 	static public function encode($data)
 	{
-		$result = json_encode($data);
+		$result = \json_encode($data);
 		if (false === $result) {
 			throw new \InvalidArgumentException("Unable to serialize value. Error: " . self::json_last_error_msg());
 		}
@@ -48,7 +48,7 @@ class Json implements Serializer
 	 */
 	static public function decode($string, $array = true)
 	{
-		$result = json_decode($string, $array);
+		$result = \json_decode($string, $array);
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			throw new \InvalidArgumentException("Unable to unserialize value. Error: " . self::json_last_error_msg());
 		}

@@ -123,7 +123,7 @@
 	 * @throws \TypeError 
 	 */
 	static public function run() {
-		return spl_autoload_register(['self', 'load']);
+		return spl_autoload_register([self::class, 'load']);
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright © 2023 ExacTI Technology Solutions. All rights reserved.
  * GPLv3 General License.
@@ -7,12 +6,13 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-namespace Phacil\Framework\MagiQL\Manipulation;
+namespace Phacil\Framework\Exception;
 
 /**
+ * Exception thrown if an error which can only be found on runtime occurs.
  * 
- * @package Phacil\Framework\MagiQL\Manipulation
+ * @package Phacil\Framework\Exception
  */
-class QueryException extends \Phacil\Framework\Exception
+class RuntimeException extends \Phacil\Framework\Exception
 {
 }

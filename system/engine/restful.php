@@ -143,7 +143,11 @@ abstract class RESTful extends Controller {
 			try {
 				//code...
 				call_user_func_array(array($this, $method), $params);
-			} catch (\Throwable $th) {
+			} catch (\Phacil\Framework\Exception\WebApiException $re) {
+				$this->data = is_string($re->getMessage()) ? ['error' => $re->getMessage()] : $re->getMessage();
+				$this->response->code($re->getCode());
+				$this->out();
+			}catch (\Phacil\Framework\Exception\Throwable $th) {
 				if(get_class($th) == 'TypeError'){
 					new Exception($th->getMessage(), $th->getCode());
 					return $this->__callInterrupt($th->getMessage());

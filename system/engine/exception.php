@@ -18,7 +18,7 @@ namespace Phacil\Framework;
  * @package Phacil\Framework
  * @api
  */
-class Exception extends \Exception
+class Exception extends \Exception implements \Phacil\Framework\Exception\Throwable
 {
 	public $errorFormat = 'text';
 
@@ -55,7 +55,7 @@ class Exception extends \Exception
 			'trace' => ($debugging) ? (($this->errorFormat == 'json') ? ($this->heritageTrace ?: $this->getTrace()) : Debug::trace(($this->heritageTrace ?: $this->getTrace()))) : null
 		];
 		$log->write(($this->errorFormat == 'json') ? json_encode($errorStamp) : implode(PHP_EOL, array_map(
-			['self','convertArray'],
+			[self::class,'convertArray'],
 			$errorStamp,
 			array_keys($errorStamp)
 		)));

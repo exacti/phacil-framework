@@ -9,13 +9,13 @@
 
 namespace Phacil\Framework\MagiQL\Syntax;
 
+use Phacil\Framework\MagiQL\Api\Syntax\OrderBy as OrderByInterface;
+
 /**
  * Class OrderBy.
  */
-class OrderBy
+class OrderBy implements OrderByInterface
 {
-    const ASC = 'ASC';
-    const DESC = 'DESC';
 
     /**
      * @var Column
@@ -73,14 +73,14 @@ class OrderBy
     /**
      * @param string $direction
      *
-     * @throws \InvalidArgumentException
+     * @throws \Phacil\Framework\Exception\InvalidArgumentException
      *
      * @return $this
      */
     public function setDirection($direction)
     {
-        if (!in_array($direction, array(self::ASC, self::DESC))) {
-            throw new \InvalidArgumentException(
+        if (!in_array($direction, array(OrderByInterface::ASC, OrderByInterface::DESC))) {
+            throw new \Phacil\Framework\Exception\InvalidArgumentException(
                 "Specified direction '$direction' is not allowed. Only ASC or DESC are allowed."
             );
         }
