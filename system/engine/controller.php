@@ -260,7 +260,7 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
      * @throws Exception 
      * @final
      */
-    final protected function render() {
+    protected function render() {
 
         foreach ($this->children as $child) {
             $this->data[basename($child)] = $this->getChild($child);

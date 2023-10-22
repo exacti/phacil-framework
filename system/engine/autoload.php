@@ -36,6 +36,8 @@
 
 	private static $subCallClass = [];
 
+	const SEPARATOR = "\\";
+
 	/**
 	 * 
 	 * @var string
@@ -70,30 +72,30 @@
 	 * @var array
 	 */
 	private static $allowed = [
-		'log',
-		'front',
-		'controller',
-		'loader',
-		'model',
-		'registry',
-		'document',
-		'response',
-		'classes',
-		'abstracthelper',
-		'interfaces\\front',
-		'interfaces\\loader',
-		'interfaces\\action',
-		'traits\\action',
-		'interfaces\\databases',
-		'interfaces\\serializer',
-		'interfaces\\common\\registers',
-		'interfaces\\controller',
-		'interfaces\\helper',
-		'interfaces\\model',
-		'exception',
-		'render',
-		'debug',
-		'restful'
+		'Log',
+		'Front',
+		'Controller',
+		'Loader',
+		'Model',
+		'Registry',
+		'Document',
+		'Response',
+		'Classes',
+		'AbstractHelper',
+		'Interfaces\\Front',
+		'Interfaces\\Loader',
+		'Interfaces\\Action',
+		'Traits\\Action',
+		'Interfaces\\Databases',
+		'Interfaces\\Serializer',
+		'Interfaces\\Common\\Registers',
+		'Interfaces\\Controller',
+		'Interfaces\\Helper',
+		'Interfaces\\Model',
+		'Exception',
+		'Render',
+		'Debug',
+		'RESTful'
 	];
 
 	/**
@@ -251,10 +253,17 @@
 	 * @return void 
 	 */
 	private function prepareNamespaces() {
-		self::$namespace = explode("\\", self::$class);
-		self::$namespaceWithoutPrefix = (\Phacil\Framework\Config::NAMESPACE_PREFIX()) ? explode("\\", str_replace(\Phacil\Framework\Config::NAMESPACE_PREFIX() . "\\", "", self::$class)) : self::$namespace;
+		self::$namespace = explode(self::SEPARATOR, self::$class);
+		self::$namespaceWithoutPrefix = (\Phacil\Framework\Config::NAMESPACE_PREFIX()) ? explode(self::SEPARATOR, str_replace(\Phacil\Framework\Config::NAMESPACE_PREFIX() . self::SEPARATOR, "", self::$class)) : self::$namespace;
 
-		self::$classNative = (isset(self::$namespace[0]) && self::$namespace[0] == "Phacil") ? str_replace('phacil\\framework\\', '', strtolower(self::$class)) : self::$class;
+		if(self::isPhacil() ) {
+			$classPhacilOutput = array_slice(self::$namespace, 2); //2 sliced because the Phacil Namespace is Phacil\Framework
+			self::$classNative = implode(self::SEPARATOR, $classPhacilOutput);
+
+			return;
+		}
+
+		self::$classNative = self::$class;
 	}
 
 	/**
@@ -294,11 +303,14 @@
 		if (!self::isPhacil()) return false;
 
 		if (in_array(self::$classNative, self::$allowed)) {
-			$file = \Phacil\Framework\Config::DIR_SYSTEM() . 'engine/' . str_replace("\\", "/", self::$classNative) . '.php';
-
+			$file = \Phacil\Framework\Config::DIR_SYSTEM() . 'engine/' . str_replace(self::SEPARATOR, "/", strtolower(self::$classNative)) . '.php';
+			
 			try {
 				if (!self::loadClassFile($file)) {
-					throw new \Exception("Class ".self::$class." not loaded.");
+					$file = \Phacil\Framework\Config::DIR_SYSTEM() . 'engine/' . str_replace(self::SEPARATOR, "/", self::$classNative) . '.php';
+					if (!self::loadClassFile($file)) {
+						throw new \Exception("Class " . self::$class . " not loaded.");
+					}
 				}
 				return true;
 			} catch (\Exception $th) {
@@ -346,13 +358,16 @@
 
 		if (isset(self::$namespace[2]) && self::$namespace[2] == 'Databases') {
 
-			$fileDB = \Phacil\Framework\Config::DIR_DATABASE(\Phacil\Framework\Config::DIR_SYSTEM() . "database/") . str_replace("\\", "/", self::$classNative) . '.php';
+			$fileDB = \Phacil\Framework\Config::DIR_DATABASE(\Phacil\Framework\Config::DIR_SYSTEM() . "database/") . str_replace(self::SEPARATOR, "/", strtolower(self::$classNative)) . '.php';
 
 			//$fileDB = self::fileResolver($fileDB);
 
 			try {
 				if (!self::loadClassFile($fileDB)) {
-					throw new \Phacil\Framework\Exception($fileDB . ' does not exist', 2);
+					$fileDB = \Phacil\Framework\Config::DIR_DATABASE(\Phacil\Framework\Config::DIR_SYSTEM() . "database/") . str_replace(self::SEPARATOR, "/", self::$classNative) . '.php';
+					if (!self::loadClassFile($fileDB)) {
+						throw new \Phacil\Framework\Exception($fileDB . ' does not exist', 2);
+					} 
 				} 
 
 				return true;
@@ -373,11 +388,16 @@
 	 */
 	private function loadEngineAutoload() {
 		if (!self::isPhacil()) return false;
-
-		$value = \Phacil\Framework\Config::DIR_SYSTEM() . str_replace('\\', "/", self::$classNative) . '/autoload.php';
-
+		
 		try {
+			$value = \Phacil\Framework\Config::DIR_SYSTEM() . str_replace('\\', "/", strtolower(self::$classNative)) . '/autoload.php';
+
 			if (self::loadClassFile($value)) {
+				return true;
+			}
+
+			$value2 = \Phacil\Framework\Config::DIR_SYSTEM() . str_replace('\\', "/", self::$classNative) . '/autoload.php';
+			if (self::loadClassFile($value2)) {
 				return true;
 			} 
 		} catch (\Exception $e) {
@@ -397,11 +417,15 @@
 	 */
 	private function loadEngineAutoload2() {
 		if (!self::isPhacil()) return false;
-
-		$value = \Phacil\Framework\Config::DIR_SYSTEM() . str_replace('\\', "/", self::$classNative) . '.php';
-
+		
 		try {
+			$value = \Phacil\Framework\Config::DIR_SYSTEM() . str_replace('\\', "/", strtolower(self::$classNative)) . '.php';
 			if (self::loadClassFile($value)) {
+				return true;
+			}
+
+			$value2 = \Phacil\Framework\Config::DIR_SYSTEM() . str_replace('\\', "/", self::$classNative) . '.php';
+			if (self::loadClassFile($value2)) {
 				return true;
 			}
 		} catch (\Exception $e) {
