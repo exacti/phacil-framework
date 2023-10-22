@@ -1,0 +1,76 @@
+## Basic NGINX example configuration:
+# upstream fastcgi_backend {
+#    ## use tcp connection
+#    #server  127.0.0.1:9000;
+#    ## or socket
+#    server  unix:/var/run/php/php8.1-fpm.sock;
+# }
+server {
+
+	#Port to listen
+    listen 80;
+	#Host name to public access
+    server_name phacil.local;
+
+	#Public HTML Folder
+    root /var/www/html/public_html;
+    index index.php;
+
+	#Acces and error logs
+    access_log /var/log/nginx/phacil_access.log;
+    error_log /var/log/nginx/phacil_error.log;
+
+	#Not log favicon requests
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    #location / {
+    #    try_files $uri $uri/ /index.php?$args;
+    #}
+
+	location / {
+        try_files $uri @phacil;
+    }
+    location @phacil {
+        rewrite ^/(.+)$ /index.php?_route_=$1 last;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass   fastcgi_backend;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires max;
+        log_not_found off;
+    }
+
+	gzip on;
+	gzip_disable "msie6";
+
+	gzip_comp_level 6;
+	gzip_min_length 1100;
+	gzip_buffers 16 8k;
+	gzip_proxied any;
+	gzip_types
+		text/plain
+		text/css
+		text/js
+		text/xml
+		text/javascript
+		application/javascript
+		application/x-javascript
+		application/json
+		application/xml
+		application/xml+rss
+		image/svg+xml;
+	gzip_vary on;
+
+	# Banned locations (only reached if the earlier PHP entry point regexes don't match)
+	location ~* (\.php$|\.phps$|\.phpc$|\.phtml$|\.htaccess$|\.htpasswd$|\.git|\.tpl$|\.ini$|\.log$|\.xml$|\.cache$|\.twig$|\.smarty$|\.dwoo$|\.mustache$) {
+		deny all;
+	}
+
+}
