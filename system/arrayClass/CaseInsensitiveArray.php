@@ -7,7 +7,7 @@
 
 namespace Phacil\Framework\ArrayClass;
 
-if (version_compare(phpversion(), "7.1.0", "<")) {
+if (version_compare(phpversion(), "8.0.0", "<")) {
 
 	class supCaseComp extends \Phacil\Framework\ArrayClass\Aux\LegacyAux {
 		

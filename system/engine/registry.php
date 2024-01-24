@@ -195,14 +195,27 @@ final class Registry {
 		foreach ($params as $param) {
 			//$param is an instance of ReflectionParameter
 			try {
-				if ($param->getType()) {
-					$injectionClass = $param->getType()->getName();
-					if (class_exists($injectionClass)) {
-						$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
-						continue;
+				if (version_compare(phpversion(), "7.2.0", "<")) {
+					if ($param->getClass()) {
+						$injectionClass = $param->getClass()->name;
+						if (class_exists($injectionClass)) {
+							$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
+							continue;
+						}
+						if (!$param->isOptional()) {
+							throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
+						}
 					}
-					if (!$param->isOptional()) {
-						throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
+				} else {
+					if ($param->getType()) {
+						$injectionClass = $param->getType()->getName();
+						if (class_exists($injectionClass)) {
+							$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
+							continue;
+						}
+						if (!$param->isOptional()) {
+							throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
+						}
 					}
 				}
 			} catch (\Exception $th) {
