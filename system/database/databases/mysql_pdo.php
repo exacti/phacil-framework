@@ -99,7 +99,7 @@ class MYSQL_PDO implements Databases
 			$sth->execute();
             //$sth= $this->dbh->query($sql);
 			$this->affectedRows = $sth->rowCount();
-            $data->rows         = $sth ? $sth->fetchAll() : array();
+            $data->rows         = $sth ? $sth->fetchAll(\PDO::FETCH_ASSOC) : array();
             $data->row          = isset($data->rows[0]) ? $data->rows[0] : null;
             $data->num_rows     = $this->affectedRows;
             return $data;
@@ -184,7 +184,7 @@ class MYSQL_PDO implements Databases
             // Bind parameters if there are any
             if (!empty($params)) {
                 foreach ($params as $placeholder => &$param) {
-                    $stmt->bindParam($placeholder, $param);
+                    $stmt->bindParam($placeholder, $param, $this->getParamType($param));
                 }
             }
 
@@ -193,7 +193,7 @@ class MYSQL_PDO implements Databases
             if ($stmt->columnCount()) {
                 $data = new \Phacil\Framework\Databases\Object\Result();
                 $data->setNumRows($stmt->rowCount());
-                $data->setRows($stmt->fetchAll());
+                $data->setRows($stmt->fetchAll(\PDO::FETCH_ASSOC));
                 //$data->setRow(isset($data->rows[0]) ? $data->rows[0] : null);
                 $stmt->closeCursor();
 
@@ -208,5 +208,36 @@ class MYSQL_PDO implements Databases
         } catch (\PDOException $exception) {
             throw new \Phacil\Framework\Exception($exception->getMessage());
         }
+    }
+
+    /**
+     * 
+     * @param mixed $param 
+     * @return int 
+     */
+    private function getParamType(&$param)
+    {
+        $paramType = gettype($param);
+
+        switch ($paramType) {
+            case 'boolean':
+                $paramType = \PDO::PARAM_BOOL;
+                break;
+            case 'integer':
+                $paramType = \PDO::PARAM_INT;
+                break;
+            case 'double':
+            case 'float':
+                $paramType = \PDO::PARAM_STR;
+                break;
+            case 'NULL':
+                $paramType = \PDO::PARAM_NULL;
+                break;
+            default:
+                $paramType = \PDO::PARAM_STR;
+                break;
+        }
+
+        return $paramType;
     }
 }

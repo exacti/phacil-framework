@@ -381,14 +381,14 @@ class Select extends AbstractBaseQuery
 
     /**
      * @param int $start
-     * @param     $count
+     * @param int    $count
      *
      * @return $this
      */
-    public function limit($start, $count = 0)
+    public function limit($start, $count = null)
     {
-        $this->limitStart = $start;
-        $this->limitCount = $count;
+        $this->limitStart = $count === null ? 0 : $start;
+        $this->limitCount = $count === null ? $start :$count;
 
         return $this;
     }
