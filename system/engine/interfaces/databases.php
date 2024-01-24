@@ -64,4 +64,14 @@
 	 * 
 	 * @return void  */
 	public function __destruct();
+
+	/**
+	 * Execute a prepared statement with parameters
+	 *
+	 * @param string $sql SQL query with named placeholders
+	 * @param array $params Associative array of parameters
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	public function execute($sql, array $params = []);
  }

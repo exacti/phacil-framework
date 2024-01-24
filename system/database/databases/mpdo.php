@@ -30,7 +30,7 @@ final class mPDO implements Databases {
 
 	/**
 	 * 
-	 * @var mixed
+	 * @var \PDOStatement
 	 */
 	private $statement = null;
 	
@@ -61,22 +61,7 @@ final class mPDO implements Databases {
 			$this->statement->bindParam($parameter, $variable, $data_type);
 		}
 	}
-	public function execute() {
-		try {
-			if ($this->statement && $this->statement->execute()) {
-				$data = array();
-				while ($row = $this->statement->fetch(\PDO::FETCH_ASSOC)) {
-					$data[] = $row;
-				}
-				$result = new \stdClass();
-				$result->row = (isset($data[0])) ? $data[0] : array();
-				$result->rows = $data;
-				$result->num_rows = $this->statement->rowCount();
-			}
-		} catch(\PDOException $e) {
-			throw new \Phacil\Framework\Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode());
-		}
-	}
+
 	public function query($sql, $params = array()) {
 		$this->statement = $this->connection->prepare($sql);
 		
@@ -137,5 +122,50 @@ final class mPDO implements Databases {
 	
 	public function __destruct() {
 		unset($this->connection);
+	}
+
+	/**
+	 * Execute a prepared statement with parameters
+	 *
+	 * @param string $sql SQL query with named placeholders
+	 * @param array $params Associative array of parameters
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	public function execute($sql, array $params = [])
+	{
+		try {
+			$stmt = $this->connection->prepare($sql);
+
+			if ($stmt === false) {
+				throw new \Phacil\Framework\Exception('Error preparing query: ' . implode(', ', $this->connection->errorInfo()));
+			}
+
+			// Bind parameters if there are any
+			if (!empty($params)) {
+				foreach ($params as $placeholder => &$param) {
+					$stmt->bindParam($placeholder, $param);
+				}
+			}
+
+			$stmt->execute();
+
+			if ($stmt->columnCount()) {
+				$data = new \Phacil\Framework\Databases\Object\Result();
+				$data->setNumRows($stmt->rowCount());
+				$data->setRows($stmt->fetchAll());
+				//$data->setRow(isset($data->rows[0]) ? $data->rows[0] : null);
+				$stmt->closeCursor();
+
+				return $data;
+			} else {
+				$this->rowCount = $stmt->rowCount();
+				$stmt->closeCursor();
+
+				return true;
+			}
+		} catch (\PDOException $exception) {
+			throw new \Phacil\Framework\Exception($exception->getMessage());
+		}
 	}
 }

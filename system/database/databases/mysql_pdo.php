@@ -10,7 +10,7 @@ namespace Phacil\Framework\Databases;
 
 use Phacil\Framework\Interfaces\Databases;
 
-final class MYSQL_PDO implements Databases
+class MYSQL_PDO implements Databases
 {
     /**
      * Link to the database connection
@@ -162,5 +162,51 @@ final class MYSQL_PDO implements Databases
     public function __destruct()
     {
         $this->close();
+    }
+
+    /**
+     * Execute a prepared statement with parameters
+     *
+     * @param string $sql SQL query with named placeholders
+     * @param array $params Associative array of parameters
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+     * @throws \Phacil\Framework\Exception 
+     */
+    public function execute($sql, array $params = [])
+    {
+        try {
+            $stmt = $this->dbh->prepare($sql);
+
+            if ($stmt === false) {
+                throw new \Phacil\Framework\Exception('Error preparing query: ' . implode(', ', $this->dbh->errorInfo()));
+            }
+
+            // Bind parameters if there are any
+            if (!empty($params)) {
+                foreach ($params as $placeholder => &$param) {
+                    $stmt->bindParam($placeholder, $param);
+                }
+            }
+
+            $stmt->execute();
+
+            if ($stmt->columnCount()) {
+                $data = new \Phacil\Framework\Databases\Object\Result();
+                $data->setNumRows($stmt->rowCount());
+                $data->setRows($stmt->fetchAll());
+                //$data->setRow(isset($data->rows[0]) ? $data->rows[0] : null);
+                $stmt->closeCursor();
+
+                return $data;
+            } else {
+                $this->affectedRows = $stmt->rowCount();
+                $stmt->closeCursor();
+
+                return true;
+				
+            }
+        } catch (\PDOException $exception) {
+            throw new \Phacil\Framework\Exception($exception->getMessage());
+        }
     }
 }

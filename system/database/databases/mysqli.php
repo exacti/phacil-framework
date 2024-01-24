@@ -115,4 +115,95 @@ class MySQLi implements Databases {
 	public function __destruct() {
 		$this->connection->close();
 	}
+
+	/**
+	 * Execute a prepared statement with parameters
+	 *
+	 * @param string $sql SQL query with named placeholders
+	 * @param array $params Associative array of parameters
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	public function execute($sql, array $params = [])
+	{
+		// Verificar se há parâmetros e fazer o bind
+		if (!empty($params)) {
+			$types = '';
+			$bindParams = [];
+
+			//$sql = str_replace(array_keys($params), array_fill(0, count($params), '?'), $sql);
+
+			foreach ($params as $placeholder => &$param) {
+
+				//$stmt->bind_param($this->getParamType($param), $param);
+				$types .= $this->getParamType($param);
+				$bindParams[] = &$param;
+
+				if (is_string($placeholder))
+					$sql = str_replace($placeholder, '?', $sql);
+			}
+
+			$stmt = $this->connection->prepare($sql);
+
+			array_unshift($bindParams, $types);
+			call_user_func_array([$stmt, 'bind_param'], $bindParams);
+		} else {
+			$stmt = $this->connection->prepare($sql);
+		}
+
+		if ($stmt === false) {
+			throw new \Phacil\Framework\Exception('Error preparing query: ' . $this->connection->error);
+		}
+
+		$result_exec = $stmt->execute();
+
+		if ($stmt->errno) {
+			throw new \Phacil\Framework\Exception('Error executing query: ' . $stmt->error);
+		}
+
+		$result = $stmt->get_result();
+
+		if ($result === false && !empty($stmt->error_list)) {
+			throw new \Phacil\Framework\Exception('Error getting result: ' . $stmt->error);
+		}
+
+		// Processar resultados se for um SELECT
+		if ($result instanceof \mysqli_result) {
+			$data = [];
+			while ($row = $result->fetch_assoc()) {
+				$data[] = $row;
+			}
+
+			$resultObj = new \Phacil\Framework\Databases\Object\Result();
+			$resultObj->setNumRows($result->num_rows);
+			$resultObj->setRow(isset($data[0]) ? $data[0] : []);
+			$resultObj->setRows($data);
+
+			$result->close();
+
+			return $resultObj;
+		}
+
+		// Se não for um SELECT, apenas retornar verdadeiro
+		return $result_exec;
+	}
+
+	/**
+	 * Check type
+	 * @param mixed $value 
+	 * @return string 
+	 */
+	private function getParamType($value)
+	{
+		switch (true) {
+			case is_int($value):
+				return 'i';
+			case is_float($value):
+				return 'd';
+			case is_string($value):
+				return 's';
+			default:
+				return 'b';
+		}
+	}
 }

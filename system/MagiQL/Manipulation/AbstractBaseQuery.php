@@ -92,7 +92,7 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
 
     /**
      * 
-     * @return \Phacil\Framework\MagiQL\Api\BuilderInterface 
+     * @return \Phacil\Framework\MagiQL\Api\BuilderInterface|\Phacil\Framework\MagiQL
      * @throws \Phacil\Framework\Exception\RuntimeException 
      */
     final public function getBuilder()
@@ -279,5 +279,19 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * 
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true|array 
+     * @throws \Phacil\Framework\Exception 
+     */
+    public function load() {
+        try {
+            return $this->getBuilder()->execute($this);
+        } catch (\Throwable $th) {
+            throw new \Phacil\Framework\Exception($th->getMessage());
+        }
+        return [];
     }
 }

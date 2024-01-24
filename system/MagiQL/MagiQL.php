@@ -40,6 +40,19 @@ class MagiQL extends Builder {
 		parent::__construct();
 	}
 
+	/**
+	 * 
+	 * @param \Phacil\Framework\MagiQL\Api\QueryInterface $obj 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+	 * @throws \Phacil\Framework\MagiQL\Builder\BuilderException 
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	public function execute(\Phacil\Framework\MagiQL\Api\QueryInterface $obj) {
+		$query = $this->write($obj);
+		$values = $this->getValues();
+		return $this->db->execute($query, $values);
+	}
+
 	public function __call($name, $arguments = array()){
 
 		return call_user_func_array([$this->queryObj, $name], $arguments);
