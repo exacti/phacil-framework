@@ -69,6 +69,7 @@ class Result extends ComplementResult implements ResultInterface {
 	 */
 	public function setRows($rows){
 		$this->rows = $rows;
+		$this->row = isset($rows[0]) ? $this->rows[0] : null;
 		return $this;
 	}
 

@@ -107,7 +107,7 @@ final class Registry {
 	 * @return \Phacil\Framework\Registry
 	 * @since 2.0.0
 	 */
-	static public function getInstance($class = null, $args = []) {
+	static public function getInstance($class = null, $args = [], $onlyCheckInstances = false) {
 		if(!$class) return \Phacil\Framework\startEngineExacTI::getRegistry();
 
 		$registry = \Phacil\Framework\startEngineExacTI::getRegistry();
@@ -126,6 +126,8 @@ final class Registry {
 		}
 
 		if($return) return $return;
+
+		if($onlyCheckInstances) return $return;
 
 		if(is_string($class)) {
 			$reflector = new ReflectionClass($class);
@@ -164,5 +166,58 @@ final class Registry {
 		if (!is_object($class)) throw new Exception('Object type is required!');
 
 		return isset(self::$autoInstances[get_class($class)]) ? self::$autoInstances[get_class($class)] : self::setAutoInstance($class);
+	}
+
+
+	public function injectionClass($class)
+	{
+		$refClass = new ReflectionClass($class);
+
+		if (!$refClass->getConstructor()) {
+			if ($refClass->hasMethod('getInstance') && $refClass->getMethod('getInstance')->isStatic()) {
+				return $refClass->getMethod('getInstance')->invoke(null);
+			}
+
+			return $refClass->newInstanceWithoutConstructor();
+		}
+
+		try {
+			if ( $autoInstance = $this->getInstance($class, [], true))
+				return $autoInstance;
+		} catch (\Throwable $th) {
+			//throw $th;
+		}
+
+
+		$rMethod = new ReflectionMethod($class, "__construct");
+		$params = $rMethod->getParameters();
+		$argsToInject = [];
+		foreach ($params as $param) {
+			//$param is an instance of ReflectionParameter
+			try {
+				if ($param->getType()) {
+					$injectionClass = $param->getType()->getName();
+					if (class_exists($injectionClass)) {
+						$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
+						continue;
+					}
+					if (!$param->isOptional()) {
+						throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
+					}
+				}
+			} catch (\Exception $th) {
+				throw $th;
+			}
+
+			if ($param->isOptional() && $param->isDefaultValueAvailable()) {
+				$argsToInject[] = $param->getDefaultValue();
+				continue;
+			}
+			if ($param->isOptional()) {
+				$argsToInject[] = null;
+			}
+		}
+
+		return self::setAutoInstance($refClass->newInstanceArgs($argsToInject));
 	}
 }

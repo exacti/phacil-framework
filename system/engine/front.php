@@ -70,13 +70,13 @@ final class Front implements frontInterface {
 			$action = $this->execute($action);
 		}
   	}
-    
+
 	/**
 	 * @param object $action 
-	 * @return \Phacil\Framework\Interfaces\Action|\Phacil\Framework\Controller
+	 * @return \Phacil\Framework\Interfaces\Action|\Phacil\Framework\Interfaces\Controller|null
 	 * @throws Exception 
 	 */
-	private function execute($action) {
+	private function execute(\Phacil\Framework\Interfaces\Action $action) {
 		$file = $action->getFile();
 		$class = $action->getClass();
 		$classAlt = $action->getClassAlt();
@@ -91,20 +91,21 @@ final class Front implements frontInterface {
 			foreach($classAlt as $classController){
 				try {
 					if(class_exists($classController)){
-						$controller = new $classController($this->registry);
 						
-						if(!is_subclass_of($controller, 'Phacil\Framework\Controller')){
+						$action = $this->callController($this->injectionClass($classController), $method, $args);
+						
+						/* if(!is_subclass_of($controller, 'Phacil\Framework\Controller')){
 							throw new Exception('PHACIL ERROR: Controller '. get_class($controller) . ' doesn\'t have Phacil\Framework\Controller implemented');
-						}
+						} */
 
 						break;
 					}
-				} catch (Exception $th) {
-					//throw $th;
+				} catch (\Phacil\Framework\Exception\Throwable $th) {
+					throw $th;
 				}
 			}
 			
-			try {
+			/* try {
 				if (is_callable(array($controller, $method))) {
 					$action = call_user_func_array(array($controller, $method), $args);
 				} else {
@@ -113,7 +114,7 @@ final class Front implements frontInterface {
 					$this->error = '';
 					throw new Exception("The controller can't be loaded", 1);
 				}
-			} catch (Exception $th) {
+			} catch (\Phacil\Framework\Exception\Throwable $th) {
 				//throw $th;
 				$action = new Action($this->error);
 			
@@ -121,13 +122,14 @@ final class Front implements frontInterface {
 
 				throw new Exception("The controller can't be loaded: ".$th->getMessage(), $th->getCode(), $th);
 				
-			}
+			} */
 			
 		} elseif(!$file && isset($classAlt['class'])) {
 			try {
-				$controller = new $classAlt['class']($this->registry);
+				$this->injectionClass($classController);
+				$action = $this->callController(new $classAlt['class']($this->registry), $method, $args);
 
-				if (!is_subclass_of($controller, 'Phacil\Framework\Controller')) {
+				/* if (!is_subclass_of($controller, 'Phacil\Framework\Controller')) {
 					throw new Exception('PHACIL ERROR: Controller ' . get_class($controller) . '  doesn\'t have Phacil\Framework\Controller implemented');
 				}
 
@@ -139,9 +141,9 @@ final class Front implements frontInterface {
 					new Exception("PHACIL ERROR: Controller class " . get_class($controller) . "->".$method."() is not a callable function");
 				} else {
 					$action = call_user_func_array(array($controller, $method), $args);
-				}
-			} catch (Exception $th) {
-				throw new Exception("The controller can't be loaded: " . $th->getMessage(), $th->getCode(), $th);
+				} */
+			} catch (\Phacil\Framework\Exception\Throwable $th) {
+				throw ($th);
 			}
 		}else {
 			$action = new Action($this->error);
@@ -150,5 +152,52 @@ final class Front implements frontInterface {
 		}
 		
 		return $action;
+	}
+
+	/**
+	 * 
+	 * @param \Phacil\Framework\Interfaces\Controller $controller 
+	 * @return \Phacil\Framework\Interfaces\Controller|\Phacil\Framework\Interfaces\Action|null 
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	protected function callController(\Phacil\Framework\Interfaces\Controller $controller, $method, $args = array()) {
+		try {
+			//code...
+			if (is_callable(array($controller, $method))) {
+				$action = call_user_func_array(array($controller, $method), $args);
+			} else {
+				$action = new Action($this->error);
+
+				$this->error = '';
+				//throw new Exception("The controller can't be loaded", 1);
+				new Exception("PHACIL ERROR: Controller class " . get_class($controller) . "->" . $method . "() is not a callable function");
+			}
+			return $action;
+		} catch (\Exception $th) {
+			throw new Exception($th->getMessage(), $th->getCode(), $th);
+			//throw $th;
+		}
+	}
+
+	protected function injectionClass($class){
+		/* $refClass = new ReflectionClass($class);
+
+		if(!$refClass->getConstructor()){
+			if($refClass->hasMethod('getInstance') && $refClass->getMethod('getInstance')->isStatic()){
+				return $refClass->getMethod('getInstance')->invoke(null);
+			}
+
+			return $refClass->newInstanceWithoutConstructor();
+		}
+
+		try {
+			if ($autoInstance = $this->registry->getInstance($class))
+				return $autoInstance;
+		} catch (\Throwable $th) {
+			//throw $th;
+		} */
+		
+			
+		return $this->registry->injectionClass($class);
 	}
 }
