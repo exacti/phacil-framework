@@ -36,21 +36,6 @@ class Builder implements \Phacil\Framework\MagiQL\Api\BuilderInterface
     protected $whereWriter;
 
     /**
-     * The SQL formatter.
-     *
-     * @var \NilPortugues\Sql\QueryFormatter\Formatter
-     */
-    protected $sqlFormatter;
-
-    /**
-     * Class namespace for the query pretty output formatter.
-     * Required to create the instance only if required.
-     *
-     * @var string
-     */
-    protected $sqlFormatterClass = 'NilPortugues\Sql\QueryFormatter\Formatter';
-
-    /**
      * Array holding the writers for each query part. Methods are called upon request and stored in
      * the $queryWriterInstances array.
      *
@@ -185,22 +170,6 @@ class Builder implements \Phacil\Framework\MagiQL\Api\BuilderInterface
     public function getValues()
     {
         return $this->placeholderWriter->get();
-    }
-
-    /**
-     * Returns a SQL string in a readable human-friendly format.
-     *
-     * @param QueryInterface $query
-     *
-     * @return string
-     */
-    public function writeFormatted(QueryInterface $query)
-    {
-        if (null === $this->sqlFormatter) {
-            $this->sqlFormatter = (new \ReflectionClass($this->sqlFormatterClass))->newInstance();
-        }
-
-        return $this->sqlFormatter->format($this->write($query));
     }
 
     /**
