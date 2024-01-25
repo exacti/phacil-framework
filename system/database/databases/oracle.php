@@ -15,7 +15,7 @@ use Phacil\Framework\Interfaces\Databases;
  * 
  * @package Phacil\Framework\Databases
  */
-final class Oracle implements Databases {
+class Oracle implements Databases {
 	/**
 	 * 
 	 * @var resource|false
@@ -94,5 +94,65 @@ final class Oracle implements Databases {
 	
 	public function __destruct() {
         oci_close($this->connection);
+	}
+
+	/**
+	 * Execute a prepared statement with parameters
+	 *
+	 * @param string $sql SQL query with named placeholders
+	 * @param array $params Associative array of parameters
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+	 * @throws \Phacil\Framework\Exception
+	 */
+	public function execute($sql, array $params = [])
+	{
+		// Verificar se há parâmetros e fazer o bind
+		if (!empty($params)) {
+			$sql = $this->replacePlaceholders($sql, array_keys($params));
+
+			$stid = oci_parse($this->connection, $sql);
+
+			foreach ($params as $placeholder => &$param) {
+				oci_bind_by_name($stid, $placeholder, $param);
+			}
+
+			$result_exec = oci_execute($stid);
+
+			if ($result_exec === false) {
+				$e = oci_error($stid);
+				throw new \Phacil\Framework\Exception('Error executing query: ' . htmlentities($e['message'], ENT_QUOTES));
+			}
+
+			// Processar resultados se for um SELECT
+			$res = [];
+			oci_fetch_all($stid, $res);
+
+			$resultObj = new \Phacil\Framework\Databases\Object\Result();
+			$resultObj->setNumRows(oci_num_rows($stid));
+			$resultObj->setRow(isset($res[0]) ? $res[0] : []);
+			$resultObj->setRows($res);
+
+			return $resultObj;
+		} else {
+			// Se não há parâmetros, executar diretamente sem consulta preparada
+			$query = $this->query($sql);
+			return $query;
+		}
+	}
+	
+	/**
+	 * Replace placeholders in the SQL query with named placeholders
+	 *
+	 * @param string $sql SQL query with named placeholders
+	 * @param array $placeholders Array of named placeholders
+	 * @return string SQL query with named placeholders
+	 */
+	private function replacePlaceholders($sql, $placeholders)
+	{
+		foreach ($placeholders as $placeholder) {
+			$sql = str_replace($placeholder, ':' . $placeholder, $sql);
+		}
+
+		return $sql;
 	}
 } 

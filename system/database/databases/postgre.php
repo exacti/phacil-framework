@@ -10,7 +10,7 @@ namespace Phacil\Framework\Databases;
 
 use Phacil\Framework\Interfaces\Databases;
 
-final class Postgre implements Databases {
+class Postgre implements Databases {
 	/**
 	 * 
 	 * @var resource|false
@@ -98,5 +98,61 @@ final class Postgre implements Databases {
 	/** @return void  */
 	public function __destruct() {
 		pg_close($this->link);
+	}
+
+
+	/**
+	 * Execute a prepared statement with parameters
+	 *
+	 * @param string $sql SQL query with named placeholders
+	 * @param array $params Associative array of parameters
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+	 * @throws \Phacil\Framework\Exception
+	 */
+	public function execute($sql, array $params = [])
+	{
+		// Verificar se há parâmetros e fazer o bind
+		if (!empty($params)) {
+			$sql = $this->replacePlaceholders($sql, array_keys($params));
+			$result = pg_query_params($this->link, $sql, array_values($params));
+
+			if ($result === false) {
+				throw new \Phacil\Framework\Exception('Error executing query: ' . pg_last_error($this->link));
+			}
+
+			// Processar resultados se for um SELECT
+			$i = 0;
+			$data = [];
+			while ($row = pg_fetch_assoc($result)) {
+				$data[$i] = $row;
+				$i++;
+			}
+
+			$resultObj = new \Phacil\Framework\Databases\Object\Result();
+			$resultObj->setNumRows($i);
+			$resultObj->setRow(isset($data[0]) ? $data[0] : []);
+			$resultObj->setRows($data);
+
+			return $resultObj;
+		} else {
+			// Se não há parâmetros, executar diretamente sem consulta preparada
+			return $this->query($sql);
+		}
+	}
+
+	/**
+	 * Replace placeholders in the SQL query with named placeholders
+	 *
+	 * @param string $sql SQL query with named placeholders
+	 * @param array $placeholders Array of named placeholders
+	 * @return string SQL query with named placeholders
+	 */
+	private function replacePlaceholders($sql, $placeholders)
+	{
+		foreach ($placeholders as $placeholder) {
+			$sql = str_replace($placeholder, '$' . ($placeholders[$placeholder] + 1), $sql);
+		}
+
+		return $sql;
 	}
 }

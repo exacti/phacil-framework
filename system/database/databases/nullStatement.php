@@ -55,4 +55,17 @@ final class nullStatement implements Databases {
     public function __destruct() {
         return NULL;
     }
+
+    /**
+     * Execute a prepared statement with parameters
+     *
+     * @param string $sql SQL query with named placeholders
+     * @param array $params Associative array of parameters
+     * @return null
+     * @throws \Phacil\Framework\Exception
+     */
+    public function execute($sql, array $params = [])
+    {
+        return [null];
+    }
 }

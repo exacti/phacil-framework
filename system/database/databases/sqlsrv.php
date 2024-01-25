@@ -127,4 +127,51 @@ final class SQLSRV implements Databases {
     public function __destruct() {
         \sqlsrv_close($this->link);
     }
+
+    /**
+     * Execute a prepared statement with parameters
+     *
+     * @param string $sql SQL query with named placeholders
+     * @param array $params Associative array of parameters
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+     * @throws \Phacil\Framework\Exception 
+     */
+    public function execute($sql, array $params = [])
+    {
+        if (!empty($params)) {
+            // Bind parameters if there are any
+            $stmt = \sqlsrv_prepare($this->link, $sql, $params);
+
+            if ($stmt === false) {
+                throw new \Phacil\Framework\Exception('Error preparing query: ' . \sqlsrv_errors());
+            }
+
+            $result = \sqlsrv_execute($stmt);
+
+            if ($result === false) {
+                throw new \Phacil\Framework\Exception('Error executing query: ' . \sqlsrv_errors());
+            }
+
+            // Processar resultados se for um SELECT
+            if (\sqlsrv_has_rows($stmt)) {
+                $data = [];
+                while ($row = \sqlsrv_fetch_array($stmt, \SQLSRV_FETCH_ASSOC)) {
+                    $data[] = $row;
+                }
+
+                $resultObj = new \Phacil\Framework\Databases\Object\Result();
+                $resultObj->setNumRows(\sqlsrv_num_rows($stmt));
+                $resultObj->setRow(isset($data[0]) ? $data[0] : []);
+                $resultObj->setRows($data);
+
+                return $resultObj;
+            }
+
+            // Se não for um SELECT, apenas retornar verdadeiro
+            return true;
+        } else {
+            // Se não há parâmetros, executar diretamente sem consulta preparada
+            return $this->query($sql);
+        }
+    }
 }

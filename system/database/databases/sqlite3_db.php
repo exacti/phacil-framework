@@ -100,4 +100,60 @@ final class Sqlite3_db implements Databases {
     public function __destruct() {
         $this->connection->close();
     }
+
+
+    /**
+     * Execute a prepared statement with parameters
+     *
+     * @param string $sql SQL query with named placeholders
+     * @param array $params Associative array of parameters
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+     * @throws \Phacil\Framework\Exception 
+     */
+    public function execute($sql, array $params = [])
+    {
+        if (!empty($params)) {
+            // Bind parameters if there are any
+            foreach ($params as $placeholder => &$param) {
+                $sql = str_replace($placeholder, ':' . $placeholder, $sql);
+            }
+
+            $stmt = $this->connection->prepare($sql);
+
+            if ($stmt === false) {
+                throw new \Phacil\Framework\Exception('Error preparing query: ' . $this->connection->lastErrorMsg());
+            }
+
+            foreach ($params as $placeholder => &$param) {
+                $stmt->bindValue(':' . $placeholder, $param);
+            }
+
+            $result = $stmt->execute();
+
+            if ($result === false) {
+                throw new \Phacil\Framework\Exception('Error executing query: ' . $this->connection->lastErrorMsg());
+            }
+
+            // Processar resultados se for um SELECT
+            if ($result instanceof \SQLite3Result) {
+                $data = [];
+                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                    $data[] = $row;
+                }
+
+                $resultObj = new \Phacil\Framework\Databases\Object\Result();
+                $resultObj->setNumRows(count($data));
+                $resultObj->setRow(isset($data[0]) ? $data[0] : []);
+                $resultObj->setRows($data);
+
+                return $resultObj;
+            }
+
+            // Se não for um SELECT, apenas retornar verdadeiro
+            return true;
+        } else {
+            // Se não há parâmetros, executar diretamente sem consulta preparada
+            return $this->query($sql);
+        }
+    }
 }

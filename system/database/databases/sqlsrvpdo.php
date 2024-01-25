@@ -20,9 +20,15 @@ final class sqlsrvPDO implements Databases {
 
     /**
      * 
-     * @var PDONative
+     * @var PDOStatement
      */
     private $statement = null;
+
+    /**
+     * 
+     * @var int
+     */
+    private $affectedRows = 0;
 
     /**
      * 
@@ -65,29 +71,6 @@ final class sqlsrvPDO implements Databases {
             $this->statement->bindParam($parameter, $variable, $data_type, $length);
         } else {
             $this->statement->bindParam($parameter, $variable, $data_type);
-        }
-    }
-
-    /**
-     * @return never 
-     * @throws Exception 
-     */
-    public function execute() {
-        try {
-            if ($this->statement && $this->statement->execute()) {
-                $data = array();
-
-                while ($row = $this->statement->fetch(\PDO::FETCH_ASSOC)) {
-                    $data[] = $row;
-                }
-
-                $result = new \stdClass();
-                $result->row = (isset($data[0])) ? $data[0] : array();
-                $result->rows = $data;
-                $result->num_rows = $this->statement->rowCount();
-            }
-        } catch(\PDOException $e) {
-            throw new \Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode());
         }
     }
 
@@ -144,7 +127,7 @@ final class sqlsrvPDO implements Databases {
         if ($this->statement) {
             return $this->statement->rowCount();
         } else {
-            return 0;
+            return $this->affectedRows;
         }
     }
 
@@ -165,5 +148,80 @@ final class sqlsrvPDO implements Databases {
     /** @return void  */
     public function __destruct() {
         unset($this->connection);
+    }
+
+    /**
+     * Execute a prepared statement with parameters
+     *
+     * @param string $sql SQL query with named placeholders
+     * @param array $params Associative array of parameters
+     * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+     * @throws \Phacil\Framework\Exception 
+     */
+    public function execute($sql, array $params = [])
+    {
+        try {
+            $this->statement = $this->connection->prepare($sql);
+
+            if ($this->statement === false) {
+                throw new \Phacil\Framework\Exception('Error preparing query: ' . implode(', ', $this->connection->errorInfo()));
+            }
+
+            // Bind parameters if there are any
+            if (!empty($params)) {
+                foreach ($params as $placeholder => &$param) {
+                    $this->statement->bindParam($placeholder, $param, $this->getParamType($param));
+                }
+            }
+
+            $this->statement->execute();
+
+            if ($this->statement->columnCount()) {
+                $data = new \Phacil\Framework\Databases\Object\Result();
+                $data->setNumRows($this->statement->rowCount());
+                $data->setRows($this->statement->fetchAll(\PDO::FETCH_ASSOC));
+                $this->statement->closeCursor();
+
+                return $data;
+            } else {
+                $this->affectedRows = $this->statement->rowCount();
+                $this->statement->closeCursor();
+
+                return true;
+            }
+        } catch (\PDOException $exception) {
+            throw new \Phacil\Framework\Exception($exception->getMessage());
+        }
+    }
+
+    /**
+     * 
+     * @param mixed $param 
+     * @return int 
+     */
+    private function getParamType(&$param)
+    {
+        $paramType = gettype($param);
+
+        switch ($paramType) {
+            case 'boolean':
+                $paramType = \PDO::PARAM_BOOL;
+                break;
+            case 'integer':
+                $paramType = \PDO::PARAM_INT;
+                break;
+            case 'double':
+            case 'float':
+                $paramType = \PDO::PARAM_STR;
+                break;
+            case 'NULL':
+                $paramType = \PDO::PARAM_NULL;
+                break;
+            default:
+                $paramType = \PDO::PARAM_STR;
+                break;
+        }
+
+        return $paramType;
     }
 }

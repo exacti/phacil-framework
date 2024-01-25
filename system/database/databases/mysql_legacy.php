@@ -88,4 +88,24 @@ final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 	public function __destruct() {
 		\mysql_close($this->connection);
 	}
+
+	/**
+	 * Execute a prepared statement with parameters
+	 *
+	 * @param string $sql SQL query with named placeholders
+	 * @param array $params Associative array of parameters
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+	 * @throws \Phacil\Framework\Exception
+	 */
+	public function execute($sql, array $params = [])
+	{
+		foreach ($params as $placeholder => &$param) {
+			$bindParams[] = $this->escape($param);
+
+			if (is_string($placeholder))
+				$sql = str_replace($placeholder, $this->escape($param), $sql);
+		}
+		$sql = str_replace(array_keys($params), array_values($bindParams), $sql);
+		return $this->query($sql);
+	}
 }
