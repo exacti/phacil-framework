@@ -15,7 +15,7 @@ use Phacil\Framework\Interfaces\Databases;
  * Alternative PDO MySQL connection method.
  * 
  * @package Phacil\Framework\Databases */
-final class mPDO implements Databases {
+class mPDO implements Databases {
 	/**
 	 * 
 	 * @var PDO

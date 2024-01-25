@@ -14,7 +14,7 @@ namespace Phacil\Framework\Databases;
  * Doesn't work with PHP 7+
  * @package Phacil\Framework\Databases 
  * */
-final class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
+class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 	private $connection;
 	
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {

@@ -10,7 +10,7 @@ namespace Phacil\Framework\Databases;
 
 use Phacil\Framework\Interfaces\Databases;
 
-final class SQLSRV implements Databases {
+class SQLSRV implements Databases {
     /**
      * 
      * @var resource

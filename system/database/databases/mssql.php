@@ -14,7 +14,7 @@ namespace Phacil\Framework\Databases;
  * Doesn't work with PHP 7+
  * @deprecated 2.0.0
  * @package Phacil\Framework\Databases */
-final class MSSQL implements \Phacil\Framework\Interfaces\Databases
+class MSSQL implements \Phacil\Framework\Interfaces\Databases
 {
 	private $connection;
 

@@ -11,7 +11,7 @@ namespace Phacil\Framework\Databases;
 use \PDO as PDONative;
 use Phacil\Framework\Interfaces\Databases;
 
-final class sqlsrvPDO implements Databases {
+class sqlsrvPDO implements Databases {
     /**
      * 
      * @var PDONative

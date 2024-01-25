@@ -12,7 +12,7 @@ use Phacil\Framework\Interfaces\Databases;
 use \SQLite3;
 use \stdClass;
 
-final class Sqlite3_db implements Databases {
+class Sqlite3_db implements Databases {
     /**
      * 
      * @var SQLite3
