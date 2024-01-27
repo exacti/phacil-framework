@@ -36,12 +36,12 @@ final class Database {
 		'dbmysqli' 		=> '\Phacil\Framework\Databases\DBMySQLi',
 		'mssql' 		=> '\Phacil\Framework\Databases\MSSQL',
 		'mysql_legacy' 	=> '\Phacil\Framework\Databases\MySQL_legacy',
-		'mysql_pdo' 	=> '\Phacil\Framework\Databases\MYSQL_PDO',
+		'mysql_pdo' 	=> '\Phacil\Framework\Databases\MySQL_PDO',
 		'mysqli' 		=> '\Phacil\Framework\Databases\MySQLi',
 		'nullstatement' => '\Phacil\Framework\Databases\nullStatement',
 		'oracle' 		=> '\Phacil\Framework\Databases\Oracle',
 		'postgre' 		=> '\Phacil\Framework\Databases\Postgre',
-		'sqlite3_db' 	=> '\Phacil\Framework\Databases\Sqlite3_db',
+		'sqlite3_db' 	=> '\Phacil\Framework\Databases\SQLite3',
 		'sqlsrv' 		=> '\Phacil\Framework\Databases\SQLSRV',
 		'sqlsrvpdo' 	=> '\Phacil\Framework\Databases\sqlsrvPDO'
 	];
