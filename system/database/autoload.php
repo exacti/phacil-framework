@@ -158,16 +158,18 @@ final class Database {
 		return $this->driver->getLastId();
   	}
 
-    /**
-     * @param string $sql 
-     * @param int $pageNum_exibe 
-     * @param int $maxRows_exibe 
-     * @param bool $cache 
-     * @param string|null $sqlTotal 
-     * @return object 
-	 * @deprecated 2.0.0
-     * @throws PhpfastcacheInvalidArgumentException 
-     */
+	/**
+	 * @param string $sql 
+	 * @param int $pageNum_exibe 
+	 * @param int $maxRows_exibe 
+	 * @param bool $cache 
+	 * @param string|null $sqlTotal 
+	 * @return object 
+	 * @deprecated 2.0.0 This method as no longer maintained and will be removed on any 2.x further version (not defined yet). 
+	 * @deprecated Use MaqiQL class (\Phacil\Framework\MagiQL) instead.
+	 * @see \Phacil\Framework\MagiQL To use statement queries for more secure and relialable code.
+	 * @throws PhpfastcacheInvalidArgumentException 
+	 */
     public function pagination($sql, $pageNum_exibe = 1, $maxRows_exibe = 10, $cache = true, $sqlTotal = null){
 
         if (($pageNum_exibe >= 1)) {
