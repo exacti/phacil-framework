@@ -15,7 +15,7 @@ use Phacil\Framework\Interfaces\Databases;
  * Alternative PDO Oracle connection method.
  * 
  * @package Phacil\Framework\Databases */
-class ORACLE_PDO implements Databases
+class Oracle_PDO implements Databases
 {
 	/**
 	 * 

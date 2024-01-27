@@ -10,7 +10,7 @@ namespace Phacil\Framework\Databases;
 
 use Phacil\Framework\Interfaces\Databases;
 
-class MYSQL_PDO implements Databases
+class MySQL_PDO implements Databases
 {
     /**
      * Link to the database connection
