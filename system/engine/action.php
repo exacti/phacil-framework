@@ -109,6 +109,21 @@ final class Action implements ActionInterface {
 				array_shift($parts);
 				
 				break;
+			}elseif (is_file(Config::DIR_APPLICATION() . 'controller/' . strtolower($strReplaceOnPath) . '.php')) {
+				$this->file = Config::DIR_APPLICATION() . 'controller/' . strtolower($strReplaceOnPath) . '.php';
+				
+				$this->class = 'Controller' . $pregReplaceOnPath;
+
+				$this->classAlt = [
+					'class' => $this->mountClass($strReplaceOnPathNew, $pregReplaceOnPart),
+					'legacy' => $this->class,
+					'ucfirst' => ucfirst($pregReplaceOnPart),
+					'direct' => $pregReplaceOnPart
+				];
+
+				array_shift($parts);
+				
+				break;
 			}
 		}
 		
