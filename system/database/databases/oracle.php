@@ -40,13 +40,13 @@ class Oracle implements Databases {
 	 * @throws Exception 
 	 */
 	public function __construct($hostname, $username, $password, $database, $port = '1521', $charset = 'utf8') {
-		$this->connection = oci_connect($username, $password, $hostname."/".$database, $charset);
+		$this->connection = \oci_connect($username, $password, $hostname.":".$port."/".$database, $charset);
         if (!$this->connection) {
-            $e = oci_error();
+            $e = \oci_error();
             $this->error = $e;
             throw new \Phacil\Framework\Exception((htmlentities($e['message'], ENT_QUOTES)));
         }
-        oci_set_client_info($this->connection, "Administrator");
+        \oci_set_client_info($this->connection, "Administrator");
         //oci_set_module_name($this->connection, $module);
         //oci_set_client_identifier($this->connection, $cid);
 
@@ -59,13 +59,13 @@ class Oracle implements Databases {
 	 * @throws \Phacil\Framework\Exception 
 	 */
 	public function query($sql) {
-        $stid = oci_parse($this->connection, $sql);
-        oci_execute($stid);
+        $stid = \oci_parse($this->connection, $sql);
+        \oci_execute($stid);
 		if (!$this->connection) {
-            oci_fetch_all($stid, $res);
+            \oci_fetch_all($stid, $res);
 
             $result = new \Phacil\Framework\Databases\Object\Result();
-            $result->setNumRows(oci_num_rows($stid));
+            $result->setNumRows(\oci_num_rows($stid));
             $result->setRow(isset($res[0]) ? $res[0] : []);
             $result->setRows($res);
 
@@ -93,7 +93,7 @@ class Oracle implements Databases {
 	}
 	
 	public function __destruct() {
-        oci_close($this->connection);
+        \oci_close($this->connection);
 	}
 
 	/**
@@ -110,25 +110,25 @@ class Oracle implements Databases {
 		if (!empty($params)) {
 			$sql = $this->replacePlaceholders($sql, array_keys($params));
 
-			$stid = oci_parse($this->connection, $sql);
+			$stid = \oci_parse($this->connection, $sql);
 
 			foreach ($params as $placeholder => &$param) {
-				oci_bind_by_name($stid, $placeholder, $param);
+				\oci_bind_by_name($stid, $placeholder, $param);
 			}
 
-			$result_exec = oci_execute($stid);
+			$result_exec = \oci_execute($stid);
 
 			if ($result_exec === false) {
-				$e = oci_error($stid);
+				$e = \oci_error($stid);
 				throw new \Phacil\Framework\Exception('Error executing query: ' . htmlentities($e['message'], ENT_QUOTES));
 			}
 
 			// Processar resultados se for um SELECT
 			$res = [];
-			oci_fetch_all($stid, $res);
+			\oci_fetch_all($stid, $res);
 
 			$resultObj = new \Phacil\Framework\Databases\Object\Result();
-			$resultObj->setNumRows(oci_num_rows($stid));
+			$resultObj->setNumRows(\oci_num_rows($stid));
 			$resultObj->setRow(isset($res[0]) ? $res[0] : []);
 			$resultObj->setRows($res);
 
