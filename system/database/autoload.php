@@ -165,6 +165,7 @@ final class Database {
      * @param bool $cache 
      * @param string|null $sqlTotal 
      * @return object 
+	 * @deprecated 2.0.0
      * @throws PhpfastcacheInvalidArgumentException 
      */
     public function pagination($sql, $pageNum_exibe = 1, $maxRows_exibe = 10, $cache = true, $sqlTotal = null){
@@ -185,21 +186,25 @@ final class Database {
         $all_exibe_query = ($sqlTotal != null) ? $sqlTotal : ((preg_match($re, $query_exibe)) ? preg_replace($re, "SELECT COUNT(*) as __TOTALdeREG_DB_Pagination", $query_exibe) : $query_exibe);
 
         $all_exibe = $this->query($all_exibe_query, $cache);
-        $totalRows_exibe = (isset($all_exibe->row['__TOTALdeREG_DB_Pagination'])) ? $all_exibe->row['__TOTALdeREG_DB_Pagination'] : $all_exibe->num_rows;
+        $totalRows_exibe = (isset($all_exibe->row['__TOTALdeREG_DB_Pagination'])) ? $all_exibe->row['__TOTALdeREG_DB_Pagination'] : $all_exibe->getNumRows();
 
         if($totalRows_exibe <= 0){
             $all_exibe_query = $query_exibe;
             $all_exibe = $this->query($all_exibe_query, $cache);
-            $totalRows_exibe = (isset($all_exibe->row['__TOTALdeREG_DB_Pagination'])) ? $all_exibe->row['__TOTALdeREG_DB_Pagination'] : $all_exibe->num_rows;
+            $totalRows_exibe = (isset($all_exibe->row['__TOTALdeREG_DB_Pagination'])) ? $all_exibe->row['__TOTALdeREG_DB_Pagination'] : $all_exibe->getNumRows();
         }
 
         $totalPages_exibe = ceil($totalRows_exibe/$maxRows_exibe);
 
-        $exibe->totalPages_exibe = $totalPages_exibe;
-        $exibe->totalRows_exibe = $totalRows_exibe;
-        $exibe->pageNum_exibe = $pageNum_exibe+1;
+		$final = new \StdClass();
 
-        return $exibe;
+		$final->totalPages_exibe = $totalPages_exibe;
+		$final->totalRows_exibe = $totalRows_exibe;
+		$final->pageNum_exibe = $pageNum_exibe+1;
+		$final->rows = $exibe->getRows();
+		$final->row = $exibe->getRow();
+
+        return $final;
     }
 	
 	/**
