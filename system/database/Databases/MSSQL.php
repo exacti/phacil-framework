@@ -13,9 +13,15 @@ namespace Phacil\Framework\Databases;
  * 
  * Doesn't work with PHP 7+
  * @deprecated 2.0.0
+ * @see \Phacil\Framework\Databases\sqlsrvPDO
  * @package Phacil\Framework\Databases */
 class MSSQL implements \Phacil\Framework\Interfaces\Databases
 {
+
+	const DB_TYPE = 'Microsoft SQL Server Database';
+
+	const DB_TYPE_ID = self::LIST_DB_TYPE_ID['MSSQL'];
+
 	private $connection;
 
 	public function __construct($hostname, $username, $password, $database, $port = '1443', $charset = 'utf8')
@@ -114,4 +120,20 @@ class MSSQL implements \Phacil\Framework\Interfaces\Databases
 		$sql = str_replace(array_keys($params), array_values($params), $sql);
 		return $this->query($sql);
 	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 }

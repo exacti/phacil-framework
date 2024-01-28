@@ -11,6 +11,11 @@ namespace Phacil\Framework\Databases;
 use Phacil\Framework\Interfaces\Databases;
 
 class SQLSRV implements Databases {
+
+    const DB_TYPE = 'Microsoft SQL Server Database';
+
+    const DB_TYPE_ID = self::LIST_DB_TYPE_ID['MSSQL'];
+
     /**
      * 
      * @var resource
@@ -174,4 +179,20 @@ class SQLSRV implements Databases {
             return $this->query($sql);
         }
     }
+
+    /**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 }

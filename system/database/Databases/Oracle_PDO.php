@@ -17,6 +17,27 @@ use Phacil\Framework\Interfaces\Databases;
  * @package Phacil\Framework\Databases */
 class Oracle_PDO implements Databases
 {
+
+	const DB_TYPE = 'Oracle';
+
+	const DB_TYPE_ID = self::LIST_DB_TYPE_ID['ORACLE'];
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
+
 	/**
 	 * 
 	 * @var PDO
@@ -48,10 +69,6 @@ class Oracle_PDO implements Databases
 		} catch (\PDOException $e) {
 			throw new \Phacil\Framework\Exception('Failed to connect to database. Reason: \'' . $e->getMessage() . '\'');
 		}
-		$this->connection->exec("SET NAMES 'utf8'");
-		$this->connection->exec("SET CHARACTER SET utf8");
-		$this->connection->exec("SET CHARACTER_SET_CONNECTION=utf8");
-		$this->connection->exec("SET SQL_MODE = ''");
 		$this->rowCount = 0;
 	}
 	public function prepare($sql)

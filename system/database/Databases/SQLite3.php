@@ -13,6 +13,11 @@ use \SQLite3 as nativeSQLite3;
 use \stdClass;
 
 class SQLite3 implements Databases {
+
+    const DB_TYPE = 'SQLite3';
+
+    const DB_TYPE_ID = 5;
+
     /**
      * 
      * @var nativeSQLite3
@@ -158,4 +163,18 @@ class SQLite3 implements Databases {
             return $this->query($sql);
         }
     }
+
+    /**
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 }

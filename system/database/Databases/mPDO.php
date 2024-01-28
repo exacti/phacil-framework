@@ -16,6 +16,11 @@ use Phacil\Framework\Interfaces\Databases;
  * 
  * @package Phacil\Framework\Databases */
 class mPDO implements Databases {
+
+	const DB_TYPE = 'MySQL';
+
+	const DB_TYPE_ID = 1;
+
 	/**
 	 * 
 	 * @var PDO
@@ -198,4 +203,20 @@ class mPDO implements Databases {
 
 		return $paramType;
 	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 }

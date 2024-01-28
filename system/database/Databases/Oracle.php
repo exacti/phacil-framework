@@ -16,6 +16,11 @@ use Phacil\Framework\Interfaces\Databases;
  * @package Phacil\Framework\Databases
  */
 class Oracle implements Databases {
+
+	const DB_TYPE = 'Oracle';
+
+	const DB_TYPE_ID = 3;
+
 	/**
 	 * 
 	 * @var resource|false
@@ -155,4 +160,18 @@ class Oracle implements Databases {
 
 		return $sql;
 	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 } 

@@ -18,6 +18,26 @@ use Phacil\Framework\Interfaces\Databases;
 final class nullStatement implements Databases {
     //private $connection;
 
+    const DB_TYPE = NULL;
+
+    const DB_TYPE_ID = 0;
+
+    /**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
+
     public function __construct($hostname, $username, $password, $database, $charset = 'utf8mb4') {
         //$this->connection = NULL;
     }

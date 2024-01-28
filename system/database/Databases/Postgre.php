@@ -11,6 +11,11 @@ namespace Phacil\Framework\Databases;
 use Phacil\Framework\Interfaces\Databases;
 
 class Postgre implements Databases {
+
+	const DB_TYPE = 'Postgre';
+
+	const DB_TYPE_ID = 4;
+
 	/**
 	 * 
 	 * @var resource|false
@@ -155,4 +160,18 @@ class Postgre implements Databases {
 
 		return $sql;
 	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 }

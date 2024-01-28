@@ -12,6 +12,11 @@ use \PDO as PDONative;
 use Phacil\Framework\Interfaces\Databases;
 
 class sqlsrvPDO implements Databases {
+
+    const DB_TYPE = 'Microsoft SQL Server Database';
+
+    const DB_TYPE_ID = 2;
+
     /**
      * 
      * @var PDONative
@@ -224,4 +229,20 @@ class sqlsrvPDO implements Databases {
 
         return $paramType;
     }
+
+    /**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 }

@@ -13,8 +13,15 @@ namespace Phacil\Framework\Databases;
  * 
  * Doesn't work with PHP 7+
  * @package Phacil\Framework\Databases 
+ * @deprecated 2.0.0 Use MySQLi class driver instead.
+ * @see \Phacil\Framework\Databases\MySQLi
  * */
 class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
+
+	const DB_TYPE = 'MySQL';
+
+	const DB_TYPE_ID = 1;
+
 	private $connection;
 	
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
@@ -108,4 +115,20 @@ class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 		$sql = str_replace(array_keys($params), array_values($bindParams), $sql);
 		return $this->query($sql);
 	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 }

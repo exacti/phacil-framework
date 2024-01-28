@@ -10,8 +10,14 @@ namespace Phacil\Framework\Databases;
 
 use Phacil\Framework\Interfaces\Databases;
 
+/** @package Phacil\Framework\Databases */
 class MySQL_PDO implements Databases
 {
+
+    const DB_TYPE = 'MySQL';
+
+    const DB_TYPE_ID = self::LIST_DB_TYPE_ID['MYSQL'];
+
     /**
      * Link to the database connection
      *
@@ -240,4 +246,20 @@ class MySQL_PDO implements Databases
 
         return $paramType;
     }
+
+    /**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 }

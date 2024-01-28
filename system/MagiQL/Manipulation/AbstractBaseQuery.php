@@ -120,18 +120,11 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
 
     /**
      * Converts this query into an SQL string by using the injected builder.
-     * Optionally can return the SQL with formatted structure.
-     *
-     * @param bool $formatted
      *
      * @return string
      */
-    public function getSql($formatted = false)
+    public function getSql()
     {
-        if ($formatted) {
-            return $this->getBuilder()->writeFormatted($this);
-        }
-
         return $this->getBuilder()->write($this);
     }
 
@@ -174,7 +167,7 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
     /**
      * @param string $table
      *
-     * @return $this
+     * @return \Phacil\Framework\MagiQL\Manipulation\Update|\Phacil\Framework\MagiQL\Manipulation\Delete|\Phacil\Framework\MagiQL\Manipulation\Select|\Phacil\Framework\MagiQL\Manipulation\Insert|\Phacil\Framework\MagiQL\Manipulation\Intersect|\Phacil\Framework\MagiQL\Manipulation\JoinQuery|\Phacil\Framework\MagiQL\Manipulation\Minus|\Phacil\Framework\MagiQL\Manipulation\Union|\Phacil\Framework\MagiQL\Manipulation\UnionAll|$this
      */
     public function setTable($table)
     {
@@ -186,7 +179,7 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
     /**
      * 
      * @param string $table 
-     * @return $this 
+     * @return \Phacil\Framework\MagiQL\Manipulation\Update|\Phacil\Framework\MagiQL\Manipulation\Delete|\Phacil\Framework\MagiQL\Manipulation\Select|\Phacil\Framework\MagiQL\Manipulation\Insert|\Phacil\Framework\MagiQL\Manipulation\Intersect|\Phacil\Framework\MagiQL\Manipulation\JoinQuery|\Phacil\Framework\MagiQL\Manipulation\Minus|\Phacil\Framework\MagiQL\Manipulation\Union|\Phacil\Framework\MagiQL\Manipulation\UnionAll|$this
      */
     public function from($table){
         return $this->setTable($table);

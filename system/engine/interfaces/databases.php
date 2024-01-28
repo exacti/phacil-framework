@@ -11,6 +11,15 @@
 
  interface Databases {
 
+	const LIST_DB_TYPE_ID = [
+		"NULL" => 0,
+		"MYSQL" => 1,
+		"MSSQL" => 2,
+		"ORACLE" => 3,
+		"POSTGRE" => 4,
+		"SQLLITE3" => 5,
+	];
+
 	/**
 	 * Construct the connection.
 	 * 
@@ -74,4 +83,24 @@
 	 * @throws \Phacil\Framework\Exception 
 	 */
 	public function execute($sql, array $params = []);
+
+	/**
+	 * Return textual database driver type
+	 * 
+	 * @return string 
+	 */
+	public function getDBType();
+
+	/**
+	 * Return ID of database type
+	 * 
+	 * 
+	 * @return int 1 = MySQL/MariaDB
+	 * @return int 2 = MS SQL Server
+	 * @return int 3 = Oracle Database
+	 * @return int 4 = Postgre 
+	 * @return int 5 = SQLite3
+	 * @return int 0 = NULL 
+	 */
+	public function getDBTypeId();
  }

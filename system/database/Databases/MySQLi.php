@@ -10,7 +10,6 @@ namespace Phacil\Framework\Databases;
 
 use MySQLi as GlobalMysqli;
 use Phacil\Framework\Interfaces\Databases;
-use \stdClass;
 
 /** 
  * Default driver to connect a MySQL/MariaDB databases.
@@ -24,6 +23,16 @@ class MySQLi implements Databases {
 	 * @var GlobalMysqli
 	 */
 	private $connection;
+
+	/**
+	 * @var string
+	 */
+	const DB_TYPE = 'MySQL';
+
+	/**
+	 * @var int
+	 */
+	const DB_TYPE_ID = self::LIST_DB_TYPE_ID['MYSQL'];
 
 	/**
 	 * @param string $hostname 
@@ -54,6 +63,22 @@ class MySQLi implements Databases {
 		}
 
 	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBType() { 
+		return self::DB_TYPE;
+	}
+
+	/**
+	 * 
+	 * {@inheritdoc}
+	 */
+	public function getDBTypeId() {
+		return self::DB_TYPE_ID;
+	 }
 
 	/**
 	 * Execute the SQl Query

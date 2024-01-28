@@ -259,4 +259,26 @@ final class Database {
 	{
 		return $this->driver->execute($sql, $params);
 	}
+
+	/**
+	 * Textual database driver type
+	 * @return string 
+	 */
+	public function getDBType() {
+		return $this->driver->getDBType();
+	}
+
+	/**
+	 * ID of database driver
+	 * 
+	 * @return int 1 = MySQL/MariaDB
+	 * @return int 2 = MS SQL Server
+	 * @return int 3 = Oracle Database
+	 * @return int 4 = Postgre 
+	 * @return int 5 = SQLite3
+	 * @return int 0 = NULL 
+	 */
+	public function getDBTypeId() {
+		return $this->driver->getDBTypeId();
+	}
 }
