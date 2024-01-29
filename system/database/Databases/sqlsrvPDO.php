@@ -25,7 +25,7 @@ class sqlsrvPDO implements Databases {
 
     /**
      * 
-     * @var PDOStatement
+     * @var \PDOStatement
      */
     private $statement = null;
 
