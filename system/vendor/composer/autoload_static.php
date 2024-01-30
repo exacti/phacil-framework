@@ -64,9 +64,17 @@ class ComposerStaticInit7bc5673f1c1ff265570d44e4bc291db0
                 0 => __DIR__ . '/..' . '/mustache/mustache/src',
             ),
         ),
+        'C' => 
+        array (
+            'Cm\\RedisSession\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/colinmollenhour/php-redis-session-abstract/src',
+            ),
+        ),
     );
 
     public static $classMap = array (
+        'Cm_Cache_Backend_Redis' => __DIR__ . '/..' . '/colinmollenhour/cache-backend-redis/Cm/Cache/Backend/Redis.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'CredisException' => __DIR__ . '/..' . '/colinmollenhour/credis/Client.php',
         'Credis_Client' => __DIR__ . '/..' . '/colinmollenhour/credis/Client.php',

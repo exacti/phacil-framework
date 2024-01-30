@@ -7,4 +7,5 @@ $baseDir = dirname(dirname($vendorDir));
 
 return array(
     'Mustache' => array($vendorDir . '/mustache/mustache/src'),
+    'Cm\\RedisSession\\' => array($vendorDir . '/colinmollenhour/php-redis-session-abstract/src'),
 );

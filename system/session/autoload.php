@@ -26,7 +26,7 @@ use Phacil\Framework\Config;
  * @since 1.0.0
  * @package Phacil\Framework 
  */
-final class Session
+class Session
 {
     /**
      * 
@@ -63,6 +63,14 @@ final class Session
 
     /**
      * 
+     * @var \Phacil\Framework\Session\Redis\Handler
+     */
+    protected $saveHandler;
+
+    protected $redisExpire;
+
+    /**
+     * 
      * @param bool $redis 
      * @param string|null $redisDSN 
      * @param int|null $redisPort 
@@ -75,11 +83,13 @@ final class Session
     {
         $this->name = (Config::SESSION_PREFIX() ?: 'SESS') . (isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
+        //define('SESSION_PREFIX_INTERNAL_REDIS', Config::REDIS_SESSION_PREFIX() ?: 'phacil_');
+
+        $this->redis($redis, $redisDSN, $redisPort, $redisPass, $redis_expire, $redis_prefix);
+
         if (!session_id()) {
             $this->openSession();
         }
-
-        $this->redis($redis, $redisDSN, $redisPort, $redisPass, $redis_expire, $redis_prefix);
 
         if (session_name() === $this->name) {
             $this->data =& $_SESSION;
@@ -130,6 +140,16 @@ final class Session
         if (!$redis)
             return false;
 
+        $redisConfig = new \Phacil\Framework\Session\Redis\Config();
+
+        $this->saveHandler = new \Phacil\Framework\Session\Redis\Handler($redisConfig, new \Phacil\Framework\Session\Redis\Logger($redisConfig));
+
+        $this->saveHandler->setName($this->name);
+
+        $a = $this->registerSaveHandler();
+
+        return;
+
         $this->redisExpire = ($redis_expire) ?: session_cache_expire() * 60;
         $this->redisPrefix = ($redis_prefix) ?: 'phacil_';
         $this->generateRedisKey();
@@ -144,6 +164,24 @@ final class Session
         $_SESSION = unserialize($this->redis->get($this->redisKey));
 
         return $this->redis;
+    }
+
+    /**
+     * Register save handler
+     *
+     * @return bool
+     */
+    protected function registerSaveHandler()
+    {
+        return session_set_save_handler(
+            //$this->saveHandler
+            [$this->saveHandler, 'open'],
+            [$this->saveHandler, 'close'],
+            [$this->saveHandler, 'read'],
+            [$this->saveHandler, 'write'],
+            [$this->saveHandler, 'destroy'],
+            [$this->saveHandler, 'gc']
+        );
     }
 
     /** 
@@ -167,6 +205,7 @@ final class Session
      */
     private function closeSession($force = false)
     {
+        return ;
         if (session_status() == PHP_SESSION_ACTIVE || $force) {
             session_unset();
             session_destroy();
@@ -186,21 +225,7 @@ final class Session
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 
-    /**
-     * Set the Redis session data
-     * @return void 
-     * @since 2.0.0
-     */
-    public function __destruct()
-    {
-        if ($this->redis) {
-            $this->generateRedisKey();
-
-            $this->redis->set($this->redisKey, serialize($_SESSION));
-
-            $this->redis->expire($this->redisKey, ($this->redisExpire));
-        }
-    }
+    
 
     /**
      * Flush all session data
