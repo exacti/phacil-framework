@@ -17,11 +17,6 @@ use Phacil\Framework\Config;
  * You can activate the Redis session instead use the default PHP session manipulation.
  * 
  * @param bool $redis Active or not the Redis session
- * @param string|null $redisDSN (optional) Redis DSN like unix:///path/to/redis.sock, tcp://host[:port][/persistence_identifier] or tls://host[:port][/persistence_identifier]. If not specified, the default value is connect to localhost in 6379 port.
- * @param int|null $redisPort (optional) If is not in the DSN specification, we can pass as separated value. The default is 6379.
- * @param string|null $redisPass (optional) Redis conection password
- * @param int|null $redis_expire (optional) Redis session expiration, the defaul is your session_cache_expire configurated in PHP *60.
- * @param string $redis_prefix (optional) The default prefis is 'phacil_'.
  * 
  * @since 1.0.0
  * @package Phacil\Framework 
@@ -35,12 +30,6 @@ class Session
     public $data = array();
 
     /**
-     * Redis object
-     * @var Credis
-     */
-    public $redis = null;
-
-    /**
      * Name of session
      * 
      * @var string
@@ -52,7 +41,7 @@ class Session
      * 
      * @var string
      */
-    private $redisPrefix = "phacil_";
+    private $redisPrefix = "sess_";
 
     /**
      * Redis Key
@@ -79,13 +68,13 @@ class Session
      * @param string $redis_prefix 
      * @return void 
      */
-    public function __construct($redis = false, $redisDSN = null, $redisPort = null, $redisPass = null, $redis_expire = null, $redis_prefix = 'phacil_')
+    public function __construct($redis = false)
     {
         $this->name = (Config::SESSION_PREFIX() ?: 'SESS') . (isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
         //define('SESSION_PREFIX_INTERNAL_REDIS', Config::REDIS_SESSION_PREFIX() ?: 'phacil_');
 
-        $this->redis($redis, $redisDSN, $redisPort, $redisPass, $redis_expire, $redis_prefix);
+        $this->redis($redis);
 
         if (!session_id()) {
             $this->openSession();
@@ -132,9 +121,9 @@ class Session
      * @param string $redis_prefix 
      * 
      * @since 2.0.0
-     * @return false|Credis 
+     * @return bool
      */
-    private function redis($redis = false, $redisDSN = null, $redisPort = null, $redisPass = null, $redis_expire = null, $redis_prefix = 'phacil_')
+    private function redis($redis = false)
     {
 
         if (!$redis)
@@ -146,24 +135,7 @@ class Session
 
         $this->saveHandler->setName($this->name);
 
-        $a = $this->registerSaveHandler();
-
-        return;
-
-        $this->redisExpire = ($redis_expire) ?: session_cache_expire() * 60;
-        $this->redisPrefix = ($redis_prefix) ?: 'phacil_';
-        $this->generateRedisKey();
-
-        /**
-         * Instanciate the Credis object
-         * 
-         * @var \Phacil\Framework\Credis
-         */
-        $this->redis = new Credis((($redisDSN) ?: '127.0.0.1'), (($redisPort) ?: '6379'), (($redisPass) ?: null));
-
-        $_SESSION = unserialize($this->redis->get($this->redisKey));
-
-        return $this->redis;
+        return $this->registerSaveHandler();
     }
 
     /**
@@ -184,19 +156,6 @@ class Session
         );
     }
 
-    /** 
-     * Generate the Redis Session KEY
-     * 
-     * @return void  
-     */
-    private function generateRedisKey()
-    {
-        if (session_id())
-            $this->redisKey = $this->redisPrefix . session_name() . session_id();
-
-        return $this->redisKey;
-    }
-
     /**
      * Close sessions
      * 
@@ -205,14 +164,10 @@ class Session
      */
     private function closeSession($force = false)
     {
-        return ;
+        //return ;
         if (session_status() == PHP_SESSION_ACTIVE || $force) {
             session_unset();
             session_destroy();
-        }
-        if ($this->redis && $force) {
-            $this->redis->close();
-            unset($this->redis);
         }
     }
 
@@ -225,8 +180,6 @@ class Session
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 
-    
-
     /**
      * Flush all session data
      * @return void 
@@ -234,11 +187,7 @@ class Session
      */
     public function flushAll()
     {
-        $this->data = [];
-        if ($this->redis) {
-            ($this->redis->flushAll());
-        }
-        $this->closeSession(true);
+        $this->flush();
     }
 
     /**
@@ -249,9 +198,6 @@ class Session
     public function flush()
     {
         $this->data = [];
-        if ($this->redis) {
-            ($this->redis->del($this->generateRedisKey()));
-        }
         $this->closeSession(true);
     }
 

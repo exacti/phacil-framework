@@ -42,7 +42,7 @@ class Handler extends \Cm\RedisSession\Handler
 			$redis =  $this->_redis;
 			$redis->select($this->_dbNum);
 			$redis->hMSet($sessionId, array(
-				'data' => $this->_encodeData(serialize($data)),
+				'data' => $this->_encodeData($data),
 				'lock' => 0, // 0 so that next lock attempt will get 1
 			));
 			$redis->hIncrBy($sessionId, 'writes', 1);

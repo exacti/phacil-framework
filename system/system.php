@@ -513,12 +513,7 @@ if($engine->config->get('config_compression'))
 
 // Session
 $engine->session = new Session(
-    $engine->config->get('session_redis'), 
-    $engine->config->get('session_redis_dsn'), 
-    $engine->config->get('session_redis_port'), 
-    $engine->config->get('session_redis_password'), 
-    $engine->config->get('session_redis_expire'), 
-    $engine->config->get('session_redis_prefix')
+    $engine->config->get('session_redis')
 );
 
 // Document
