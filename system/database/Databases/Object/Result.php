@@ -10,6 +10,7 @@ namespace Phacil\Framework\Databases\Object;
 
 use Phacil\Framework\Databases\Object\ResultInterface;
 use SplObjectStorage;
+use Traversable;
 
 if (version_compare(phpversion(), "7.1.0", ">=")) {
 	class ComplementResult extends \Phacil\Framework\Databases\Object\Aux\ComplementResult
@@ -48,6 +49,10 @@ class Result extends ComplementResult implements ResultInterface {
 	 * @var \Phacil\Framework\Databases\Object\Item[]|\SplObjectStorage|\Iterator|null
 	 */
 	public $data = null;
+
+	public function __construct(array $array = []) {
+		//return parent::__construct($array, 0, "\Phacil\Framework\Databases\Object\ResultIterator");
+	}
 
 	/**
 	 * 
@@ -92,7 +97,9 @@ class Result extends ComplementResult implements ResultInterface {
 	 * {@inheritdoc}
 	 */
 	public function getRow($numRow = false){
-		return $numRow ? (isset($this->rows[$numRow + 1])?$this->rows[$numRow + 1] : null ) : $this->row;
+		$obj = new \Phacil\Framework\Databases\Object\Item();
+		$this->data->attach($obj->setData($numRow ? (isset($this->rows[$numRow + 1]) ? $this->rows[$numRow + 1] : null) : $this->row));
+		return $obj;
 	}
 
 	/**
@@ -135,6 +142,17 @@ class Result extends ComplementResult implements ResultInterface {
 		}
 
 		return $this->data;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function offsetGet($index)
+	{
+		$data = parent::offsetGet($index);
+		$item = new \Phacil\Framework\Databases\Object\Item();
+		$item->setData($data);
+		return $item;
 	}
 	
 }

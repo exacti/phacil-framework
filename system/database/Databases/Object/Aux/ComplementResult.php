@@ -7,8 +7,10 @@
 
 namespace Phacil\Framework\Databases\Object\Aux;
 
-abstract class ComplementResult
+abstract class ComplementResult 
 {
+	protected $customStorage;
+
 	/**
 	 * {@inheritdoc}
 	 * @return int<0, \max> 
@@ -23,8 +25,8 @@ abstract class ComplementResult
 	 */
 	public function getIterator(): \Traversable
 	{
-		$this->loop($this->rows);
-		return $this->data;
+		$this->customStorage = new \Phacil\Framework\Databases\Object\ResultIterator($this->rows);
+		return $this->customStorage;
 		//return new \ArrayIterator($this->loop($this->rows));
 	}
 }

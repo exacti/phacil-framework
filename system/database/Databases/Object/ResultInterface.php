@@ -39,7 +39,7 @@ interface ResultInterface extends \Countable, \IteratorAggregate  {
 	/**
 	 * 
 	 * @param int $numRow 
-	 * @return array 
+	 * @return \Phacil\Framework\Databases\Object\Item 
 	 */
 	public function getRow($numRow = false);
 
@@ -59,7 +59,7 @@ interface ResultInterface extends \Countable, \IteratorAggregate  {
 	/**
 	 * 
 	 * @param int $numRow 
-	 * @return array 
+	 * @return \Phacil\Framework\Databases\Object\Item[]|\Phacil\Framework\Databases\Object\Item
 	 */
 	public function getData($numRow = false);
 
