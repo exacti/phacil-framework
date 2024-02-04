@@ -9,34 +9,13 @@
 namespace Phacil\Framework\Databases\Object;
 
 use Phacil\Framework\Databases\Object\ResultInterface;
-use SplObjectStorage;
-use Traversable;
+use Phacil\Framework\Databases\Object\ResultCacheIterator;
 
-if (version_compare(phpversion(), "7.1.0", ">=")) {
-	class ComplementResult extends \Phacil\Framework\Databases\Object\Aux\ComplementResult
-	{
-		
-	}
-
-} else {
-	class ComplementResult extends \Phacil\Framework\Databases\Object\Aux\ComplementResultLegacy{
-	
-	}
-}
-
-class Result extends ComplementResult implements ResultInterface {
-
-	/**
-	 * 
-	 * @var array
-	 */
-	public $rows;
-
-	/**
-	 * 
-	 * @var array
-	 */
-	public $row;
+/**
+ * @since 2.0.0
+ * @package Phacil\Framework\Databases\Object
+ */
+class Result extends \ArrayIterator implements ResultInterface {
 
 	/**
 	 * 
@@ -46,13 +25,44 @@ class Result extends ComplementResult implements ResultInterface {
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Object\Item[]|\SplObjectStorage|\Iterator|null
+	 * @var ResultCacheIterator
+	 */
+	private $cachedIterator;
+
+	/**
+	 * 
+	 * @var \Phacil\Framework\Databases\Object\Item[]|\Iterator|null
 	 */
 	public $data = null;
 
-	public function __construct(array $array = []) {
-		//return parent::__construct($array, 0, "\Phacil\Framework\Databases\Object\ResultIterator");
+	public function __construct(array $results = []) {
+		parent::__construct($results);
+		//$this->num_rows = $this->count();
+		return $this;
 	}
+
+	/**
+	 * 
+	 * @param string $name 
+	 * @return \Phacil\Framework\Databases\Object\ItemInterface[]|\Phacil\Framework\Databases\Object\ItemInterface|null 
+	 * @throws \Phacil\Framework\Exception\RuntimeException 
+	 */
+	public function __get($name) {
+
+        switch ($name) {
+			case 'rows':
+				return $this;
+				break;
+			
+			case 'row':
+				return $this->offsetGet(0);
+				break;
+			
+			default:
+				throw new \Phacil\Framework\Exception\RuntimeException("Undefined property: $name");
+				break;
+		}
+    }
 
 	/**
 	 * 
@@ -97,9 +107,7 @@ class Result extends ComplementResult implements ResultInterface {
 	 * {@inheritdoc}
 	 */
 	public function getRow($numRow = false){
-		$obj = new \Phacil\Framework\Databases\Object\Item();
-		$this->data->attach($obj->setData($numRow ? (isset($this->rows[$numRow + 1]) ? $this->rows[$numRow + 1] : null) : $this->row));
-		return $obj;
+		return ($numRow ? ($this->offsetGet($numRow - 1) ? : null) : $this->row);
 	}
 
 	/**
@@ -122,7 +130,19 @@ class Result extends ComplementResult implements ResultInterface {
 	 * {@inheritdoc}
 	 */
 	public function __toObject() {
-		return $this->data ? $this->data : $this->loop($this->rows);
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toArray() {
+		return iterator_to_array($this);
+		$this->cachedIterator = new ResultCacheIterator($this);
+		foreach ($this->cachedIterator as $val) {
+			# nothing
+		}
+		return $this->cachedIterator->getCache();
 	}
 
 	/**
@@ -134,11 +154,9 @@ class Result extends ComplementResult implements ResultInterface {
 	{
 		if($this->data) return $this->data;
 
-		$this->data = new SplObjectStorage();
+		$this->data = [];
 		foreach ($array as $key => $value) {
-			//$this->data[] = new \Phacil\Framework\Databases\Object\Item($value);
-			$obj = new \Phacil\Framework\Databases\Object\Item();
-			$this->data->attach($obj->setData($value));
+			$this->data[] = $value;
 		}
 
 		return $this->data;
@@ -149,9 +167,21 @@ class Result extends ComplementResult implements ResultInterface {
 	 */
 	public function offsetGet($index)
 	{
+		if(!$this->offsetExists($index)) return null;
+
 		$data = parent::offsetGet($index);
-		$item = new \Phacil\Framework\Databases\Object\Item();
-		$item->setData($data);
+
+		$item = new \Phacil\Framework\Databases\Object\Item($data);
+		return $item;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function current()
+	{
+		$item = new \Phacil\Framework\Databases\Object\Item(parent::current());
+		//$item->setData(parent::current());
 		return $item;
 	}
 	

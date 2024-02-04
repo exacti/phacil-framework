@@ -92,6 +92,7 @@
 		'Interfaces\\Controller',
 		'Interfaces\\Helper',
 		'Interfaces\\Model',
+		'Interfaces\\Url',
 		'Exception',
 		'Render',
 		'Debug',

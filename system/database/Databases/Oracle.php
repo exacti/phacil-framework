@@ -69,10 +69,9 @@ class Oracle implements Databases {
 		if (!$this->connection) {
             \oci_fetch_all($stid, $res);
 
-            $result = new \Phacil\Framework\Databases\Object\Result();
+			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
+            $result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$res]);
             $result->setNumRows(\oci_num_rows($stid));
-            $result->setRow(isset($res[0]) ? $res[0] : []);
-            $result->setRows($res);
 
             return $result;
 
@@ -132,10 +131,9 @@ class Oracle implements Databases {
 			$res = [];
 			\oci_fetch_all($stid, $res);
 
-			$resultObj = new \Phacil\Framework\Databases\Object\Result();
+			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
+			$resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$res]);
 			$resultObj->setNumRows(\oci_num_rows($stid));
-			$resultObj->setRow(isset($res[0]) ? $res[0] : []);
-			$resultObj->setRows($res);
 
 			return $resultObj;
 		} else {

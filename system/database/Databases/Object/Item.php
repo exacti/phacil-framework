@@ -46,15 +46,6 @@ class Item extends ComplementItem implements ObjectInterface {
 	 */
 	public function setData(array $data) {
 		$this->__data = $data;
-		//$this->__data = new SplObjectStorage();
-
-		/* foreach($data as $key => $val) {
-			$keyForA = new self([$key => $val]);
-			$this->__data[$keyForA] = [$key => $val];
-		} */
-		
-		//$this->__data->attach(new self($data));
-		//$this->__data->attach(json_decode(json_encode($data)));
 		return $this;
 	}
 

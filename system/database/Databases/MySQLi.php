@@ -90,14 +90,9 @@ class MySQLi implements Databases {
 		$query = $this->connection->query($sql);
 		if (!$this->connection->errno) {
 			if ($query instanceof \mysqli_result) {
-				$data = array();
-				while ($row = $query->fetch_assoc()) {
-					$data[] = $row;
-				}
-				$result = new \Phacil\Framework\Databases\Object\Result();
+				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
+				$result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$query->fetch_all(MYSQLI_ASSOC)]);
 				$result->setNumRows($query->num_rows);
-				$result->setRow(isset($data[0]) ? $data[0] : []);
-				$result->setRows($data);
 				$query->close();
 				return $result;
 			} else {
@@ -194,15 +189,10 @@ class MySQLi implements Databases {
 
 		// Processar resultados se for um SELECT
 		if ($result instanceof \mysqli_result) {
-			$data = [];
-			while ($row = $result->fetch_assoc()) {
-				$data[] = $row;
-			}
-
-			$resultObj = new \Phacil\Framework\Databases\Object\Result();
+			//$resultObj = new \Phacil\Framework\Databases\Object\Result($result->fetch_all(MYSQLI_ASSOC));
+			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
+			$resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$result->fetch_all(MYSQLI_ASSOC)]);
 			$resultObj->setNumRows($result->num_rows);
-			$resultObj->setRow(isset($data[0]) ? $data[0] : []);
-			$resultObj->setRows($data);
 
 			$result->close();
 

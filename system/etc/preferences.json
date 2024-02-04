@@ -1,0 +1,7 @@
+{
+	"preferences": {
+		"Phacil\\Framework\\Databases\\Object\\ResultInterface": "Phacil\\Framework\\Databases\\Object\\Result",
+		"Phacil\\Framework\\Interfaces\\Loader": "Phacil\\Framework\\Loader",
+		"Phacil\\Framework\\Interfaces\\Url": "Phacil\\Framework\\Url"
+	}
+}

@@ -98,16 +98,14 @@ class MySQL_PDO implements Databases
      */
     public function query($sql)
     {
-        if ($this->dbh) {
-            $data = new \Phacil\Framework\Databases\Object\Result();
-			
+        if ($this->dbh) {			
 			$sth=$this->dbh->prepare($sql);
 			$sth->execute();
             //$sth= $this->dbh->query($sql);
 			$this->affectedRows = $sth->rowCount();
-            $data->rows         = $sth ? $sth->fetchAll(\PDO::FETCH_ASSOC) : array();
-            $data->row          = isset($data->rows[0]) ? $data->rows[0] : null;
-            $data->num_rows     = $this->affectedRows;
+            /** @var \Phacil\Framework\Databases\Object\ResultInterface */
+            $data = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$sth ? $sth->fetchAll(\PDO::FETCH_ASSOC) : array()]);
+            $data->setNumRows($this->affectedRows);
             return $data;
         }
         return null;
@@ -197,10 +195,10 @@ class MySQL_PDO implements Databases
             $stmt->execute();
 
             if ($stmt->columnCount()) {
-                $data = new \Phacil\Framework\Databases\Object\Result();
+                /** @var \Phacil\Framework\Databases\Object\ResultInterface */
+                $data = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
                 $data->setNumRows($stmt->rowCount());
-                $data->setRows($stmt->fetchAll(\PDO::FETCH_ASSOC));
-                //$data->setRow(isset($data->rows[0]) ? $data->rows[0] : null);
+                
                 $stmt->closeCursor();
 
                 return $data;

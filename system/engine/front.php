@@ -10,7 +10,10 @@ namespace Phacil\Framework;
 
 use Phacil\Framework\Interfaces\Front as frontInterface;
 
-/** @package Phacil\Framework */
+/** 
+ * @package Phacil\Framework 
+ * @since 1.0.0
+ **/
 final class Front implements frontInterface {
 
 	/**
@@ -105,43 +108,10 @@ final class Front implements frontInterface {
 				}
 			}
 			
-			/* try {
-				if (is_callable(array($controller, $method))) {
-					$action = call_user_func_array(array($controller, $method), $args);
-				} else {
-					$action = new Action($this->error);
-				
-					$this->error = '';
-					throw new Exception("The controller can't be loaded", 1);
-				}
-			} catch (\Phacil\Framework\Exception\Throwable $th) {
-				//throw $th;
-				$action = new Action($this->error);
-			
-				$this->error = '';
-
-				throw new Exception("The controller can't be loaded: ".$th->getMessage(), $th->getCode(), $th);
-				
-			} */
-			
 		} elseif(!$file && isset($classAlt['class'])) {
 			try {
 				$this->injectionClass($classController);
 				$action = $this->callController(new $classAlt['class']($this->registry), $method, $args);
-
-				/* if (!is_subclass_of($controller, 'Phacil\Framework\Controller')) {
-					throw new Exception('PHACIL ERROR: Controller ' . get_class($controller) . '  doesn\'t have Phacil\Framework\Controller implemented');
-				}
-
-				if(!is_callable(array($controller, $method))) {
-					$action = new Action($this->error);
-
-					$this->error = '';
-
-					new Exception("PHACIL ERROR: Controller class " . get_class($controller) . "->".$method."() is not a callable function");
-				} else {
-					$action = call_user_func_array(array($controller, $method), $args);
-				} */
 			} catch (\Phacil\Framework\Exception\Throwable $th) {
 				throw ($th);
 			}
@@ -180,24 +150,6 @@ final class Front implements frontInterface {
 	}
 
 	protected function injectionClass($class){
-		/* $refClass = new ReflectionClass($class);
-
-		if(!$refClass->getConstructor()){
-			if($refClass->hasMethod('getInstance') && $refClass->getMethod('getInstance')->isStatic()){
-				return $refClass->getMethod('getInstance')->invoke(null);
-			}
-
-			return $refClass->newInstanceWithoutConstructor();
-		}
-
-		try {
-			if ($autoInstance = $this->registry->getInstance($class))
-				return $autoInstance;
-		} catch (\Throwable $th) {
-			//throw $th;
-		} */
-		
-			
 		return $this->registry->injectionClass($class);
 	}
 }

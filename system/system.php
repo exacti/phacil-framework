@@ -99,6 +99,8 @@ final class startEngineExacTI {
 
         self::$RegistryAlt = &$this->registry;
 
+        $this->registry::addPreference(\Phacil\Framework\Config::DIR_SYSTEM()."etc/preferences.json");
+
         if($this->composer) {
             $this->registry->set('composer', $this->composer);
         }
@@ -379,9 +381,9 @@ $engine->engine = $engine;
 
 // Loader
 /**
- * @var Loader
+ * @var \Phacil\Framework\Interfaces\Loader
  */
-$engine->load = new Loader($engine->registry);
+$engine->load = $engine->getRegistry()->create("Phacil\Framework\Interfaces\Loader", [$engine->registry]);
 
 // Config
 /** @var Config */
@@ -444,7 +446,10 @@ if($engine->config->get('PatternSiteTitle') == true) {
 }
 
 // Url
-$engine->url =  new Url($engine->config->get('config_url'), $engine->config->get('config_use_ssl') ? $engine->config->get('config_ssl') : $engine->config->get('config_url'));
+/**
+ * @var \Phacil\Framework\Interfaces\Url
+ */
+$engine->url = $engine->getRegistry()->create("Phacil\Framework\Interfaces\Url", [$engine->config->get('config_url'), $engine->config->get('config_use_ssl') ? $engine->config->get('config_ssl') : $engine->config->get('config_url')]);
 
 // Log
 if(!$engine->config->get('config_error_filename')){

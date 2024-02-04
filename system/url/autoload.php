@@ -8,10 +8,11 @@
 
 namespace Phacil\Framework;
 
+use Phacil\Framework\Interfaces\Url as UrlInterface;
 use Phacil\Framework\Config;
 use Phacil\Framework\Request;
 
-class Url {
+class Url implements UrlInterface {
 
 	/**
 	 * 

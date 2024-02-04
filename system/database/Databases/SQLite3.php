@@ -65,10 +65,11 @@ class SQLite3 implements Databases {
             while ($row = $query->fetchArray(SQLITE3_ASSOC)) {
                 $data[] = $row;
             }
-            $result = new \Phacil\Framework\Databases\Object\Result();
+
+            /** @var \Phacil\Framework\Databases\Object\ResultInterface */
+            $result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
             $result->setNumRows((!empty($data)) ? count($data) : 0);
-            $result->setRow(isset($data[0]) ? $data[0] : array());
-            $result->setRows($data);
+
             $query->finalize();
             return $result;
 
@@ -146,10 +147,9 @@ class SQLite3 implements Databases {
                     $data[] = $row;
                 }
 
-                $resultObj = new \Phacil\Framework\Databases\Object\Result();
+                /** @var \Phacil\Framework\Databases\Object\ResultInterface */
+                $resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
                 $resultObj->setNumRows(count($data));
-                $resultObj->setRow(isset($data[0]) ? $data[0] : []);
-                $resultObj->setRows($data);
 
                 $result->finalize();
 

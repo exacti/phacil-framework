@@ -64,10 +64,11 @@ class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 				
 				\mysql_free_result($resource);
 				
-				$query = new \Phacil\Framework\Databases\Object\Result();
-				$query->row = isset($data[0]) ? $data[0] : array();
-				$query->rows = $data;
-				$query->num_rows = $i;
+				/**
+				 * @var \Phacil\Framework\Databases\Object\ResultInterface
+				 */
+				$query = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+				$query->setNumRows($i);
 				
 				unset($data);
 

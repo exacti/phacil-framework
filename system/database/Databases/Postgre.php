@@ -64,10 +64,11 @@ class Postgre implements Databases {
 					$i++;
 				}
 				pg_free_result($resource);
-				$query = new \Phacil\Framework\Databases\Object\Result();
-				$query->setRow(isset($data[0]) ? $data[0] : array());
-				$query->setRows($data);
+
+				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
+				$query = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
 				$query->setNumRows($i);
+
 				unset($data);
 				return $query;
 			} else {
@@ -133,10 +134,9 @@ class Postgre implements Databases {
 				$i++;
 			}
 
-			$resultObj = new \Phacil\Framework\Databases\Object\Result();
+			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
+			$resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
 			$resultObj->setNumRows($i);
-			$resultObj->setRow(isset($data[0]) ? $data[0] : []);
-			$resultObj->setRows($data);
 
 			return $resultObj;
 		} else {

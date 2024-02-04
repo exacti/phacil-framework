@@ -10,12 +10,14 @@
 namespace Phacil\Framework\Databases\Object;
 
 /**
+ * A Database result object with all stored data
+ * @since 2.0.0
  * @property int $num_rows
- * @property array $row
- * @property array $rows
+ * @property \Phacil\Framework\Databases\Object\Item $row
+ * @property \Phacil\Framework\Databases\Object\Item[] $rows
  * @package Phacil\Framework\Databases\Object
  */
-interface ResultInterface extends \Countable, \IteratorAggregate  {
+interface ResultInterface extends \Countable, \ArrayAccess, \Traversable  {
 	/**
 	 * 
 	 * @param array $rows 
@@ -65,9 +67,15 @@ interface ResultInterface extends \Countable, \IteratorAggregate  {
 
 	/**
 	 * 
-	 * @return \Phacil\Framework\Databases\Object\Item[] 
+	 * @return \Phacil\Framework\Databases\Object\ResultInterface 
 	 */
 	public function __toObject();
+
+	/**
+	 * 
+	 * @return \Phacil\Framework\Databases\Object\Item[] 
+	 */
+	public function __toArray();
 
 	/**
 	 * 

@@ -85,10 +85,10 @@ class mPDO implements Databases {
                 // free up resources
                 $this->statement->closeCursor();
                 $this->statement = null;
-				$result = new \Phacil\Framework\Databases\Object\Result();
-				$result->row = (isset($data[0]) ? $data[0] : array());
-				$result->rows = $data;
-				$result->num_rows = $this->rowCount;
+				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
+				$result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+				$result->setNumRows($this->rowCount);
+				
 			}
 		} catch (\PDOException $e) {
 			throw new \Phacil\Framework\Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode() . ' <br />' . $sql);
@@ -156,10 +156,10 @@ class mPDO implements Databases {
 			$stmt->execute();
 
 			if ($stmt->columnCount()) {
-				$data = new \Phacil\Framework\Databases\Object\Result();
+				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
+				$data = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
 				$data->setNumRows($stmt->rowCount());
-				$data->setRows($stmt->fetchAll(\PDO::FETCH_ASSOC));
-				//$data->setRow(isset($data->rows[0]) ? $data->rows[0] : null);
+				
 				$stmt->closeCursor();
 
 				return $data;
