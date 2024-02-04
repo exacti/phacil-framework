@@ -67,8 +67,8 @@ class Url implements UrlInterface {
 	 * @param string $connection 
 	 * @return string 
 	 */
-	public function link($route, $args = '', $connection = 'NONSSL') {
-		if ($connection ==  'NONSSL') {
+	public function link($route, $args = '', $connection = self::NONSSL) {
+		if ($connection == self::NONSSL) {
 			$url = $this->url;	
 		} else {
 			$url = $this->ssl;	

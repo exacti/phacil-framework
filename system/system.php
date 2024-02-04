@@ -99,7 +99,7 @@ final class startEngineExacTI {
 
         self::$RegistryAlt = &$this->registry;
 
-        $this->registry::addPreference(\Phacil\Framework\Config::DIR_SYSTEM()."etc/preferences.json");
+        \Phacil\Framework\Registry::addPreference(\Phacil\Framework\Config::DIR_SYSTEM()."etc/preferences.json");
 
         if($this->composer) {
             $this->registry->set('composer', $this->composer);

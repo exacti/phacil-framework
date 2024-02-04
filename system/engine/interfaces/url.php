@@ -11,6 +11,8 @@ namespace Phacil\Framework\Interfaces;
 
 interface Url
 {
+	const NONSSL = 'NONSSL';
+
 	/**
 	 * @param string $url 
 	 * @param string $ssl 
@@ -24,7 +26,7 @@ interface Url
 	 * @param string $connection 
 	 * @return string 
 	 */
-	public function link($route, $args = '', $connection = 'NONSSL');
+	public function link($route, $args = '', $connection = self::NONSSL);
 
 	/**
 	 * @param string $hook 
