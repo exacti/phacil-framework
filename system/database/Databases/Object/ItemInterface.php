@@ -12,6 +12,29 @@ namespace Phacil\Framework\Databases\Object;
  * @method mixed getValue(string $field) 
  * @package Phacil\Framework\Databases\Object
  */
-interface ItemInterface extends \Countable, \IteratorAggregate {
-	
+interface ItemInterface extends \Countable, \IteratorAggregate, \Serializable {
+	/**
+	 * 
+	 * @param array $data 
+	 * @return $this 
+	 */
+	public function setData(array $data);
+
+	public function __get($key);
+
+	/**
+	 * 
+	 * @param string $key 
+	 * @param mixed $value 
+	 * @return $this 
+	 */
+	public function setValue($key, $value);
+
+	/**
+	 * 
+	 * @param string $method 
+	 * @param string[] $args 
+	 * @return mixed 
+	 */
+	public function __call($method, $args);
 }

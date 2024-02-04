@@ -8,18 +8,9 @@
 
 namespace Phacil\Framework\Databases\Object;
 
+use ArrayObject;
 use Phacil\Framework\Databases\Object\ItemInterface as ObjectInterface;
-use Traversable;
 
-if (version_compare(phpversion(), "7.1.0", ">=")) {
-	class ComplementItem extends \Phacil\Framework\Databases\Object\Aux\ComplementItem
-	{
-	}
-} else {
-	class ComplementItem extends \Phacil\Framework\Databases\Object\Aux\ComplementItemLegacy
-	{
-	}
-}
 
 /**
  * {@inheritdoc}
@@ -27,7 +18,13 @@ if (version_compare(phpversion(), "7.1.0", ">=")) {
  * @method mixed getValues(string field, ...) 
  * @package Phacil\Framework\Databases\Object
  */
-class Item extends ComplementItem implements ObjectInterface {
+class Item extends \ArrayObject implements ObjectInterface {
+
+	/**
+	 * 
+	 * @var array|null
+	 */
+	protected $__data = null;
 
 	/**
 	 * 
@@ -36,6 +33,7 @@ class Item extends ComplementItem implements ObjectInterface {
 	 */
 	function __construct($data = null) {
 		$this->__data = $data;
+		parent::__construct($data);
 		return $this;
 	}
 

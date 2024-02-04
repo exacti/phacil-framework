@@ -172,7 +172,8 @@ class Result extends \ArrayIterator implements ResultInterface {
 
 		$data = parent::offsetGet($index);
 
-		$item = new \Phacil\Framework\Databases\Object\Item($data);
+		/** @var \Phacil\Framework\Databases\Object\ItemInterface */
+		$item = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ItemInterface", [$data]);
 		return $item;
 	}
 
@@ -182,8 +183,9 @@ class Result extends \ArrayIterator implements ResultInterface {
 	#[\ReturnTypeWillChange]
 	public function current()
 	{
-		$item = new \Phacil\Framework\Databases\Object\Item(parent::current());
-		//$item->setData(parent::current());
+		/** @var \Phacil\Framework\Databases\Object\ItemInterface */
+		$item = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ItemInterface", [parent::current()]);
+		
 		return $item;
 	}
 	
