@@ -84,9 +84,10 @@ class Handler implements \SessionHandlerInterface {
 	 * @return bool
 	 * @throws Exception
 	 */
+	#[\ReturnTypeWillChange]
 	public function open($savePath, $sessionName)
 	{
-		return $this->getConnection()->open($savePath, $sessionName);
+		return (bool)$this->getConnection()->open($savePath, $sessionName);
 	}
 
 	/**
@@ -97,6 +98,7 @@ class Handler implements \SessionHandlerInterface {
 	 * @throws ConcurrentConnectionsExceededException
 	 * @throws Exception
 	 */
+	#[\ReturnTypeWillChange]
 	public function read($sessionId)
 	{
 		try {
@@ -115,12 +117,13 @@ class Handler implements \SessionHandlerInterface {
 	 * @return boolean
 	 * @throws Exception
 	 */
+	#[\ReturnTypeWillChange]
 	public function write($sessionId, $sessionData)
 	{
 		try {
 			//$this->getConnection()->setName($this->name);
 			$cha = $this->getConnection()->write($sessionId, $sessionData);
-			return $cha;
+			return (bool) $cha;
 		} catch (ConcurrentConnectionsExceededException $e) {
 			throw new Exception($e->getMessage(), 1);
 		}
@@ -134,9 +137,10 @@ class Handler implements \SessionHandlerInterface {
 	 * @return boolean
 	 * @throws Exception
 	 */
+	#[\ReturnTypeWillChange]
 	public function destroy($sessionId)
 	{
-		return $this->getConnection()->destroy($sessionId);
+		return (bool) $this->getConnection()->destroy($sessionId);
 	}
 
 	/**
@@ -145,9 +149,10 @@ class Handler implements \SessionHandlerInterface {
 	 * @return bool
 	 * @throws Exception
 	 */
+	#[\ReturnTypeWillChange]
 	public function close()
 	{
-		return $this->getConnection()->close();
+		return (bool)$this->getConnection()->close();
 	}
 
 	/**
@@ -158,6 +163,7 @@ class Handler implements \SessionHandlerInterface {
 	 * @throws Exception
 	 * @SuppressWarnings(PHPMD.ShortMethodName)
 	 */
+	#[\ReturnTypeWillChange]
 	public function gc($maxLifeTime)
 	{
 		return $this->getConnection()->gc($maxLifeTime);

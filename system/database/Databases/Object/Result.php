@@ -165,6 +165,7 @@ class Result extends \ArrayIterator implements ResultInterface {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet($index)
 	{
 		if(!$this->offsetExists($index)) return null;
@@ -178,6 +179,7 @@ class Result extends \ArrayIterator implements ResultInterface {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function current()
 	{
 		$item = new \Phacil\Framework\Databases\Object\Item(parent::current());

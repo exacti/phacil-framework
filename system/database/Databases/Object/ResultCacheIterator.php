@@ -171,6 +171,7 @@ class ResultCacheIterator extends \CachingIterator implements ResultInterface {
 	/**
 	 * {@inheritdoc}
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet($index)
 	{
 		$data = null;
