@@ -15,6 +15,10 @@ namespace Phacil\Framework\Interfaces;
  */
 interface Controller extends \Phacil\Framework\Interfaces\Common\Registers {
 
+	const TEMPLATE_AREA_MODULAR = 1;
+	const TEMPLATE_AREA_THEME = 2;
+	const TEMPLATE_AREA_BOTH = 3;
+
 	/**
 	 * 
 	 * {@inheritdoc}

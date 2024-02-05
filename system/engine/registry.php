@@ -191,6 +191,52 @@ final class Registry {
 		if (isset($dataArray['preferences']))
 			self::$preferences = array_merge(self::$preferences, $dataArray['preferences']);
 	}
+	
+	/**
+	 * Adds DI preferences from a JSON file.
+	 *
+	 * This method reads a JSON file containing preferences and merges them into the existing preferences array.
+	 *
+	 * @param string $jsonFilePath The path to the JSON file containing preferences.
+	 * @return void 
+	 * @throws \Phacil\Framework\Exception If there is an error reading the JSON file or if the JSON data is invalid.
+	 */
+	static public function addPreferenceByRoute($route) {
+		$routeArray = explode('/', $route);
+
+		$directory = \Phacil\Framework\Config::DIR_APP_MODULAR() . self::case_insensitive_pattern($routeArray[0]) . '/etc/preferences.json';
+
+		$pattern = self::case_insensitive_pattern($routeArray[0]);
+
+		$files = glob($directory . "*", GLOB_MARK);
+
+		if(isset($files[0])) {
+			$jsonFilePath = $files[0];
+		} else {
+			return;
+		}
+		if (file_exists($jsonFilePath)) {
+			self::addPreference($jsonFilePath);
+		}
+	}
+
+	/**
+	 * Generate Glob case insensitive pattern
+	 * @param string $string 
+	 * @return string 
+	 */
+	static public function case_insensitive_pattern($string)
+	{
+		$pattern = '';
+		foreach (str_split($string) as $char) {
+			if (ctype_alpha($char)) { // se o caractere é uma letra
+				$pattern .= '[' . strtoupper($char) . strtolower($char) . ']'; // adiciona as duas variações de caixa
+			} else {
+				$pattern .= $char; // mantém o caractere original
+			}
+		}
+		return $pattern;
+	}
 
 	/**
 	 * Checks if a preference has been set for the specified class and returns it if found.

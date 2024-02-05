@@ -101,9 +101,21 @@ final class startEngineExacTI {
 
         \Phacil\Framework\Registry::addPreference(\Phacil\Framework\Config::DIR_SYSTEM()."etc/preferences.json");
 
+        \Phacil\Framework\Registry::addPreferenceByRoute(self::getRoute());
+
         if($this->composer) {
             $this->registry->set('composer', $this->composer);
         }
+    }
+
+    static public function getRoute() {
+        if (Request::GET('route')) {
+            return (Request::GET('route'));
+        } else {
+            $default = \Phacil\Framework\Config::DEFAULT_ROUTE() ?: \Phacil\Framework\Config::DEFAULT_ROUTE('common/home');
+            return Request::GET('route', $default);
+        }
+        return Request::GET('route') ?: (\Phacil\Framework\Config::DEFAULT_ROUTE() ?: \Phacil\Framework\Config::DEFAULT_ROUTE('common/home'));
     }
 
     /**
@@ -541,13 +553,7 @@ if($engine->controllerPreActions()){
 }
 
 // Router
-if (Request::GET('route')) {
-    $action = new Action(Request::GET('route'));
-} else {
-    $default = \Phacil\Framework\Config::DEFAULT_ROUTE() ?: \Phacil\Framework\Config::DEFAULT_ROUTE('common/home');
-    Request::GET('route', $default);
-    $action = new Action($default);
-}
+$action = new Action(startEngineExacTI::getRoute());
 
 // Dispatch
 $not_found = \Phacil\Framework\Config::NOT_FOUND() ?: \Phacil\Framework\Config::NOT_FOUND('error/not_found');

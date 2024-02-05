@@ -269,49 +269,131 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
         $tpl = new \Phacil\Framework\Render($this->registry);
 
         $pegRout = explode("/", ($this->registry->routeOrig)?: Request::GET('route'));
-        $pegRoutWithoutLast = $pegRout;
+        /* $pegRoutWithoutLast = $pegRout;
         array_pop($pegRoutWithoutLast);
         $pegRoutWithoutPenultimate = $pegRoutWithoutLast;
-        array_pop($pegRoutWithoutPenultimate);
+        array_pop($pegRoutWithoutPenultimate); */
 
         if($this->template === NULL) {
-
             $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
 
+            $noCaseFunction = function ($str) {
+                return \Phacil\Framework\Registry::case_insensitive_pattern($str);
+            };
+
+            //Just template not set manual
+            $routePatterned = array_map($noCaseFunction, $pegRout);
+            $routeWithoutLastPatterned = $routePatterned;
+            $lastRoutePatterned = array_pop($routeWithoutLastPatterned);
+            $routeWithoutFirstPatterned = $routePatterned;
+            $firstRoutePatterned = array_shift($routeWithoutFirstPatterned);
+
+            $structure = [];
+
+            $structure[self::TEMPLATE_AREA_THEME][] =  $thema . '/' . implode("/", $routePatterned);
+            $structure[self::TEMPLATE_AREA_THEME][] = 'default/' . implode("/", $routePatterned);
+            //$structure[] = implode("/", $routePatterned);
+            $structure[self::TEMPLATE_AREA_MODULAR][] = $firstRoutePatterned . '/View/' . implode("/", $routeWithoutFirstPatterned);
+
+            if (count($routePatterned) > 2) {
+                $structure[self::TEMPLATE_AREA_MODULAR][] = $firstRoutePatterned . '/View/' . implode("/", array_slice($routeWithoutFirstPatterned, 0, -1)) . "_" . $lastRoutePatterned;
+
+                //Old compatibility
+                $structure[self::TEMPLATE_AREA_THEME][] =  $thema . '/' . implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned ;
+                $structure[self::TEMPLATE_AREA_THEME][] = 'default/' . implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned ;
+                //$structure[self::TEMPLATE_AREA_THEME][] = implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned ;
+            }
+
             
-            foreach($tpl->getTemplateTypes() as $extensionTemplate) {
-                $structure = [];
-
-                $structure[] =  $thema.'/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
-                $structure[] = 'default/'.$pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
-                $structure[] = $pegRout[0].'/'.$pegRout[1].((isset($pegRout[2])) ? '_'.$pegRout[2] : '').'.'.$extensionTemplate;
-                $structure[] = implode("/", $pegRoutWithoutLast).'/View/'.end($pegRout).'.'.$extensionTemplate;
-                $structure[] = implode("/", $pegRoutWithoutPenultimate).'/View/'.((isset($pegRout[count($pegRout)-2])) ? $pegRout[count($pegRout)-2]."_".end($pegRout) : end($pegRout)).'.'.$extensionTemplate;
-
-
-                foreach($structure as $themefile){
-                    if(file_exists(Config::DIR_APP_MODULAR() .$themefile)){
-                        $this->template = $themefile;
+            foreach($structure[self::TEMPLATE_AREA_MODULAR] as $themefile){
+                $types = [
+                    'modular' => Config::DIR_APP_MODULAR() .$themefile,
+                    //'theme' => Config::DIR_TEMPLATE() .$themefile,
+                ];
+                $files['modular'] = null;
+                $files['theme'] = null;
+                foreach ($types as $type => $globs) {
+                    foreach ($tpl->getTemplateTypes() as $extensionTemplate) {
+                        $files[$type] = glob($globs. "." .$extensionTemplate, GLOB_BRACE);
+                        if(count($files[$type]) > 0) break;
+                    }
+                }
+                if(empty($files['modular']) && empty($files['theme'])) continue;
+                if(!empty($files['modular'])) {
+                    foreach ($files['modular'] as $modular){
+                        $this->template = str_replace(Config::DIR_APP_MODULAR(), "", $modular);
                         $templatePath = Config::DIR_APP_MODULAR();
                         break;
                     }
-                    if(file_exists(Config::DIR_TEMPLATE() .$themefile)){
-                        $this->template = $themefile;
+                }
+                if(!empty($files['theme'])) {
+                    foreach ($files['theme'] as $modular){
+                        $this->template = str_replace(Config::DIR_TEMPLATE(), "", $modular);
                         $templatePath = Config::DIR_TEMPLATE();
                         break;
                     }
                 }
-                
+                if(!empty($this->template)) break;
             }
+            
+            foreach($structure[self::TEMPLATE_AREA_THEME] as $themefile){
+                $types = [
+                    //'modular' => Config::DIR_APP_MODULAR() .$themefile,
+                    'theme' => Config::DIR_TEMPLATE() .$themefile,
+                ];
+                $files['modular'] = null;
+                $files['theme'] = null;
+                foreach ($types as $type => $globs) {
+                    foreach ($tpl->getTemplateTypes() as $extensionTemplate) {
+                        $files[$type] = glob($globs. "." .$extensionTemplate, GLOB_BRACE);
+                        if(count($files[$type]) > 0) break;
+                    }
+                }
+                if(empty($files['modular']) && empty($files['theme'])) continue;
+                if(!empty($files['modular'])) {
+                    foreach ($files['modular'] as $modular){
+                        $this->template = str_replace(Config::DIR_APP_MODULAR(), "", $modular);
+                        $templatePath = Config::DIR_APP_MODULAR();
+                        break;
+                    }
+                }
+                if(!empty($files['theme'])) {
+                    foreach ($files['theme'] as $modular){
+                        $this->template = str_replace(Config::DIR_TEMPLATE(), "", $modular);
+                        $templatePath = Config::DIR_TEMPLATE();
+                        break;
+                    }
+                }
+                if(!empty($this->template)) break;
+            }
+            
         } else {
-            if(file_exists(Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutLast)."/View/" .$this->template)){
+            if(file_exists(Config::DIR_APP_MODULAR(). $pegRout[0] ."/View/" .$this->template)){
+                $templatePath = Config::DIR_APP_MODULAR(). $pegRout[0] ."/View/";
+            } else {
+                $filesSeted = glob(
+                    Config::DIR_APP_MODULAR() .
+                    \Phacil\Framework\Registry::case_insensitive_pattern($pegRout[0])
+                    . "/View/" . $this->template,
+                    GLOB_BRACE
+                );
+
+                if (count($filesSeted) > 0) {
+                    $templatePath = str_replace($this->template, "", $filesSeted[0]);
+                }
+            }
+            /* elseif(file_exists(Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutLast)."/View/" .$this->template)){
                 $templatePath = Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutLast)."/View/";
             } elseif(file_exists(Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutPenultimate)."/View/" .$this->template)){
                 $templatePath = Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutPenultimate)."/View/";
-            }
+            } */
             if(file_exists(Config::DIR_TEMPLATE() .$this->template)){
                 $templatePath = Config::DIR_TEMPLATE();
             }
+        }
+
+        if(empty($this->template)) {
+            throw new Exception('Error: template not seted!');
         }
 
         if (file_exists($templatePath . $this->template)) {
