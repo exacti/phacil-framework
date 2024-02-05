@@ -304,69 +304,32 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
                 //$structure[self::TEMPLATE_AREA_THEME][] = implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned ;
             }
 
-            
-            foreach($structure[self::TEMPLATE_AREA_MODULAR] as $themefile){
-                $types = [
-                    'modular' => Config::DIR_APP_MODULAR() .$themefile,
-                    //'theme' => Config::DIR_TEMPLATE() .$themefile,
-                ];
-                $files['modular'] = null;
-                $files['theme'] = null;
-                foreach ($types as $type => $globs) {
-                    foreach ($tpl->getTemplateTypes() as $extensionTemplate) {
-                        $files[$type] = glob($globs. "." .$extensionTemplate, GLOB_BRACE);
-                        if(count($files[$type]) > 0) break;
+            //Check if theme exists
+            $findThemeFile = (function(array $structure, $pathArea) use ($tpl) {
+                foreach ($structure as $themefile) {
+                    $types = [
+                        'modular' => $pathArea . $themefile,
+                    ];
+                    $files['modular'] = null;
+                    foreach ($types as $type => $globs) {
+                        foreach ($tpl->getTemplateTypes() as $extensionTemplate) {
+                            $files[$type] = glob($globs . "." . $extensionTemplate, GLOB_BRACE);
+                            if (count($files[$type]) > 0) break;
+                        }
                     }
-                }
-                if(empty($files['modular']) && empty($files['theme'])) continue;
-                if(!empty($files['modular'])) {
-                    foreach ($files['modular'] as $modular){
-                        $this->template = str_replace(Config::DIR_APP_MODULAR(), "", $modular);
-                        $templatePath = Config::DIR_APP_MODULAR();
-                        break;
+                    if (empty($files['modular'])) continue;
+                    if (!empty($files['modular'])) {
+                        foreach ($files['modular'] as $modular) {
+                            $this->template = str_replace($pathArea, "", $modular);
+                            return $templatePath = $pathArea;
+                            break;
+                        }
                     }
+                    if (!empty($this->template)) break;
                 }
-                if(!empty($files['theme'])) {
-                    foreach ($files['theme'] as $modular){
-                        $this->template = str_replace(Config::DIR_TEMPLATE(), "", $modular);
-                        $templatePath = Config::DIR_TEMPLATE();
-                        break;
-                    }
-                }
-                if(!empty($this->template)) break;
-            }
-            
-            foreach($structure[self::TEMPLATE_AREA_THEME] as $themefile){
-                $types = [
-                    //'modular' => Config::DIR_APP_MODULAR() .$themefile,
-                    'theme' => Config::DIR_TEMPLATE() .$themefile,
-                ];
-                $files['modular'] = null;
-                $files['theme'] = null;
-                foreach ($types as $type => $globs) {
-                    foreach ($tpl->getTemplateTypes() as $extensionTemplate) {
-                        $files[$type] = glob($globs. "." .$extensionTemplate, GLOB_BRACE);
-                        if(count($files[$type]) > 0) break;
-                    }
-                }
-                if(empty($files['modular']) && empty($files['theme'])) continue;
-                if(!empty($files['modular'])) {
-                    foreach ($files['modular'] as $modular){
-                        $this->template = str_replace(Config::DIR_APP_MODULAR(), "", $modular);
-                        $templatePath = Config::DIR_APP_MODULAR();
-                        break;
-                    }
-                }
-                if(!empty($files['theme'])) {
-                    foreach ($files['theme'] as $modular){
-                        $this->template = str_replace(Config::DIR_TEMPLATE(), "", $modular);
-                        $templatePath = Config::DIR_TEMPLATE();
-                        break;
-                    }
-                }
-                if(!empty($this->template)) break;
-            }
-            
+            });
+
+            $templatePath = $findThemeFile($structure[self::TEMPLATE_AREA_THEME], Config::DIR_TEMPLATE()) ?: $findThemeFile($structure[self::TEMPLATE_AREA_MODULAR], Config::DIR_APP_MODULAR());            
         } else {
             if(file_exists(Config::DIR_APP_MODULAR(). $pegRout[0] ."/View/" .$this->template)){
                 $templatePath = Config::DIR_APP_MODULAR(). $pegRout[0] ."/View/";
