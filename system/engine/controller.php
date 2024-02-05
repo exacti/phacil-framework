@@ -268,11 +268,7 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
 
         $tpl = new \Phacil\Framework\Render($this->registry);
 
-        $pegRout = explode("/", ($this->registry->routeOrig)?: Request::GET('route'));
-        /* $pegRoutWithoutLast = $pegRout;
-        array_pop($pegRoutWithoutLast);
-        $pegRoutWithoutPenultimate = $pegRoutWithoutLast;
-        array_pop($pegRoutWithoutPenultimate); */
+        $pegRout = explode("/", ($this->registry->routeOrig)?: \Phacil\Framework\startEngineExacTI::getRoute());
 
         if($this->template === NULL) {
             $thema = ($this->config->get("config_template") != NULL) ? $this->config->get("config_template") : "default";
@@ -345,11 +341,7 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
                     $templatePath = str_replace($this->template, "", $filesSeted[0]);
                 }
             }
-            /* elseif(file_exists(Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutLast)."/View/" .$this->template)){
-                $templatePath = Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutLast)."/View/";
-            } elseif(file_exists(Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutPenultimate)."/View/" .$this->template)){
-                $templatePath = Config::DIR_APP_MODULAR().implode("/", $pegRoutWithoutPenultimate)."/View/";
-            } */
+
             if(file_exists(Config::DIR_TEMPLATE() .$this->template)){
                 $templatePath = Config::DIR_TEMPLATE();
             }

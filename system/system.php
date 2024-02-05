@@ -543,7 +543,7 @@ $engine->extraRegistrations();
 $frontController = new Front($engine->registry);
 
 // SEO URL's
-$frontController->addPreAction(new ActionSystem((string) 'url/seo_url'));
+$frontController->addPreAction(new Action((string) 'url/seo_url', [], \Phacil\Framework\Interfaces\Action::SYSTEM));
 
 //extraPreActions
 if($engine->controllerPreActions()){

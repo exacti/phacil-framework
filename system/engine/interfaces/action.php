@@ -16,12 +16,16 @@ namespace Phacil\Framework\Interfaces;
  */
 interface Action {
 
+	const APP = "APP";
+	const SYSTEM = "SYSTEM";
+
 	/**
 	 * @param string $route HTTP route for the respective controller
-	 * @param array $args Args to be pass for the method controller
+	 * @param array $args (Optional) Args to be pass for the method controller
+	 * @param string $local (Optional) Set if the action is a system or app controller
 	 * @return void 
 	 */
-	public function __construct($route, $args = array());
+	public function __construct($route, $args = array(), $local = self::APP);
 
 	/** 
 	 * Return the controller file path

@@ -82,6 +82,7 @@
 		'Response',
 		'Classes',
 		'AbstractHelper',
+		'ActionSystem',
 		'Interfaces\\Front',
 		'Interfaces\\Loader',
 		'Interfaces\\Action',
@@ -331,7 +332,7 @@
 	private function loadActionClasses() {
 		if (!self::isPhacil()) return false;
 
-		if(self::$class != 'Phacil\Framework\Action' && self::$class != 'Phacil\Framework\ActionSystem') return false;
+		if(self::$class != 'Phacil\Framework\Action') return false;
 
 		$file = (\Phacil\Framework\Config::DIR_SYSTEM() . 'engine/action.php');
 

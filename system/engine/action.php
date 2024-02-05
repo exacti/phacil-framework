@@ -19,14 +19,69 @@ use \Phacil\Framework\Config;
  * 
  * @package Phacil\Framework 
  **/
-final class Action implements ActionInterface {
+class Action implements ActionInterface {
 
 	use ActionTrait;
-	
+
 	/**
 	 * @inheritdoc
 	 */
-	public function __construct($route, $args = array()) {
+	public function __construct($route, $args = array(), $local = self::APP) {
+		if($local == self::APP) {
+			$this->normal($route, $args);
+		}
+		if($local == self::SYSTEM) {
+			$this->system($route, $args);
+		}
+	}
+
+	private function system($route, $args = array())
+	{
+		$path = '';
+
+		$parts = explode('/', str_replace('../', '', (string)$route));
+
+		foreach ($parts as $part) {
+			$path .= $part;
+
+			if (is_dir(Config::DIR_SYSTEM() . '' . $path)) {
+				$path .= '/';
+
+				array_shift($parts);
+
+				continue;
+			}
+
+			if (is_file(Config::DIR_SYSTEM() . '' . str_replace('../', '', $path) . '.php')) {
+				$this->file = Config::DIR_SYSTEM() . '' . str_replace('../', '', $path) . '.php';
+
+				$this->class = 'System' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
+
+				$this->classAlt = [
+					'legacy' => $this->class,
+					'direct' => preg_replace('/[^a-zA-Z0-9]/', '', $part)
+				];
+
+				array_shift($parts);
+
+				break;
+			}
+		}
+
+		if ($args) {
+			$this->args = $args;
+		}
+
+		$method = array_shift($parts);
+
+		if ($method) {
+			$this->method = $method;
+		} else {
+			$this->method = 'index';
+		}
+	}
+
+	private function normal($route, $args = array()) {
 		$path = '';
 		$pathC = "";
 		
@@ -162,67 +217,5 @@ final class Action implements ActionInterface {
 
 	}
 	
-	
-}
-
-
-/** 
- * Action class to route all framework system controllers
- * 
- * @since 1.0.1
- * 
- * @package Phacil\Framework 
- */
-final class ActionSystem implements ActionInterface {
-	
-	use ActionTrait;
-
-	/**
-	 * @inheritdoc
-	 */
-	public function __construct($route, $args = array()) {
-		$path = '';
-		
-		$parts = explode('/', str_replace('../', '', (string)$route));
-		
-		foreach ($parts as $part) { 
-			$path .= $part;
-			
-			if (is_dir(Config::DIR_SYSTEM() . '' . $path)) {
-				$path .= '/';
-				
-				array_shift($parts);
-				
-				continue;
-			}
-			
-			if (is_file(Config::DIR_SYSTEM() . '' . str_replace('../', '', $path) . '.php')) {
-				$this->file = Config::DIR_SYSTEM() . '' . str_replace('../', '', $path) . '.php';
-				
-				$this->class = 'System' . preg_replace('/[^a-zA-Z0-9]/', '', $path);
-
-				$this->classAlt = [
-					'legacy' => $this->class,
-					'direct' => preg_replace('/[^a-zA-Z0-9]/', '', $part)
-				];
-
-				array_shift($parts);
-				
-				break;
-			}
-		}
-		
-		if ($args) {
-			$this->args = $args;
-		}
-			
-		$method = array_shift($parts);
-				
-		if ($method) {
-			$this->method = $method;
-		} else {
-			$this->method = 'index';
-		}
-	}
 	
 }
