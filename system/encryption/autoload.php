@@ -8,8 +8,13 @@
 
 namespace Phacil\Framework;
 
-/** @package Phacil\Framework */
-final class Encryption {
+/** 
+ * Encryption class for Phacil Framework
+ * @since 1.0.0
+ * @api
+ * @package Phacil\Framework 
+ */
+class Encryption {
     private $key;
     private $method;
     private $cipher;
@@ -19,8 +24,8 @@ final class Encryption {
      * @param string $opensslCipher 
      * @return void 
      */
-    function __construct($key, $opensslCipher = 'aes-128-cbc') {
-        $this->key = $this->hash($key);
+    function __construct($key = null, $opensslCipher = 'aes-128-cbc') {
+        if($key) $this->key = $this->hash($key);
 
         if(function_exists('openssl_encrypt')) {
             $this->method = 'openssl';
@@ -29,6 +34,10 @@ final class Encryption {
             $this->method = 'base64';
         }
 
+    }
+
+    public function setKey($key) {
+        $this->key = $this->hash($key);
     }
 
     /**

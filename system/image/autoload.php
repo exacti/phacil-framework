@@ -10,10 +10,27 @@ namespace Phacil\Framework;
 
 //use Exception;
 
-/** @package Phacil\Framework */
-final class Image {
+/** 
+ * @since 1.0.1
+ * @package Phacil\Framework 
+ */
+class Image {
+    /**
+     * 
+     * @var string
+     */
     private $file;
+
+    /**
+     * 
+     * @var \GdImage|false|void
+     */
     private $image;
+
+    /**
+     * 
+     * @var array
+     */
     private $info;
 
     /**
@@ -21,16 +38,24 @@ final class Image {
      * @return void 
      * @throws Exception 
      */
-    public function __construct($file) {
+    public function __construct($file = null) {
         if(!extension_loaded('gd')){
-            throw new \Exception("The image function requires GD extension on PHP!");
+            throw new \Phacil\Framework\Exception\RuntimeException("The image function requires GD extension on PHP!");
         }
 
-        if($this->infoChk($file))
+        if($file){
+            if ($this->infoChk($file))
+                $this->image = $this->create($file);
+            else
+                throw new \Phacil\Framework\Exception('Error: Could not load image ' . $file . '!');
+        }
+    }
+
+    public function setImage($file){
+        if ($this->infoChk($file))
             $this->image = $this->create($file);
         else
-            throw new \Exception('Error: Could not load image ' . $file . '!');
-
+            throw new \Phacil\Framework\Exception('Error: Could not load image ' . $file . '!');
     }
 
     /**
