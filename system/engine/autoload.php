@@ -617,7 +617,7 @@
 		if($autoload->loadModularWithoutNamespacesPrefix()) return;
 
 		if (version_compare(phpversion(), "7.2.0", "<")) {
-			if($autoload->setFactoryAliases()) return;
+			//if($autoload->setFactoryAliases()) return;
 		}
 
 		//if($autoload->loadModularNamespaceShift()) return;

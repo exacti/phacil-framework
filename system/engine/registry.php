@@ -340,10 +340,31 @@ final class Registry {
 					//$param is an instance of ReflectionParameter
 					try {
 						if (version_compare(phpversion(), "7.2.0", "<")) {
+							$declaringClass = $param->__toString();
+							$pattern = '/\[.*?>\s*([^$\s]+)/'; //$pattern = '/<[^>]+>\s*([^$\s]+)/';
+
+							if (preg_match($pattern, $declaringClass, $matches)) {
+								$classFactoryName = $matches[1];
+
+								if (substr($classFactoryName, -7) === "Factory") {
+									$factoredRefClass = substr($classFactoryName, 0, -7);
+
+									if (!class_exists($classFactoryName) && $classFactoryName != self::FACTORY_CLASS) {
+										$argsToInject[$param->getPosition()] = ($this->getInstance($classFactoryName, [], true)) ?: self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $classFactoryName);
+										class_alias(self::FACTORY_CLASS, $classFactoryName);
+										continue;
+									} elseif ($classFactoryName != self::FACTORY_CLASS){
+										$argsToInject[$param->getPosition()] = ($this->getInstance($classFactoryName, [], true)) ?: self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $classFactoryName);
+										
+										continue;
+									}
+								}
+
+							}
 							if ($param->getClass()) {
 								$injectionClass = $param->getClass()->name;
 
-								if ($injectionClass === self::FACTORY_CLASS) {
+								/* if ($injectionClass === self::FACTORY_CLASS) {
 									$declaringClass = $param->__toString();
 									$pattern = '/\[.*?>\s*([^$\s]+)/';//$pattern = '/<[^>]+>\s*([^$\s]+)/';
 
@@ -357,7 +378,7 @@ final class Registry {
 											continue;
 										}
 									}
-								}
+								} */
 								if (class_exists($injectionClass)) {
 									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
 									continue;
