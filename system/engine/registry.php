@@ -345,7 +345,7 @@ final class Registry {
 
 								if ($injectionClass === self::FACTORY_CLASS) {
 									$declaringClass = $param->__toString();
-									$pattern = '/Parameter #\d+ \[ <required> ([^\s]+) \$\w+ \]/';
+									$pattern = '/<[^>]+>\s*([^$\s]+)/';
 
 									if (preg_match($pattern, $declaringClass, $matches)) {
 										$classFactoryName = $matches[1];
