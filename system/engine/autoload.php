@@ -526,8 +526,8 @@
 	 */
 	private function setFactoryAliases(){
 		$class = self::$class;
-		if (substr($class, -7) === "Factory" && $class !== "Phacil\Framework\Factory") {
-			class_alias("Phacil\Framework\Factory", $class);
+		if (substr($class, -7) === "Factory" && $class !== \Phacil\Framework\Registry::FACTORY_CLASS) {
+			class_alias(\Phacil\Framework\Registry::FACTORY_CLASS, $class);
 			return true;
 		} 
 

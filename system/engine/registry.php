@@ -9,13 +9,16 @@
  namespace Phacil\Framework;
  
 /** 
- * The registration off all objects on this Framework.
+ * The registration of all objects on this Framework.
  * 
  * @since 0.0.1
  * 
  * @package Phacil\Framework 
  */
 final class Registry {
+
+	const FACTORY_CLASS = 'Phacil\Framework\Factory';
+
 	/**
 	 * data Objects
 	 * @var array
@@ -309,14 +312,7 @@ final class Registry {
 		$originalClass = $class;
 		$class = self::checkPreference($class);
 		$originalClass = $originalClass == $class ? null : $originalClass;
-		/* if (substr($class, -7) === "Factory") {
-			$refClass = substr($class, 0, -7);
-			if(isset($args[0]) && $this->getInstance($args[0], [], true)) return $this->getInstance($args[0]);
-
-			return self::setAutoInstance($this->create("Phacil\Framework\Factory", $args), $originalClass);
-		} */
 		$refClass = new ReflectionClass($class);
-
 
 		try {
 			if (!$forceCreate && $autoInstance = $this->getInstance($originalClass ?: $class, [], true))
@@ -329,14 +325,14 @@ final class Registry {
 				return $refClass->newInstanceWithoutConstructor();
 			}
 
-		} catch (\Throwable $th) {
-			//throw $th;
+		} catch (\Exception $th) {
+			//throw $th; Don't make anything and retry create
+
 		}
 
-
 		try {
-			//code...
 			$rMethod = new ReflectionMethod($class, "__construct");
+
 			if (!$argsToInject) {
 				$params = $rMethod->getParameters();
 				$argsToInject = [];
@@ -346,8 +342,8 @@ final class Registry {
 						if (version_compare(phpversion(), "7.2.0", "<")) {
 							if ($param->getClass()) {
 								$injectionClass = $param->getClass()->name;
-								//if (substr($injectionClass, -7) === "Factory") {
-								if ($injectionClass === "Phacil\Framework\Factory") {
+
+								if ($injectionClass === self::FACTORY_CLASS) {
 									$declaringClass = $param->__toString();
 									$pattern = '/Parameter #\d+ \[ <required> ([^\s]+) \$\w+ \]/';
 
@@ -355,8 +351,9 @@ final class Registry {
 										$classFactoryName = $matches[1];
 										if($classFactoryName !== $injectionClass){
 											$factoredRefClass = substr($classFactoryName, 0, -7);
-											//$jatem = ($this->getInstance($classFactoryName, [], true)) ?: false;
-											$argsToInject[$param->getPosition()] = ($this->getInstance($classFactoryName, [], true)) ? : self::setAutoInstance($this->create("Phacil\Framework\Factory", [$factoredRefClass]), $classFactoryName);
+											
+											$argsToInject[$param->getPosition()] = ($this->getInstance($classFactoryName, [], true)) ? : self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $classFactoryName);
+											
 											continue;
 										}
 									}
@@ -376,9 +373,10 @@ final class Registry {
 									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
 									continue;
 								} elseif (substr($injectionClass, -7) === "Factory") {
+									// Create a factored instance
 									$factoredRefClass = substr($injectionClass, 0, -7);
-									$argsToInject[$param->getPosition()] = ($this->getInstance($injectionClass, [], true)) ?: self::setAutoInstance($this->create("Phacil\Framework\Factory", [$factoredRefClass]), $injectionClass);
-									class_alias("Phacil\Framework\Factory", $injectionClass);
+									$argsToInject[$param->getPosition()] = ($this->getInstance($injectionClass, [], true)) ?: self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $injectionClass);
+									class_alias(self::FACTORY_CLASS, $injectionClass);
 									continue;
 								}
 								if (!$param->isOptional()) {
@@ -387,22 +385,7 @@ final class Registry {
 							}
 						}
 					} catch (\ReflectionException $th) {
-						/* $pattern = '/Class\s+(\S+)\s+/';
-
-						// Procurar por correspondências na mensagem
-						if (!$factored && preg_match($pattern, $th->getMessage(), $matches)) {
-							// O nome da classe estará na segunda posição do array de correspondências
-							$className = $matches[1];
-
-							class_alias("Phacil\Framework\Factory", $className);
-
-							return $this->injectionClass($class, $args, $forceCreate, $className);
-							// Exibir o nome da classe
-							echo $className;
-						} else { */
-							throw new \Phacil\Framework\Exception\ReflectionException($th->getMessage(), $th->getCode(), $th);
-						//}
-						
+						throw new \Phacil\Framework\Exception\ReflectionException($th->getMessage(), $th->getCode(), $th);
 					} catch (\Exception $th) {
 						throw new \Phacil\Framework\Exception($th->getMessage());
 					}
@@ -418,6 +401,8 @@ final class Registry {
 			}
 		} catch (\ReflectionException $th) {
 			throw new \Phacil\Framework\Exception\ReflectionException($th->getMessage());
+		} catch (\Exception $th) {
+			throw new \Phacil\Framework\Exception($th->getMessage());
 		}
 
 		return self::setAutoInstance($refClass->newInstanceArgs($argsToInject), $originalClass);
