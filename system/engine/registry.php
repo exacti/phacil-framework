@@ -303,12 +303,18 @@ final class Registry {
 	 * @throws \Exception 
 	 * @throws \Phacil\Framework\Exception 
 	 */
-	public function injectionClass($class, $args = array(), $forceCreate = false)
+	public function injectionClass($class, $args = array(), $forceCreate = false, $factored = null)
 	{
 		$argsToInject = !empty($args) ? $args : false;
 		$originalClass = $class;
 		$class = self::checkPreference($class);
 		$originalClass = $originalClass == $class ? null : $originalClass;
+		/* if (substr($class, -7) === "Factory") {
+			$refClass = substr($class, 0, -7);
+			if(isset($args[0]) && $this->getInstance($args[0], [], true)) return $this->getInstance($args[0]);
+
+			return self::setAutoInstance($this->create("Phacil\Framework\Factory", $args), $originalClass);
+		} */
 		$refClass = new ReflectionClass($class);
 
 
@@ -328,50 +334,91 @@ final class Registry {
 		}
 
 
-		$rMethod = new ReflectionMethod($class, "__construct");
-		if(!$argsToInject){
-			$params = $rMethod->getParameters();
-			$argsToInject = [];
-			foreach ($params as $param) {
-				//$param is an instance of ReflectionParameter
-				try {
-					if (version_compare(phpversion(), "7.2.0", "<")) {
-						if ($param->getClass()) {
-							$injectionClass = $param->getClass()->name;
-							if (class_exists($injectionClass)) {
-								$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
-								continue;
-							}
-							if (!$param->isOptional()) {
-								throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
-							}
-						}
-					} else {
-						if ($param->getType()) {
-							$injectionClass = $param->getType()->getName();
-							if (class_exists($injectionClass)) {
-								$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
-								continue;
-							}
-							if (!$param->isOptional()) {
-								throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
-							}
-						}
-					}
-				} catch (\Exception $th) {
-					throw $th;
-				}
+		try {
+			//code...
+			$rMethod = new ReflectionMethod($class, "__construct");
+			if (!$argsToInject) {
+				$params = $rMethod->getParameters();
+				$argsToInject = [];
+				foreach ($params as $param) {
+					//$param is an instance of ReflectionParameter
+					try {
+						if (version_compare(phpversion(), "7.2.0", "<")) {
+							if ($param->getClass()) {
+								$injectionClass = $param->getClass()->name;
+								//if (substr($injectionClass, -7) === "Factory") {
+								if ($injectionClass === "Phacil\Framework\Factory") {
+									$declaringClass = $param->__toString();
+									$pattern = '/Parameter #\d+ \[ <required> ([^\s]+) \$\w+ \]/';
 
-				if ($param->isOptional() && $param->isDefaultValueAvailable()) {
-					$argsToInject[] = $param->getDefaultValue();
-					continue;
-				}
-				if ($param->isOptional()) {
-					$argsToInject[] = null;
+									if (preg_match($pattern, $declaringClass, $matches)) {
+										$classFactoryName = $matches[1];
+										if($classFactoryName !== $injectionClass){
+											$factoredRefClass = substr($classFactoryName, 0, -7);
+											//$jatem = ($this->getInstance($classFactoryName, [], true)) ?: false;
+											$argsToInject[$param->getPosition()] = ($this->getInstance($classFactoryName, [], true)) ? : self::setAutoInstance($this->create("Phacil\Framework\Factory", [$factoredRefClass]), $classFactoryName);
+											continue;
+										}
+									}
+								}
+								if (class_exists($injectionClass)) {
+									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
+									continue;
+								}
+								if (!$param->isOptional()) {
+									throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
+								}
+							}
+						} else {
+							if ($param->getType()) {
+								$injectionClass = $param->getType()->getName();
+								if (class_exists($injectionClass)) {
+									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
+									continue;
+								} elseif (substr($injectionClass, -7) === "Factory") {
+									$factoredRefClass = substr($injectionClass, 0, -7);
+									$argsToInject[$param->getPosition()] = ($this->getInstance($injectionClass, [], true)) ?: self::setAutoInstance($this->create("Phacil\Framework\Factory", [$factoredRefClass]), $injectionClass);
+									class_alias("Phacil\Framework\Factory", $injectionClass);
+									continue;
+								}
+								if (!$param->isOptional()) {
+									throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
+								}
+							}
+						}
+					} catch (\ReflectionException $th) {
+						/* $pattern = '/Class\s+(\S+)\s+/';
+
+						// Procurar por correspondências na mensagem
+						if (!$factored && preg_match($pattern, $th->getMessage(), $matches)) {
+							// O nome da classe estará na segunda posição do array de correspondências
+							$className = $matches[1];
+
+							class_alias("Phacil\Framework\Factory", $className);
+
+							return $this->injectionClass($class, $args, $forceCreate, $className);
+							// Exibir o nome da classe
+							echo $className;
+						} else { */
+							throw new \Phacil\Framework\Exception\ReflectionException($th->getMessage(), $th->getCode(), $th);
+						//}
+						
+					} catch (\Exception $th) {
+						throw new \Phacil\Framework\Exception($th->getMessage());
+					}
+
+					if ($param->isOptional() && $param->isDefaultValueAvailable()) {
+						$argsToInject[] = $param->getDefaultValue();
+						continue;
+					}
+					if ($param->isOptional()) {
+						$argsToInject[] = null;
+					}
 				}
 			}
+		} catch (\ReflectionException $th) {
+			throw new \Phacil\Framework\Exception\ReflectionException($th->getMessage());
 		}
-		
 
 		return self::setAutoInstance($refClass->newInstanceArgs($argsToInject), $originalClass);
 	}

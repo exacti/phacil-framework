@@ -98,7 +98,8 @@
 		'Exception',
 		'Render',
 		'Debug',
-		'RESTful'
+		'RESTful',
+		'Factory'
 	];
 
 	/**
@@ -518,6 +519,21 @@
 		
 	}
 
+	/** 
+	 * Support for Factory class.
+	 * Need only for PHP 5.6 to 7.1
+	 * @return bool  
+	 */
+	private function setFactoryAliases(){
+		$class = self::$class;
+		if (substr($class, -7) === "Factory" && $class !== "Phacil\Framework\Factory") {
+			class_alias("Phacil\Framework\Factory", $class);
+			return true;
+		} 
+
+		return false;
+	}
+
 	/**
 	 * Load Composer
 	 * 
@@ -599,6 +615,10 @@
 		if($autoload->loadModularFiles()) return;
 
 		if($autoload->loadModularWithoutNamespacesPrefix()) return;
+
+		if (version_compare(phpversion(), "7.2.0", "<")) {
+			if($autoload->setFactoryAliases()) return;
+		}
 
 		//if($autoload->loadModularNamespaceShift()) return;
 
