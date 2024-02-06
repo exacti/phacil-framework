@@ -12,12 +12,12 @@ namespace Phacil\Framework\Interfaces\Common;
 
 /** 
  * @since 2.0.0
- * @property \Phacil\Framework\Database $db 
+ * @property \Phacil\Framework\Api\Database $db 
  * @property \Phacil\Framework\Session $session
  * @property \Phacil\Framework\Request $request
- * @property \Phacil\Framework\Url $url
+ * @property \Phacil\Framework\Interfaces\Url $url
  * @property \Phacil\Framework\Mail $mail
- * @property \Phacil\Framework\Loader $loader
+ * @property \Phacil\Framework\Interfaces\Loader $loader
  * @property \Phacil\Framework\startEngineExacTI $engine 
  * @property \Phacil\Framework\Config $config
  * @property \Phacil\Framework\Log $log

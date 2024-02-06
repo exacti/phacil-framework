@@ -73,8 +73,8 @@ trait Action {
 		return $this->class;
 	}
 
-	private function mountClass($namespace, $class) {
-		return (Config::NAMESPACE_PREFIX() ? Config::NAMESPACE_PREFIX()."\\" : "").str_replace("/", "\\", (string) $namespace)."Controller\\".(string) $class;
+	private function mountClass($namespace, $class, $withPrefix = true) {
+		return ($withPrefix && Config::NAMESPACE_PREFIX() ? Config::NAMESPACE_PREFIX()."\\" : "").str_replace("/", "\\", (string) $namespace)."Controller\\".(string) $class;
 	}
 
 	/**

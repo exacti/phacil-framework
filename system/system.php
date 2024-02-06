@@ -13,6 +13,7 @@ namespace Phacil\Framework;
  * 
  * @since 1.0.0
  * @package Phacil\Framework
+ * @property \Phacil\Framework\Api\Database $db 
  */
 final class startEngineExacTI {
 
@@ -419,7 +420,13 @@ set_exception_handler(function ($e) use (&$engine) {
 });
 
 if(\Phacil\Framework\Config::DB_DRIVER())
-    $engine->db = new Database(\Phacil\Framework\Config::DB_DRIVER(), \Phacil\Framework\Config::DB_HOSTNAME(), \Phacil\Framework\Config::DB_USERNAME(), \Phacil\Framework\Config::DB_PASSWORD(), \Phacil\Framework\Config::DB_DATABASE());
+    $engine->db = $engine->getRegistry()->create("Phacil\Framework\Api\Database", [
+        \Phacil\Framework\Config::DB_DRIVER(), 
+        \Phacil\Framework\Config::DB_HOSTNAME(), 
+        \Phacil\Framework\Config::DB_USERNAME(), 
+        \Phacil\Framework\Config::DB_PASSWORD(), 
+        \Phacil\Framework\Config::DB_DATABASE()
+    ]);
 
 // Settings
 if(!empty($configs)){
@@ -430,9 +437,9 @@ if(!empty($configs)){
 
 if(\Phacil\Framework\Config::USE_DB_CONFIG() === true) {
 
-    $query = (\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) ? $engine->db->query(\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) : $engine->db->query("SELECT * FROM settings ORDER BY setting_id ASC");
+    $query = (\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) ? $engine->db->query(\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) : $engine->db->query()->select()->from('settings')->orderBy('setting_id', \Phacil\Framework\MagiQL\Api\Syntax\OrderBy::ASC)->load();
 
-    foreach ($query->rows as $setting) {
+    foreach ($query as $setting) {
         if (!$setting['serialized']) {
             $engine->config->set($setting['key'], $setting['value']);
         } else {

@@ -96,11 +96,6 @@ final class Front implements frontInterface {
 					if(class_exists($classController)){
 						
 						$action = $this->callController($this->injectionClass($classController), $method, $args);
-						
-						/* if(!is_subclass_of($controller, 'Phacil\Framework\Controller')){
-							throw new Exception('PHACIL ERROR: Controller '. get_class($controller) . ' doesn\'t have Phacil\Framework\Controller implemented');
-						} */
-
 						break;
 					}
 				} catch (\Phacil\Framework\Exception\Throwable $th) {
@@ -108,10 +103,9 @@ final class Front implements frontInterface {
 				}
 			}
 			
-		} elseif(!$file && isset($classAlt['class'])) {
+		} elseif(!$file && isset($classAlt['class']) && !empty($classAlt['class']) && class_exists($classAlt['class'])) {
 			try {
-				$this->injectionClass($classController);
-				$action = $this->callController(new $classAlt['class']($this->registry), $method, $args);
+				$action = $this->callController($this->injectionClass($classAlt['class']), $method, $args);
 			} catch (\Phacil\Framework\Exception\Throwable $th) {
 				throw ($th);
 			}

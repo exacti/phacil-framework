@@ -18,6 +18,7 @@ interface Action {
 
 	const APP = "APP";
 	const SYSTEM = "SYSTEM";
+	const MAX_ROUTE_LENGTH = 255;
 
 	/**
 	 * @param string $route HTTP route for the respective controller

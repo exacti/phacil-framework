@@ -11,13 +11,14 @@ namespace Phacil\Framework;
 
 use Phacil\Framework\Interfaces\Databases as DatabaseInterface;
 use Phacil\Framework\Config;
+use Phacil\Framework\Api\Database as DatabaseApi;
 
 /** 
  * Principal class to load databases drivers
  * 
  * @since 2.0.0
  * @package Phacil\Framework */
-final class Database {
+class Database implements DatabaseApi {
 	/**
 	 * Loaded class db driver
 	 * 
@@ -52,16 +53,9 @@ final class Database {
 	 * @var string
 	 */
 	private $cachePrefix = "SQL_";
-	
+
 	/**
-	 * Construct the connection.
-	 * 
-	 * @param string $driver 
-	 * @param string $hostname 
-	 * @param string $username 
-	 * @param string $password 
-	 * @param string $database 
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function __construct($driver, $hostname, $username, $password, $database) {
 
@@ -89,30 +83,22 @@ final class Database {
         }
 	}
 
-	/** 
-	 * Check is connected on database
-	 * @return bool  
-	 **/
+	/**
+	 * {@inheritdoc}
+	 */
 	public function isConnected() { 
 		return $this->driver->isConnected();
 	}
 
-	/** 
-	 * Destroy the connection
-	 * 
-	 * @return void  
+	/**
+	 * {@inheritdoc}
 	 */
 	public function __destruct() {
 		unset($this->driver);
 	 }
 
 	/**
-	 * Execute the SQL Query
-	 * 
-	 * @param string|null $sql 
-	 * @param bool $cacheUse 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|\Phacil\Framework\Database::Cache|\Phacil\Framework\MagiQL 
-	 * @throws PhpfastcacheInvalidArgumentException 
+	 * {@inheritdoc}
 	 */
   	public function query($sql = null, $cacheUse = true) {
 		if(!$sql) {
@@ -129,46 +115,30 @@ final class Database {
 		}		
 		
   	}
-	
+
 	/**
-	 * Important escape to prevent SQL injection.
-	 * 
-	 * @param string $value 
-	 * @return string 
+	 * {@inheritdoc}
 	 */
 	public function escape($value) {
 		return $this->driver->escape($value);
 	}
-	
-  	/** 
-	 * Gets the number of rows affected by the last operation
-	 * 
-	 * @return int 
+
+	/**
+	 * {@inheritdoc}
 	 */
   	public function countAffected() {
 		return $this->driver->countAffected();
   	}
 
-  	/** 
-	 * Gets the ID of the last inserted row or sequence of values
-	 * 
-	 * @return int  
+	/**
+	 * {@inheritdoc}
 	 */
   	public function getLastId() {
 		return $this->driver->getLastId();
   	}
 
 	/**
-	 * @param string $sql 
-	 * @param int $pageNum_exibe 
-	 * @param int $maxRows_exibe 
-	 * @param bool $cache 
-	 * @param string|null $sqlTotal 
-	 * @return object 
-	 * @deprecated 2.0.0 This method as no longer maintained and will be removed on any 2.x further version (not defined yet). 
-	 * @deprecated Use MaqiQL class (\Phacil\Framework\MagiQL) instead.
-	 * @see \Phacil\Framework\MagiQL To use statement queries for more secure and relialable code.
-	 * @throws PhpfastcacheInvalidArgumentException 
+	 * {@inheritdoc}
 	 */
     public function pagination($sql, $pageNum_exibe = 1, $maxRows_exibe = 10, $cache = true, $sqlTotal = null){
 
@@ -238,9 +208,7 @@ final class Database {
 	}
 
 	/**
-	 * @param string $nome 
-	 * @param object $object 
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function createSubBase($nome, $object) {
 
@@ -248,12 +216,7 @@ final class Database {
     }
 
 	/**
-	 * Execute a prepared statement with parameters
-	 *
-	 * @param string $sql SQL query with named placeholders
-	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-	 * @throws \Phacil\Framework\Exception 
+	 * {@inheritdoc}
 	 */
 	public function execute($sql, array $params = [])
 	{
@@ -261,22 +224,14 @@ final class Database {
 	}
 
 	/**
-	 * Textual database driver type
-	 * @return string 
+	 * {@inheritdoc}
 	 */
 	public function getDBType() {
 		return $this->driver->getDBType();
 	}
 
 	/**
-	 * ID of database driver
-	 * 
-	 * @return int 1 = MySQL/MariaDB
-	 * @return int 2 = MS SQL Server
-	 * @return int 3 = Oracle Database
-	 * @return int 4 = Postgre 
-	 * @return int 5 = SQLite3
-	 * @return int 0 = NULL 
+	 * {@inheritdoc}
 	 */
 	public function getDBTypeId() {
 		return $this->driver->getDBTypeId();

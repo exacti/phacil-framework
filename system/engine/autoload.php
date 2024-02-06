@@ -94,6 +94,7 @@
 		'Interfaces\\Helper',
 		'Interfaces\\Model',
 		'Interfaces\\Url',
+		'Api\\Database',
 		'Exception',
 		'Render',
 		'Debug',
@@ -445,10 +446,16 @@
 	 * @return bool 
 	 */
 	private function loadModularFiles() {
-		$tryMagicOne = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", self::$namespace) . ".php";
+		$modulesPrepared = array_map(function ($item) {
+			return \Phacil\Framework\Registry::case_insensitive_pattern($item);
+		}, self::$namespace);
+
+		$tryMagicOne = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", $modulesPrepared) . ".php";
+
+		$files = glob($tryMagicOne, GLOB_NOSORT);
 
 		try {
-			if (self::loadClassFile($tryMagicOne)) {
+			if (!empty($files) && self::loadClassFile($files[0])) {
 				return true;
 			} 
 		} catch (\Exception $e) {
@@ -466,9 +473,16 @@
 	 * @return bool 
 	 */
 	private function loadModularWithoutNamespacesPrefix() {
-		$tryMagicOne = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", self::$namespaceWithoutPrefix) . ".php";
+		$modulesPrepared = array_map(function ($item) {
+			return \Phacil\Framework\Registry::case_insensitive_pattern($item);
+		}, self::$namespaceWithoutPrefix);
+
+		$tryMagicOne = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", $modulesPrepared) . ".php";
+
+		$files = glob($tryMagicOne, GLOB_NOSORT);
+
 		try {
-			if (self::loadClassFile($tryMagicOne)) {
+			if (!empty($files) && self::loadClassFile($files[0])) {
 				return true;
 			} 
 		} catch (\Exception $e) {
@@ -586,7 +600,7 @@
 
 		if($autoload->loadModularWithoutNamespacesPrefix()) return;
 
-		if($autoload->loadModularNamespaceShift()) return;
+		//if($autoload->loadModularNamespaceShift()) return;
 
 		//if($autoload->loadComposer()) return;
 		
