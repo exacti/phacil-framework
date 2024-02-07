@@ -19,6 +19,8 @@ final class Registry {
 
 	const FACTORY_CLASS = 'Phacil\Framework\Factory';
 
+	const FACTORY_WORD_KEY = "Factory";
+
 	/**
 	 * data Objects
 	 * @var array
@@ -145,7 +147,8 @@ final class Registry {
 		}
 
 		if (is_object($class)) {
-			return self::getInstance($class);
+			return self::setAutoInstance($class);
+			//return self::getInstance($class);
 		}
 
 		return null;
@@ -162,9 +165,6 @@ final class Registry {
 	public function create($class, $args = array()) {
 		if(is_string($class)) {
 			return $this->injectionClass($class, $args, true);
-			/* $classCreate = self::checkPreference($class);
-			$reflector = new ReflectionClass($classCreate);
-			return self::setAutoInstance($reflector->newInstanceArgs($args), $class); */
 		}
 		return null;
 	}
@@ -204,14 +204,18 @@ final class Registry {
 	 * @return void 
 	 * @throws \Phacil\Framework\Exception If there is an error reading the JSON file or if the JSON data is invalid.
 	 */
-	static public function addPreferenceByRoute($route) {
+	static public function addPreferenceByRoute($route, $levels = 2) {
 		$routeArray = explode('/', $route);
 
-		$directory = \Phacil\Framework\Config::DIR_APP_MODULAR() . self::case_insensitive_pattern($routeArray[0]) . '/etc/preferences.json';
+		for ($i=1; $i <= $levels; $i++) {
+			# code...
+			if($i >= count($routeArray)) break;
 
-		$pattern = self::case_insensitive_pattern($routeArray[0]);
-
-		$files = glob($directory . "*", GLOB_MARK);
+			$routeGlue = implode("/", array_slice($routeArray, 0, $i));
+			$directory = \Phacil\Framework\Config::DIR_APP_MODULAR() . self::case_insensitive_pattern($routeGlue) . '/etc/preferences.json';
+			$files = glob($directory, GLOB_MARK);
+			if(!empty($files)) break;
+		}
 
 		if(isset($files[0])) {
 			$jsonFilePath = $files[0];
@@ -327,7 +331,6 @@ final class Registry {
 
 		} catch (\Exception $th) {
 			//throw $th; Don't make anything and retry create
-
 		}
 
 		try {
@@ -346,8 +349,8 @@ final class Registry {
 							if (preg_match($pattern, $declaringClass, $matches)) {
 								$classFactoryName = $matches[1];
 
-								if (substr($classFactoryName, -7) === "Factory") {
-									$factoredRefClass = substr($classFactoryName, 0, -7);
+								if (substr($classFactoryName, -(strlen(self::FACTORY_WORD_KEY))) === self::FACTORY_WORD_KEY) {
+									$factoredRefClass = substr($classFactoryName, 0, -(strlen(self::FACTORY_WORD_KEY)));
 
 									if (!class_exists($classFactoryName) && $classFactoryName != self::FACTORY_CLASS) {
 										$argsToInject[$param->getPosition()] = ($this->getInstance($classFactoryName, [], true)) ?: self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $classFactoryName);
@@ -355,30 +358,13 @@ final class Registry {
 										continue;
 									} elseif ($classFactoryName != self::FACTORY_CLASS){
 										$argsToInject[$param->getPosition()] = ($this->getInstance($classFactoryName, [], true)) ?: self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $classFactoryName);
-										
 										continue;
 									}
 								}
-
 							}
 							if ($param->getClass()) {
 								$injectionClass = $param->getClass()->name;
-
-								/* if ($injectionClass === self::FACTORY_CLASS) {
-									$declaringClass = $param->__toString();
-									$pattern = '/\[.*?>\s*([^$\s]+)/';//$pattern = '/<[^>]+>\s*([^$\s]+)/';
-
-									if (preg_match($pattern, $declaringClass, $matches)) {
-										$classFactoryName = $matches[1];
-										if($classFactoryName !== $injectionClass){
-											$factoredRefClass = substr($classFactoryName, 0, -7);
-											
-											$argsToInject[$param->getPosition()] = ($this->getInstance($classFactoryName, [], true)) ? : self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $classFactoryName);
-											
-											continue;
-										}
-									}
-								} */
+								
 								if (class_exists($injectionClass)) {
 									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
 									continue;
@@ -393,9 +379,9 @@ final class Registry {
 								if (class_exists($injectionClass)) {
 									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
 									continue;
-								} elseif (substr($injectionClass, -7) === "Factory") {
+								} elseif (substr($injectionClass, -(strlen(self::FACTORY_WORD_KEY))) === self::FACTORY_WORD_KEY) {
 									// Create a factored instance
-									$factoredRefClass = substr($injectionClass, 0, -7);
+									$factoredRefClass = substr($injectionClass, 0, -(strlen(self::FACTORY_WORD_KEY)));
 									$argsToInject[$param->getPosition()] = ($this->getInstance($injectionClass, [], true)) ?: self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $injectionClass);
 									class_alias(self::FACTORY_CLASS, $injectionClass);
 									continue;

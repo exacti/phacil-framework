@@ -370,7 +370,7 @@
 				if (!self::loadClassFile($fileDB)) {
 					$fileDB = \Phacil\Framework\Config::DIR_DATABASE(\Phacil\Framework\Config::DIR_SYSTEM() . "database/") . str_replace(self::SEPARATOR, "/", self::$classNative) . '.php';
 					if (!self::loadClassFile($fileDB)) {
-						throw new \Phacil\Framework\Exception($fileDB . ' does not exist', 2);
+						return false; //throw new \Phacil\Framework\Exception($fileDB . ' does not exist', 2);
 					} 
 				} 
 
@@ -616,9 +616,9 @@
 
 		if($autoload->loadModularWithoutNamespacesPrefix()) return;
 
-		if (version_compare(phpversion(), "7.2.0", "<")) {
-			//if($autoload->setFactoryAliases()) return;
-		}
+		/* if (version_compare(phpversion(), "7.2.0", "<")) {
+			if($autoload->setFactoryAliases()) return;
+		} */
 
 		//if($autoload->loadModularNamespaceShift()) return;
 

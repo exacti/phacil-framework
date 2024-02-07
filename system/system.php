@@ -100,6 +100,8 @@ final class startEngineExacTI {
 
         self::$RegistryAlt = &$this->registry;
 
+        $this->request = new Request();
+
         \Phacil\Framework\Registry::addPreference(\Phacil\Framework\Config::DIR_SYSTEM()."etc/preferences.json");
 
         \Phacil\Framework\Registry::addPreferenceByRoute(self::getRoute());
@@ -526,7 +528,7 @@ $engine->cache = new Caches();
  * Request
  * @var Request
  */
-$engine->request = new Request();
+//$engine->request = new Request();
 
 // Response
 $engine->response = new Response();
