@@ -177,12 +177,8 @@ class transExtension extends \Twig\Extension\AbstractExtension
 function traduzir() {
 	$params = func_get_args();
 	$body = array_shift($params);
-	
-	if (class_exists('Translate')) {
-		$trans = new \Phacil\Framework\Translate();
-		echo ($trans->translation($body)); 
-	} else {
-		echo $body;
-	}
-	
+
+   /** @var \Phacil\Framework\Translate */
+   $trans = \Phacil\Framework\Registry::getInstance("Phacil\Framework\Translate");
+   echo ($trans->translation($body)); 
 }

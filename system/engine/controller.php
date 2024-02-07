@@ -224,31 +224,50 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
 		$classAlt = $action->getClassAlt();
         $method = $action->getMethod();
 
-        if (file_exists($file)) {
+        if ($file && file_exists($file)) {
             require_once($file);
 
             foreach($classAlt as $classController){
 				try {
                     if(class_exists($classController)){
                         $this->registry->routeOrig = $child;
-					    $controller = new $classController($this->registry);
+                        $controller = $this->registry->injectionClass($classController);
+					    //$controller = new $classController($this->registry);
+                        if (is_callable([$controller, $method])) {
+                            call_user_func_array(array($controller, $method), $args);
+                        } else {
+                            throw new \Phacil\Framework\Exception("Error Processing Request", 1);
+                        }
 					
 					    break;
                     }
-				} catch (Exception $th) {
-					//throw $th;
+				} catch (\Phacil\Framework\Exception\Throwable $th) {
+					throw $th;
 				}
 			}
-
-            $controller->$method($args);
 
             $this->registry->routeOrig = null;
 
             return $controller->output;
+
+        } elseif (!$file && isset($classAlt['class']) && !empty($classAlt['class']) && class_exists($classAlt['class'])) {
+            try {
+                $this->registry->routeOrig = $child;
+                $controller = $this->registry->injectionClass($classAlt['class']);
+                if (is_callable(array($controller, $method))) {
+                    call_user_func_array(array($controller, $method), $args);
+                } else {
+                    throw new \Phacil\Framework\Exception("Error Processing Request", 1);
+                }
+
+                $this->registry->routeOrig = null;
+
+                return $controller->output;
+            } catch (\Phacil\Framework\Exception\Throwable $th) {
+                throw ($th);
+            }
         } else {
             throw new Exception("Could not load controller " . $child . '!', 1);
-            
-            //exit();
         }
     }
 
@@ -266,7 +285,10 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
             $this->data[basename($child)] = $this->getChild($child);
         }
 
-        $tpl = new \Phacil\Framework\Render($this->registry);
+        /**
+         * @var \Phacil\Framework\Render
+         */
+        $tpl = $this->registry->getInstance("Phacil\Framework\Render");
 
         $pegRout = explode("/", ($this->registry->routeOrig)?: \Phacil\Framework\startEngineExacTI::getRoute());
 
@@ -281,23 +303,35 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
             $routePatterned = array_map($noCaseFunction, $pegRout);
             $routeWithoutLastPatterned = $routePatterned;
             $lastRoutePatterned = array_pop($routeWithoutLastPatterned);
-            $routeWithoutFirstPatterned = $routePatterned;
-            $firstRoutePatterned = array_shift($routeWithoutFirstPatterned);
+            //$routeWithoutFirstPatterned = $routePatterned;
+            //$firstRoutePatterned = array_shift($routeWithoutFirstPatterned);
 
             $structure = [];
 
-            $structure[self::TEMPLATE_AREA_THEME][] =  $thema . '/' . implode("/", $routePatterned);
+            if ($thema != "default")
+                $structure[self::TEMPLATE_AREA_THEME][] =  $thema . '/' . implode("/", $routePatterned);
+
             $structure[self::TEMPLATE_AREA_THEME][] = 'default/' . implode("/", $routePatterned);
-            //$structure[] = implode("/", $routePatterned);
-            $structure[self::TEMPLATE_AREA_MODULAR][] = $firstRoutePatterned . '/View/' . implode("/", $routeWithoutFirstPatterned);
+
+            $positions = 2;
+
+            for ($i=1; $i <= $positions; $i++) {
+                if(count($routePatterned) <= ($i)) break;
+
+                $mount = $routePatterned;
+                array_splice($mount, $i, 0, 'View');
+                $structure[self::TEMPLATE_AREA_MODULAR][] =  implode("/", $mount);
+
+                if(($i+1) < count($routePatterned))
+                    $structure[self::TEMPLATE_AREA_MODULAR][] =  implode("/",  array_slice($mount, 0, -1)). "_" .end($mount);
+            }
 
             if (count($routePatterned) > 2) {
-                $structure[self::TEMPLATE_AREA_MODULAR][] = $firstRoutePatterned . '/View/' . implode("/", array_slice($routeWithoutFirstPatterned, 0, -1)) . "_" . $lastRoutePatterned;
-
                 //Old compatibility
-                $structure[self::TEMPLATE_AREA_THEME][] =  $thema . '/' . implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned ;
-                $structure[self::TEMPLATE_AREA_THEME][] = 'default/' . implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned ;
-                //$structure[self::TEMPLATE_AREA_THEME][] = implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned ;
+                if($thema != "default")
+                    $structure[self::TEMPLATE_AREA_THEME][] =  $thema . '/' . implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned ;
+
+                $structure[self::TEMPLATE_AREA_THEME][] = 'default/' . implode("/", $routeWithoutLastPatterned) . '_' . $lastRoutePatterned;
             }
 
             //Check if theme exists
@@ -325,7 +359,7 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
                 }
             });
 
-            $templatePath = $findThemeFile($structure[self::TEMPLATE_AREA_THEME], Config::DIR_TEMPLATE()) ?: $findThemeFile($structure[self::TEMPLATE_AREA_MODULAR], Config::DIR_APP_MODULAR());            
+            $templatePath = $findThemeFile($structure[self::TEMPLATE_AREA_THEME], Config::DIR_TEMPLATE()) ?: $findThemeFile($structure[self::TEMPLATE_AREA_MODULAR], Config::DIR_APP_MODULAR());
         } else {
             if(file_exists(Config::DIR_APP_MODULAR(). $pegRout[0] ."/View/" .$this->template)){
                 $templatePath = Config::DIR_APP_MODULAR(). $pegRout[0] ."/View/";
@@ -351,7 +385,7 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
             throw new Exception('Error: template not seted!');
         }
 
-        if (file_exists($templatePath . $this->template)) {
+        if (is_readable($templatePath . $this->template)) {
 
             $templateFileInfo = pathinfo($templatePath .$this->template);
             $templateType = $templateFileInfo['extension'];

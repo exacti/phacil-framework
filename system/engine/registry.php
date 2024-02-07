@@ -142,8 +142,9 @@ final class Registry {
 
 		if(is_string($class)) {
 			$classCreate = self::checkPreference($class);
-			$reflector = new ReflectionClass($classCreate);
-			return self::setAutoInstance($reflector->newInstanceArgs($args), $class);
+			return self::getInstance()->injectionClass($classCreate, $args, true);
+			/* $reflector = new ReflectionClass($classCreate);
+			return self::setAutoInstance($reflector->newInstanceArgs($args), $class); */
 		}
 
 		if (is_object($class)) {
@@ -310,7 +311,7 @@ final class Registry {
 	 * @throws \Exception 
 	 * @throws \Phacil\Framework\Exception 
 	 */
-	public function injectionClass($class, $args = array(), $forceCreate = false, $factored = null)
+	public function injectionClass($class, $args = array(), $forceCreate = false)
 	{
 		$argsToInject = !empty($args) ? $args : false;
 		$originalClass = $class;

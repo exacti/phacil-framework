@@ -95,11 +95,11 @@
 
 	/**
 	 * 
-	 * @param mixed $templateType 
-	 * @param mixed $templatePath 
-	 * @param mixed $template 
-	 * @param mixed $data 
-	 * @param mixed $extras 
+	 * @param string $templateType 
+	 * @param string $templatePath 
+	 * @param string $template 
+	 * @param array $data 
+	 * @param array $extras 
 	 * @return $this 
 	 */
 	public function setTemplate($templateType, $templatePath, $template, $data, $extras) {

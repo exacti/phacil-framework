@@ -40,6 +40,10 @@ class Encryption {
         $this->key = $this->hash($key);
     }
 
+    public function getKey() {
+        return $this->key;
+    }
+
     /**
      * @param string $value 
      * @return string|false 

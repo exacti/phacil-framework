@@ -11,9 +11,10 @@ namespace Phacil\Framework;
 use Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException;
 use Phacil\Framework\Registry;
 
-/** @package Phacil\Framework */
-
-final class Translate {
+/** 
+ * @package Phacil\Framework 
+ */
+class Translate {
 	
 	/**
 	 * 
@@ -38,6 +39,18 @@ final class Translate {
 	 * @var \Phacil\Framework\Caches
 	 */
 	protected $cache;
+
+	/**
+	 * 
+	 * @var string|null
+	 */
+	private $cookie;
+
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $table = 'translate';
 	
 	public function __construct(){
 		
@@ -45,7 +58,7 @@ final class Translate {
 		
 		$this->autoLang = (isset($this->session->data['lang'])) ? $this->session->data['lang'] : NULL;
 				
-		$this->cookie = (Request::COOKIE(['lang'])) ?: NULL;
+		$this->cookie = (Request::COOKIE('lang')) ?: NULL;
 		
 		$this->cache = Registry::getInstance()->cache;
 
@@ -55,6 +68,16 @@ final class Translate {
 			setcookie("lang", ($this->autoLang), strtotime( '+90 days' ));
 		}
 		
+	}
+
+	/**
+	 * 
+	 * @param string $table 
+	 * @return $this 
+	 */
+	public function setTranslateTable($table){
+		$this->table = $table;
+		return $this;
 	}
 	
 	/**
@@ -71,33 +94,37 @@ final class Translate {
 			return $this->cache->get("lang_".$lang."_".md5($value));
 			
 		} else {
-			$sql = "SELECT * FROM translate WHERE text = '".$this->db->escape($value)."'";
-			$result = $this->db->query($sql, false);
+			$result = $this->db->query()->select()->from($this->table);
+			$result->where()->equals('text', $value)->end();
+			$result = $result->load();
 
-			if ($result->num_rows == 1) {
-				if(isset($result->row[$lang]) and $result->row[$lang] != "") {
-					$this->cache->set("lang_".$lang."_".md5($value), $result->row[$lang], false);
-					return $result->row[$lang]; //valid translation present
+			if ($result->getNumRows() == 1) {
+				if($lang && $result->getRow()->getValue($lang) and !empty($result->getRow()->getValue($lang))) {
+					$this->cache->set("lang_".$lang."_".md5($value), $result->getRow()->getValue($lang), false);
+					return $result->getRow()->getValue($lang); //valid translation present
 				} else {
 					return $value;
 				}
 
-			} else { //message not found in the table
+			} elseif($result->getNumRows() < 1) { //message not found in the table
 				//add unfound message to the table with empties translations
 				$this->insertBaseText($value);
 
-				return $value;
+				
 			}
 		}
-		
-		
+
+		return $value;
 	}
 	
 	/**
 	 * @param string $value 
 	 * @return void 
 	 */
-	public function insertBaseText ($value){		
-		$this->db->query("INSERT INTO translate SET text='".$this->db->escape($value)."'");
+	public function insertBaseText ($value){
+		$this->db->query()->insert()->setTable($this->table)->setValues([
+			'text' => $value
+		])->load();
+		return $this;
 	}
 }
