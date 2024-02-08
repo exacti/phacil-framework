@@ -229,6 +229,25 @@ final class Registry {
 	}
 
 	/**
+	 * 
+	 * @param string $for 
+	 * @param string $to 
+	 * @return void 
+	 */
+	static public function addDIPreference($for, $to) {
+		self::$preferences = array_merge(self::$preferences, [$for => $to]);
+	}
+
+	/**
+	 * 
+	 * @param string $for 
+	 * @return bool 
+	 */
+	static public function checkPreferenceExist($for) {
+		return isset(self::$preferences[$for]);
+	}
+
+	/**
 	 * Generate Glob case insensitive pattern
 	 * @param string $string 
 	 * @return string 

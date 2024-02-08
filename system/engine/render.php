@@ -217,13 +217,14 @@
 		}
 
 		/**
-		 * @var \transExtension
+		 * @var \Phacil\Framework\templateEngines\Twig\Api\Extension\TranslateInterface
 		 */
-		$twig->addExtension(new \transExtension());
+		$translateExtension = $this->registry->getInstance('Phacil\Framework\templateEngines\Twig\Api\Extension\TranslateInterface');
+		$twig->addExtension($translateExtension);
 
-		$twig->addFilter(new $Twig_SimpleFilter('translate', function ($str) {
+		$twig->addFilter(new $Twig_SimpleFilter('translate', function ($str) use ($translateExtension){
 			// do something different from the built-in date filter
-			return traduzir($str);
+			return $translateExtension->traduzir($str);
 		}));
 
 		$twig->addFilter(new $Twig_SimpleFilter('config', function ($str) {
