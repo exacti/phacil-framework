@@ -336,6 +336,9 @@ final class Registry {
 		$originalClass = $class;
 		$class = self::checkPreference($class);
 		$originalClass = $originalClass == $class ? null : $originalClass;
+
+		if($class === get_class($this)) return $this;
+
 		$refClass = new ReflectionClass($class);
 
 		try {
@@ -344,9 +347,9 @@ final class Registry {
 
 			if (!$refClass->getConstructor() && !$argsToInject) {
 				if ($refClass->hasMethod('getInstance') && $refClass->getMethod('getInstance')->isStatic()) {
-					return $refClass->getMethod('getInstance')->invoke(null);
+					return self::setAutoInstance($refClass->getMethod('getInstance')->invoke(null), ($originalClass ?: $class));
 				}
-				return $refClass->newInstanceWithoutConstructor();
+				return self::setAutoInstance($refClass->newInstanceWithoutConstructor(), ($originalClass ?: $class));
 			}
 
 		} catch (\Exception $th) {

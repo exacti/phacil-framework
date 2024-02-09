@@ -12,6 +12,7 @@ namespace Phacil\Framework\templateEngines\Twig\Api\Extension;
  * Twig translate extension interface
  * 
  * @package Phacil\Framework\templateEngines\Twig\Api\Extension
+ * @since 2.0.0
  */
 interface TranslateInterface {
 

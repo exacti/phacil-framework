@@ -13,6 +13,15 @@ use Phacil\Framework\templateEngines\Twig\Extension\Legacy\TokenParser;
 
 class Translate extends \Twig_Extension implements TranslateInterface
 {
+	/**
+	 * 
+	 * @var \Phacil\Framework\templateEngines\Twig\Extension\Legacy\TokenParser
+	 */
+	private $tokenParser;
+
+	public function __construct(TokenParser $tokenParser){
+		$this->tokenParser = $tokenParser;
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -20,7 +29,7 @@ class Translate extends \Twig_Extension implements TranslateInterface
 	public function getTokenParsers()
 	{
 		return array(
-			new TokenParser(),
+			$this->tokenParser,
 		);
 	}
 
