@@ -339,19 +339,18 @@ final class Registry {
 
 		if($class === get_class($this)) return $this;
 
+		if (!$forceCreate && $autoInstance = $this->getInstance($originalClass ?: $class, [], true))
+			return $autoInstance;
+
 		$refClass = new ReflectionClass($class);
 
 		try {
-			if (!$forceCreate && $autoInstance = $this->getInstance($originalClass ?: $class, [], true))
-				return $autoInstance;
-
 			if (!$refClass->getConstructor() && !$argsToInject) {
 				if ($refClass->hasMethod('getInstance') && $refClass->getMethod('getInstance')->isStatic()) {
 					return self::setAutoInstance($refClass->getMethod('getInstance')->invoke(null), ($originalClass ?: $class));
 				}
 				return self::setAutoInstance($refClass->newInstanceWithoutConstructor(), ($originalClass ?: $class));
 			}
-
 		} catch (\Exception $th) {
 			//throw $th; Don't make anything and retry create
 		}
