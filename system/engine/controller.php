@@ -288,7 +288,7 @@ abstract class Controller implements \Phacil\Framework\Interfaces\Controller {
         /**
          * @var \Phacil\Framework\Render
          */
-        $tpl = $this->registry->getInstance("Phacil\Framework\Render");
+        $tpl = $this->registry->getInstance(\Phacil\Framework\Render::class);
 
         $pegRout = explode("/", ($this->registry->routeOrig)?: \Phacil\Framework\startEngineExacTI::getRoute());
 

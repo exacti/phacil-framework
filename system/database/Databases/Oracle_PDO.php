@@ -104,7 +104,7 @@ class Oracle_PDO implements Databases
 				$this->statement = null;
 
 				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+				$result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
 				$result->setNumRows($this->rowCount);
 			}
 		} catch (\PDOException $e) {
@@ -179,7 +179,7 @@ class Oracle_PDO implements Databases
 
 			if ($stmt->columnCount()) {
 				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$data = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
+				$data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
 				$data->setNumRows($stmt->rowCount());
 				
 				$stmt->closeCursor();

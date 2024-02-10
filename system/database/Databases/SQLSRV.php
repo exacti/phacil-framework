@@ -83,7 +83,7 @@ class SQLSRV implements Databases {
                 \sqlsrv_free_stmt($resource);
 
                 /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $query = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+                $query = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
                 $query->setNumRows($i);
 
                 unset($data);
@@ -164,7 +164,7 @@ class SQLSRV implements Databases {
                 }
 
                 /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+                $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
                 $resultObj->setNumRows(\sqlsrv_num_rows($stmt));
 
                 return $resultObj;

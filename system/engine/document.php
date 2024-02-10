@@ -238,8 +238,5 @@ class Document {
         } else {
             return $ref;
         }
-
-
     }
-
 }

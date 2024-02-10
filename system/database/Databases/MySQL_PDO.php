@@ -104,7 +104,7 @@ class MySQL_PDO implements Databases
             //$sth= $this->dbh->query($sql);
 			$this->affectedRows = $sth->rowCount();
             /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-            $data = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$sth ? $sth->fetchAll(\PDO::FETCH_ASSOC) : array()]);
+            $data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$sth ? $sth->fetchAll(\PDO::FETCH_ASSOC) : array()]);
             $data->setNumRows($this->affectedRows);
             return $data;
         }
@@ -196,7 +196,7 @@ class MySQL_PDO implements Databases
 
             if ($stmt->columnCount()) {
                 /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $data = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
+                $data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
                 $data->setNumRows($stmt->rowCount());
                 
                 $stmt->closeCursor();

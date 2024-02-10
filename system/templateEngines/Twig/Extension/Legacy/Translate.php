@@ -50,7 +50,7 @@ class Translate extends \Twig_Extension implements TranslateInterface
 		$body = array_shift($params);
 
 		/** @var \Phacil\Framework\Translate */
-		$trans = \Phacil\Framework\Registry::getInstance("Phacil\Framework\Translate");
+		$trans = \Phacil\Framework\Registry::getInstance(\Phacil\Framework\Translate::class);
 		echo ($trans->translation($body));
 	}
 
@@ -62,7 +62,7 @@ class Translate extends \Twig_Extension implements TranslateInterface
 		$body = array_shift($params);
 
 		/** @var \Phacil\Framework\Translate */
-		$trans = \Phacil\Framework\Registry::getInstance("Phacil\Framework\Translate");
+		$trans = \Phacil\Framework\Registry::getInstance(\Phacil\Framework\Translate::class);
 		echo ($trans->translation($body));
 	}
 }

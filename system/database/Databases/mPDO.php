@@ -86,7 +86,7 @@ class mPDO implements Databases {
                 $this->statement->closeCursor();
                 $this->statement = null;
 				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+				$result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
 				$result->setNumRows($this->rowCount);
 				
 			}
@@ -157,7 +157,7 @@ class mPDO implements Databases {
 
 			if ($stmt->columnCount()) {
 				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$data = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
+				$data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
 				$data->setNumRows($stmt->rowCount());
 				
 				$stmt->closeCursor();

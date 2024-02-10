@@ -67,7 +67,7 @@ class SQLite3 implements Databases {
             }
 
             /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-            $result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+            $result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
             $result->setNumRows((!empty($data)) ? count($data) : 0);
 
             $query->finalize();
@@ -148,7 +148,7 @@ class SQLite3 implements Databases {
                 }
 
                 /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+                $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
                 $resultObj->setNumRows(count($data));
 
                 $result->finalize();

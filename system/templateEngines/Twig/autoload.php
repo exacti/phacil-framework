@@ -1,6 +1,6 @@
 <?php
 namespace {
-    $preferenceDIObj = 'Phacil\Framework\templateEngines\Twig\Api\Extension\TranslateInterface';
+    $preferenceDIObj = \Phacil\Framework\templateEngines\Twig\Api\Extension\TranslateInterface::class;
     if (version_compare(phpversion(), '7.2.5', '>') == false) {
         define('TwigFolderLoad', 'Twig1x');
         define('TwigLoaderFilesystem', 'Twig_Loader_Filesystem');
@@ -9,7 +9,7 @@ namespace {
         define('TwigExtensionDebug', 'Twig_Extension_Debug');
 
         if(!\Phacil\Framework\Registry::checkPreferenceExist($preferenceDIObj)){
-            \Phacil\Framework\Registry::addDIPreference($preferenceDIObj, "Phacil\\Framework\\templateEngines\\Twig\\Extension\\Legacy\\Translate");
+            \Phacil\Framework\Registry::addDIPreference($preferenceDIObj, \Phacil\Framework\templateEngines\Twig\Extension\Legacy\Translate::class);
         }
     } else {
         define('TwigLoaderFilesystem', '\Twig\Loader\FilesystemLoader');

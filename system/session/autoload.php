@@ -8,7 +8,6 @@
 
 namespace Phacil\Framework;
 
-use Phacil\Framework\Credis;
 use Phacil\Framework\Config;
 
 /** 
@@ -54,9 +53,19 @@ class Session
      * 
      * @var \Phacil\Framework\Session\Redis\Handler
      */
-    protected $saveHandler;
+    private $saveHandler;
 
-    protected $redisExpire;
+    /**
+     * 
+     * @var \Phacil\Framework\Registry
+     */
+    private $registry;
+
+    /**
+     * 
+     * @var \Phacil\Framework\Cookies\SameSite
+     */
+    private $sameSite;
 
     /**
      * 
@@ -68,13 +77,20 @@ class Session
      * @param string $redis_prefix 
      * @return void 
      */
-    public function __construct($redis = false)
-    {
+    public function __construct(
+        \Phacil\Framework\Registry $registry,
+        Config $config,
+        \Phacil\Framework\Cookies\SameSite $sameSite
+    ) {
+        $this->registry = $registry;
+
+        $this->sameSite = $sameSite;
+
         $this->name = (Config::SESSION_PREFIX() ?: 'SESS') . (isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
         //define('SESSION_PREFIX_INTERNAL_REDIS', Config::REDIS_SESSION_PREFIX() ?: 'phacil_');
 
-        $this->redis($redis);
+        $this->redis($config->get('session_redis'));
 
         if (!session_id()) {
             $this->openSession();
@@ -104,7 +120,15 @@ class Session
         if ($this->isSecure())
             ini_set('session.cookie_secure', 1);
 
-        session_set_cookie_params(0, '/');
+        if (version_compare(phpversion(), "7.3.0", "<")) {
+            session_set_cookie_params(0, '/; samesite=' . $this->sameSite->getValue());
+        } else {
+            session_set_cookie_params([
+                'lifetime' => 0,
+                'path' => '/',
+                'samesite' => $this->sameSite->getValue()
+            ]);
+        }
         //session_id(md5());
         session_name($this->name);
         session_start();
@@ -125,13 +149,10 @@ class Session
      */
     private function redis($redis = false)
     {
-
         if (!$redis)
             return false;
 
-        $redisConfig = new \Phacil\Framework\Session\Redis\Config();
-
-        $this->saveHandler = new \Phacil\Framework\Session\Redis\Handler($redisConfig, new \Phacil\Framework\Session\Redis\Logger($redisConfig));
+        $this->saveHandler = $this->registry->getInstance(\Phacil\Framework\Session\Redis\Handler::class);
 
         $this->saveHandler->setName($this->name);
 

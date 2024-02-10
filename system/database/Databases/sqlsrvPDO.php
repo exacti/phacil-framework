@@ -100,7 +100,7 @@ class sqlsrvPDO implements Databases {
                 }
 
                 /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+                $result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
                 $result->setNumRows($this->statement->rowCount());
             }
         } catch (\PDOException $e) {
@@ -182,7 +182,7 @@ class sqlsrvPDO implements Databases {
 
             if ($this->statement->columnCount()) {
                 /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $data = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$this->statement->fetchAll(\PDO::FETCH_ASSOC)]);
+                $data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$this->statement->fetchAll(\PDO::FETCH_ASSOC)]);
                 $data->setNumRows($this->statement->rowCount());
                 
                 $this->statement->closeCursor();

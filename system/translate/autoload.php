@@ -52,17 +52,17 @@ class Translate {
 	 */
 	protected $table = 'translate';
 	
-	public function __construct(){
+	public function __construct(Registry $registry){
 		
-		$this->session = Registry::getInstance()->session;
+		$this->session = $registry->session;
 		
 		$this->autoLang = (isset($this->session->data['lang'])) ? $this->session->data['lang'] : NULL;
 				
 		$this->cookie = (Request::COOKIE('lang')) ?: NULL;
 		
-		$this->cache = Registry::getInstance()->cache;
+		$this->cache = $registry->cache;
 
-		$this->db = Registry::getInstance()->db;
+		$this->db = $registry->db;
 				
 		if($this->autoLang != NULL) {
 			setcookie("lang", ($this->autoLang), strtotime( '+90 days' ));

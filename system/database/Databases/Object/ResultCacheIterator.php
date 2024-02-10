@@ -184,7 +184,7 @@ class ResultCacheIterator extends \CachingIterator implements ResultInterface {
 		if(!$data) return null;
 
 		/** @var \Phacil\Framework\Databases\Object\ItemInterface */
-		$item = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ItemInterface", [$data]);
+		$item = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ItemInterface::class, [$data]);
 		
 		return $item;
 	}

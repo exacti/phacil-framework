@@ -63,23 +63,17 @@ class Config implements ConfigInterface {
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Registry
+	 * @var \Phacil\Framework\Config
 	 */
-	protected $engine;
+	private $config;
 
 	/** 
 	 * Get the Framework instance
 	 * @return void 
 	 */
-	public function __construct(){
-		$this->engine = \Phacil\Framework\Registry::getInstance();
+	public function __construct(\Phacil\Framework\Config $config){
+		$this->config = $config;
 		$this->logLevel = \Phacil\Framework\Config::Debug() ? 6 : $this->logLevel;
-		$fg = [];
-		foreach (get_class_methods($this) as $key => $value) {
-			# code...
-			if ($value != '__construct' && $value != 'getLogLevel')
-			$fg[$value] = $this->$value();
-		}
 
 		return;
 	}
@@ -89,7 +83,7 @@ class Config implements ConfigInterface {
 	 * {@inheritdoc}
 	 */
 	function getLogLevel() {
-		return $this->engine->config->get('session_redis_log_level') ?: $this->logLevel;
+		return $this->config->get('session_redis_log_level') ?: $this->logLevel;
 	}
 
 	/**
@@ -97,7 +91,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getHost()
 	{
-		return $this->engine->config->get('session_redis_dsn') ? : self::PARAM_HOST;
+		return $this->config->get('session_redis_dsn') ? : self::PARAM_HOST;
 	}
 
 	/**
@@ -105,7 +99,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getPort()
 	{
-		return $this->engine->config->get('session_redis_port') ?: self::PARAM_PORT;
+		return $this->config->get('session_redis_port') ?: self::PARAM_PORT;
 	}
 
 	/**
@@ -113,7 +107,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getDatabase()
 	{
-		return (string)$this->engine->config->get('session_redis_database') ?: self::PARAM_DATABASE;
+		return (string)$this->config->get('session_redis_database') ?: self::PARAM_DATABASE;
 	}
 
 	/**
@@ -121,7 +115,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getPassword()
 	{
-		return $this->engine->config->get('session_redis_password') ?: '';
+		return $this->config->get('session_redis_password') ?: '';
 	}
 
 	/**
@@ -129,7 +123,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getTimeout()
 	{
-		return $this->engine->config->get('session_redis_timeout') ? : self::PARAM_TIMEOUT;
+		return $this->config->get('session_redis_timeout') ? : self::PARAM_TIMEOUT;
 	}
 
 	/**
@@ -137,7 +131,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getPersistentIdentifier()
 	{
-		return $this->engine->config->get('session_redis_persistent_id') ?: '';
+		return $this->config->get('session_redis_persistent_id') ?: '';
 	}
 
 	/**
@@ -145,7 +139,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getCompressionThreshold()
 	{
-		return $this->engine->config->get('session_redis_compression_threshold') ?: self::DEFAULT_COMPRESSION_THRESHOLD ;
+		return $this->config->get('session_redis_compression_threshold') ?: self::DEFAULT_COMPRESSION_THRESHOLD ;
 	}
 
 	/**
@@ -153,7 +147,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getCompressionLibrary()
 	{
-		return $this->engine->config->get('session_redis_compression_library') ?: (self::PARAM_COMPRESSION_LIBRARY);
+		return $this->config->get('session_redis_compression_library') ?: (self::PARAM_COMPRESSION_LIBRARY);
 	}
 
 	/**
@@ -161,7 +155,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getMaxConcurrency()
 	{
-		return $this->engine->config->get('session_redis_max_concurrency') ?: (self::PARAM_MAX_CONCURRENCY);
+		return $this->config->get('session_redis_max_concurrency') ?: (self::PARAM_MAX_CONCURRENCY);
 	}
 
 	/**
@@ -169,7 +163,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getMaxLifetime()
 	{
-		return $this->engine->config->get('session_redis_max_lifetime') ?: self::SESSION_MAX_LIFETIME;
+		return $this->config->get('session_redis_max_lifetime') ?: self::SESSION_MAX_LIFETIME;
 	}
 
 	/**
@@ -177,7 +171,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getMinLifetime()
 	{
-		return (int)$this->engine->config->get('session_redis_min_lifetime') ?: (self::PARAM_MIN_LIFETIME);
+		return (int)$this->config->get('session_redis_min_lifetime') ?: (self::PARAM_MIN_LIFETIME);
 	}
 
 	/**
@@ -185,7 +179,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getDisableLocking()
 	{
-		return (bool)$this->engine->config->get('session_redis_disable_locking') ?:  (self::PARAM_DISABLE_LOCKING);
+		return (bool)$this->config->get('session_redis_disable_locking') ?:  (self::PARAM_DISABLE_LOCKING);
 	}
 
 	/**
@@ -193,7 +187,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getBotLifetime()
 	{
-		return (int) $this->engine->config->get('session_redis_bot_lifetime') ?: (self::PARAM_BOT_LIFETIME);
+		return (int) $this->config->get('session_redis_bot_lifetime') ?: (self::PARAM_BOT_LIFETIME);
 	}
 
 	/**
@@ -201,7 +195,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getBotFirstLifetime()
 	{
-		return (string)$this->engine->config->get('session_redis_bot_first_lifetime') ?: (self::PARAM_BOT_FIRST_LIFETIME);
+		return (string)$this->config->get('session_redis_bot_first_lifetime') ?: (self::PARAM_BOT_FIRST_LIFETIME);
 	}
 
 	/**
@@ -209,7 +203,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getFirstLifetime()
 	{
-		return (int)$this->engine->config->get('session_redis_first_lifetime') ?: (self::PARAM_FIRST_LIFETIME);
+		return (int)$this->config->get('session_redis_first_lifetime') ?: (self::PARAM_FIRST_LIFETIME);
 	}
 
 	/**
@@ -217,7 +211,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getBreakAfter()
 	{
-		return (int)$this->engine->config->get('session_redis_break_after') ?: (self::PARAM_BREAK_AFTER);
+		return (int)$this->config->get('session_redis_break_after') ?: (self::PARAM_BREAK_AFTER);
 	}
 
 	/**
@@ -225,7 +219,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getLifetime()
 	{
-		return (int)$this->engine->config->get('session_redis_expire') ?: self::PARAM_SESSION_LIFETIME;
+		return (int)$this->config->get('session_redis_expire') ?: self::PARAM_SESSION_LIFETIME;
 	}
 
 	/**
@@ -233,7 +227,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getSentinelServers()
 	{
-		return $this->engine->config->get('session_redis_sentinel_servers') ?: null;
+		return $this->config->get('session_redis_sentinel_servers') ?: null;
 	}
 
 	/**
@@ -241,7 +235,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getSentinelMaster()
 	{
-		return $this->engine->config->get('session_redis_sentinel_master') ?: null;
+		return $this->config->get('session_redis_sentinel_master') ?: null;
 	}
 
 	/**
@@ -249,7 +243,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getSentinelVerifyMaster()
 	{
-		return $this->engine->config->get('session_redis_verify_master') ?: (null);
+		return $this->config->get('session_redis_verify_master') ?: (null);
 	}
 
 	/**
@@ -257,7 +251,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getSentinelConnectRetries()
 	{
-		return $this->engine->config->get('session_redis_sentinel_connect_retries') ?: (self::PARAM_SENTINEL_CONNECT_RETRIES);
+		return $this->config->get('session_redis_sentinel_connect_retries') ?: (self::PARAM_SENTINEL_CONNECT_RETRIES);
 	}
 
 	/**
@@ -265,7 +259,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getFailAfter()
 	{
-		return (int)$this->engine->config->get('session_redis_fail_after') ?: self::DEFAULT_FAIL_AFTER;
+		return (int)$this->config->get('session_redis_fail_after') ?: self::DEFAULT_FAIL_AFTER;
 	}
 
 }

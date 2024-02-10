@@ -8,7 +8,6 @@
 
  namespace Phacil\Framework;
 
- use Phacil\Framework\Translate;
  use Phacil\Framework\Registry;
  use Phacil\Framework\Config;
 
@@ -219,7 +218,9 @@
 		/**
 		 * @var \Phacil\Framework\templateEngines\Twig\Api\Extension\TranslateInterface
 		 */
-		$translateExtension = $this->registry->getInstance('Phacil\Framework\templateEngines\Twig\Api\Extension\TranslateInterface');
+		$translateExtension = $this->registry->getInstance(
+			\Phacil\Framework\templateEngines\Twig\Api\Extension\TranslateInterface::class
+		);
 		$twig->addExtension($translateExtension);
 
 		$twig->addFilter(new $Twig_SimpleFilter('translate', function ($str) use ($translateExtension){
@@ -259,9 +260,10 @@
 			'cache_file_mode' => 0666,
 			'loader' => new \Mustache_Loader_FilesystemLoader($this->templatePath),
 			'helpers' => array('translate' => function ($text) {
-				if (class_exists('Translate')) {
-					$trans = new Translate();
-					return ($trans->translation($text));
+				if (class_exists('Phacil\Framework\Translate')) {
+					/** @var \Phacil\Framework\Translate */
+					$trans = $this->registry->getInstance(\Phacil\Framework\Translate::class);
+					return $trans->translation($text);
 				} else {
 					return $text;
 				} // do something translate here...
@@ -291,8 +293,9 @@
 
 		$smarty->registerPlugin("block", "translate", function ($text) {
 			if (class_exists('Phacil\Framework\Translate')) {
-				$trans = new Translate();
-				return ($trans->translation($text));
+				/** @var \Phacil\Framework\Translate */
+				$trans = $this->registry->getInstance(\Phacil\Framework\Translate::class);
+				return $trans->translation($text);
 			} else {
 				return $text;
 			} // do something translate here...

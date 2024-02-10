@@ -17,7 +17,7 @@
  */
 final class Registry {
 
-	const FACTORY_CLASS = 'Phacil\Framework\Factory';
+	const FACTORY_CLASS = \Phacil\Framework\Factory::class;
 
 	const FACTORY_WORD_KEY = "Factory";
 
@@ -143,13 +143,10 @@ final class Registry {
 		if(is_string($class)) {
 			$classCreate = self::checkPreference($class);
 			return self::getInstance()->injectionClass($classCreate, $args, true);
-			/* $reflector = new ReflectionClass($classCreate);
-			return self::setAutoInstance($reflector->newInstanceArgs($args), $class); */
 		}
 
 		if (is_object($class)) {
 			return self::setAutoInstance($class);
-			//return self::getInstance($class);
 		}
 
 		return null;
@@ -386,19 +383,22 @@ final class Registry {
 							}
 							if ($param->getClass()) {
 								$injectionClass = $param->getClass()->name;
+								$classAttr = self::checkPreference($injectionClass);
 								
-								if (class_exists($injectionClass)) {
+								if (class_exists($classAttr)) {
 									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
 									continue;
 								}
 								if (!$param->isOptional()) {
-									throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
+									throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . " not exist");
 								}
 							}
 						} else {
 							if ($param->getType()) {
 								$injectionClass = $param->getType()->getName();
-								if (class_exists($injectionClass)) {
+								$classAttr = self::checkPreference($injectionClass);
+
+								if (class_exists($classAttr)) {
 									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
 									continue;
 								} elseif (substr($injectionClass, -(strlen(self::FACTORY_WORD_KEY))) === self::FACTORY_WORD_KEY) {
@@ -409,7 +409,7 @@ final class Registry {
 									continue;
 								}
 								if (!$param->isOptional()) {
-									throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . "not exist");
+									throw new \Phacil\Framework\Exception\ReflectionException("Error Processing Request: " . $injectionClass . " not exist");
 								}
 							}
 						}

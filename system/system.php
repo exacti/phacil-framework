@@ -163,8 +163,9 @@ final class startEngineExacTI {
      * @return string|false 
      */
     private function checkPHPversion() {
-        if (version_compare(phpversion(), '5.4.40', '>') == false) {
-            trigger_error('PHP 5.4.40+ Required', E_ERROR);
+        if (version_compare(phpversion(), '5.6.20', '>') == false) {
+            trigger_error('PHP 5.6.20+ Required', E_USER_ERROR);
+            die('PHP 5.6.20+ Required');
         } else {
             return phpversion();
         }
@@ -367,12 +368,12 @@ final class startEngineExacTI {
 
 		// Translate
 		if(!isset($this->registry->$key) && $key == 'translate'){
-			$this->translate = new Translate();
+			$this->translate = $this->registry->getInstance(\Phacil\Framework\Translate::class);
 		}
 
 		// Session
 		if(!isset($this->registry->$key) && $key == 'session'){
-			$this->session = new Session();
+			$this->session = $this->registry->getInstance(\Phacil\Framework\Session::class);
 		}
 
         return (isset($this->registry->$key)) ?: NULL;
@@ -398,7 +399,7 @@ $engine->engine = $engine;
 /**
  * @var \Phacil\Framework\Interfaces\Loader
  */
-$engine->load = $engine->getRegistry()->create("Phacil\Framework\Interfaces\Loader", [$engine->registry]);
+$engine->load = $engine->getRegistry()->create(\Phacil\Framework\Interfaces\Loader::class, [$engine->registry]);
 
 // Config
 /** @var Config */
@@ -422,7 +423,7 @@ set_exception_handler(function ($e) use (&$engine) {
 });
 
 if(\Phacil\Framework\Config::DB_DRIVER())
-    $engine->db = $engine->getRegistry()->create("Phacil\Framework\Api\Database", [
+    $engine->db = $engine->getRegistry()->create(\Phacil\Framework\Api\Database::class, [
         \Phacil\Framework\Config::DB_DRIVER(), 
         \Phacil\Framework\Config::DB_HOSTNAME(), 
         \Phacil\Framework\Config::DB_USERNAME(), 
@@ -470,7 +471,10 @@ if($engine->config->get('PatternSiteTitle') == true) {
 /**
  * @var \Phacil\Framework\Interfaces\Url
  */
-$engine->url = $engine->getRegistry()->create("Phacil\Framework\Interfaces\Url", [$engine->config->get('config_url'), $engine->config->get('config_use_ssl') ? $engine->config->get('config_ssl') : $engine->config->get('config_url')]);
+$engine->url = $engine->getRegistry()->create(\Phacil\Framework\Interfaces\Url::class, [
+    $engine->config->get('config_url'), 
+    $engine->config->get('config_use_ssl') ? $engine->config->get('config_ssl') : $engine->config->get('config_url')
+]);
 
 // Log
 if(!$engine->config->get('config_error_filename')){
@@ -531,16 +535,15 @@ $engine->cache = new Caches();
 //$engine->request = new Request();
 
 // Response
-$engine->response = new Response();
+/** @var Response */
+$engine->response = $engine->registry->getInstance(\Phacil\Framework\Response::class);
 $engine->response->addHeader('Content-Type: text/html; charset=utf-8');
 
 if($engine->config->get('config_compression'))
     $engine->response->setCompression($engine->config->get('config_compression'));
 
 // Session
-$engine->session = new Session(
-    $engine->config->get('session_redis')
-);
+$engine->session = $engine->getRegistry()->create(\Phacil\Framework\Session::class);
 
 // Document
 $engine->document = new Document();

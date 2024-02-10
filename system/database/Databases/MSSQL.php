@@ -58,7 +58,7 @@ class MSSQL implements \Phacil\Framework\Interfaces\Databases
 				\mssql_free_result($resource);
 
 				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$query = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+				$query = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
 				$query->setNumRows($i);
 
 				unset($data);

@@ -101,7 +101,7 @@ final class Request {
 
     /**
      * 
-     * @var array|string|false
+     * @var string|false
      */
     static protected  $_METHOD;
 
@@ -148,8 +148,8 @@ final class Request {
     /**
      * Return POST values from $_POST or $_FILES.
      * 
-     * @param string $key (optional)
-     * @param mixed $value (optional)
+     * @param string $key (Optional) If null return all values.
+     * @param mixed $value (Optional) If not null, set the value for this key.
      * @return mixed 
      * 
      * @since 2.0.0
@@ -172,9 +172,9 @@ final class Request {
     static public function INPUT($key = null){
         if (self::HEADER("Content-Type") == 'application/json'){
             try{
-                $data = self::clean(JSON::decode(file_get_contents('php://input')));
+                $data = self::clean(\Phacil\Framework\Json::decode(file_get_contents('php://input')));
             } catch (\Exception $e){
-                throw new \UnexpectedValueException($e->getMessage(), $e->getCode());
+                throw new \Phacil\Framework\Exception\UnexpectedValueException($e->getMessage(), $e->getCode());
             }
         } else {
             $data = self::clean(file_get_contents('php://input'));
@@ -186,8 +186,8 @@ final class Request {
     /**
      * Return GET values from $_GET.
      * 
-     * @param string $key (optional)
-     * @param mixed $value (optional)
+     * @param string $key (Optional) If null return all values.
+     * @param mixed $value (Optional) If not null, set the value for this key.
      * @return mixed 
      * 
      * @since 2.0.0
@@ -202,8 +202,8 @@ final class Request {
     /**
      * Return REQUEST values from $_REQUEST.
      * 
-     * @param string $key (optional)
-     * @param mixed $value (optional)
+     * @param string $key (Optional) If null return all values.
+     * @param mixed $value (Optional) If not null, set the value for this key.
      * @return mixed 
      * 
      * @since 2.0.0
@@ -218,8 +218,8 @@ final class Request {
     /**
      * Return FILES values from $_FILES.
      * 
-     * @param string $key (optional) If null return all values.
-     * @param mixed $value (optional) If not null, set the value for this key.
+     * @param string $key (Optional) If null return all values.
+     * @param mixed $value (Optional) If not null, set the value for this key.
      * @return mixed 
      * 
      * @since 2.0.0
@@ -234,8 +234,8 @@ final class Request {
     /**
      * Return COOKIE values from $_COOKIE.
      * 
-     * @param string $key 
-     * @param mixed $value 
+     * @param string $key (Optional) If null return all values.
+     * @param mixed $value (Optional) If not null, set the value for this key.
      * @return mixed 
      * 
      * @since 2.0.0
@@ -250,8 +250,8 @@ final class Request {
     /**
      * Return SERVER values from $_SERVER.
      * 
-     * @param string $key 
-     * @param mixed $value 
+     * @param string $key (Optional) If null return all values.
+     * @param mixed $value (Optional) If not null, set the value for this key.
      * @return mixed 
      * 
      * @since 2.0.0
@@ -266,8 +266,8 @@ final class Request {
     /**
      * Return HEADERS values from getallheaders().
      * 
-     * @param string $key 
-     * @param mixed $value 
+     * @param string $key (Optional) If null return all values.
+     * @param mixed $value (Optional) If not null, set the value for this key.
      * @return mixed 
      * 
      * @since 2.0.0
@@ -290,21 +290,24 @@ final class Request {
         return self::$_METHOD;
     }
 
-    /** @return bool
+    /** 
+     * @return bool
      * @since 1.5.0
      */
     public function isPOST() {
         return $this->is('POST');
     }
 
-    /** @return bool
+    /** 
+     * @return bool
      * @since 1.5.0
      */
     public function isGET() {
         return $this->is('GET');
     }
 
-    /** @return bool
+    /** 
+     * @return bool
      * @since 1.5.0
      */
     public function isHEAD() {
@@ -329,28 +332,32 @@ final class Request {
         return $this->is('DELETE');
     }
 
-    /** @return bool
+    /** 
+     * @return bool
      * @since 1.5.0
      */
     public function isCONNECT() {
         return $this->is('CONNECT') ;
     }
 
-    /** @return bool
+    /** 
+     * @return bool
      * @since 1.5.0
      */
     public function isOPTIONS() {
         return $this->is('OPTIONS') ;
     }
 
-    /** @return bool 
+    /** 
+     * @return bool 
      * @since 1.5.0
      */
     public function isTRACE() {
         return $this->is('TRACE');
     }
 
-    /** @return bool 
+    /** 
+     * @return bool 
      * @since 1.5.0
      */
     public function isPATCH() {
@@ -364,5 +371,151 @@ final class Request {
      */
     public function is($method){
         return (self::$_METHOD == $method);
+    }
+
+    /**
+     * 
+     * @param string $key (Optional) If null, return all data
+     * @return mixed 
+     */
+    public function getPost($key = null){
+        return self::POST($key);
+    }
+
+    /**
+     * 
+     * @param string $key (Optional) If null, return all data
+     * @return mixed 
+     */
+    public function getParam($key = null){
+        return self::GET($key);
+    }
+
+    /**
+     * 
+     * @param string $key (Optional) If null, return all data
+     * @return mixed 
+     */
+    public function getCookie($key = null){
+        return self::COOKIE($key);
+    }
+
+    /**
+     * 
+     * @param string $key (Optional) If null, return all data
+     * @return mixed 
+     */
+    public function getInput($key = null){
+        return self::INPUT($key);
+    }
+
+    /**
+     * 
+     * @param string $key (Optional) If null, return all data
+     * @return mixed 
+     */
+    public function getRequest($key = null){
+        return self::REQUEST($key);
+    }
+
+    /**
+     * 
+     * @param string $key (Optional) If null, return all data
+     * @return mixed 
+     */
+    public function getFiles($key = null){
+        return self::FILES($key);
+    }
+
+    /**
+     * 
+     * @param string $key (Optional) If null, return all data
+     * @return mixed 
+     */
+    public function getServer($key = null){
+        return self::SERVER($key);
+    }
+
+    /**
+     * 
+     * @param string $key (Optional) If null, return all data
+     * @return mixed 
+     */
+    public function getHeader($key = null){
+        return self::HEADER($key);
+    }
+
+    /**
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return $this 
+     */
+    public function setPostValue($key, $value){
+        self::$_POST[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return $this 
+     */
+    public function setParamValue($key, $value){
+        self::$_GET[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return $this 
+     */
+    public function setCookieValue($key, $value){
+        self::$_COOKIE[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return $this 
+     */
+    public function setRequestValue($key, $value){
+        self::$_REQUEST[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return $this 
+     */
+    public function setFilesValue($key, $value){
+        self::$_FILES[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return $this 
+     */
+    public function setHeaderValue($key, $value){
+        self::$_HEADERS[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * Return the HTTP method used
+     * @return string 
+     */
+    public function getMethod(){
+        return self::METHOD();
     }
 }
