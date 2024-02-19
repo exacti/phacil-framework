@@ -184,7 +184,7 @@ class Mail implements MailInterface {
 
 	/** @inheritdoc  */
 	public function getSender() {
-		return $this->sender;
+		return $this->sender ?: $this->from;
 	}
 
 	/**
@@ -280,7 +280,7 @@ class Mail implements MailInterface {
 			throw new \Phacil\Framework\Exception\InvalidArgumentException('Valid e-mail From required!');
 		}
 
-		if (!$this->sender || !is_string($this->sender)) {
+		if (empty($this->getSender()) || !is_string($this->getSender())) {
 			throw new \Phacil\Framework\Exception\InvalidArgumentException('A valid email sender is required!');
 		}
 
@@ -303,69 +303,75 @@ class Mail implements MailInterface {
 			$to = $this->to;
 		}
 
-		$boundary = '----=_NextPart_' . md5(time());
+		$boundary = '----=_NextPart_' . md5((string)time());
 
-		$header = '';
-		
-		$header .= 'MIME-Version: 1.0' . $this->newline;
-		
+		$header  = 'MIME-Version: 1.0' . $this->newline;
+
 		if ($this->protocol != self::PROTOCOL_MAIL) {
-			$header .= 'To: ' . $to . $this->newline;
-			$header .= 'Subject: ' . $this->subject . $this->newline;
+			$header .= 'To: <' . $to . '>' . $this->newline;
+			$header .= 'Subject: =?UTF-8?B?' . base64_encode($this->getSubject()) . '?=' . $this->newline;
 		}
-		
-		$header .= 'Date: ' . date("D, d M Y H:i:s O") . $this->newline;
-		$header .= 'From: ' . '=?UTF-8?B?' . base64_encode($this->sender) . '?=' . '<' . $this->from . '>' . $this->newline;
-		$header .= 'Reply-To: ' . $this->sender . '<' . $this->from . '>' . $this->newline;
-		$header .= 'Return-Path: ' . $this->from . $this->newline;
-		$header .= 'X-Mailer: '.self::XMAILER_SIGN.' with PHP/' . (defined('PHP_MAJOR_VERSION') ? PHP_MAJOR_VERSION : phpversion() ). $this->newline;
-		$header .= 'Content-Type: multipart/related; boundary="' . $boundary . '"' . $this->newline;
 
-		if (!$this->html) {
-			$message  = '--' . $boundary . $this->newline;
-			$message .= 'Content-Type: text/plain; charset="utf-8"' . $this->newline;
-			$message .= 'Content-Transfer-Encoding: 8bit' . $this->newline . $this->newline;
-			$message .= $this->text . $this->newline;
+		$header .= 'Date: ' . date('D, d M Y H:i:s O') . $this->newline;
+		$header .= 'From: =?UTF-8?B?' . base64_encode($this->getSender()) . '?= <' . $this->getFrom() . '>' . $this->newline;
+
+		if (empty($this->getReplyTo())) {
+			$header .= 'Reply-To: =?UTF-8?B?' . base64_encode($this->getSender()) . '?= <' . $this->getFrom() . '>' . $this->newline;
 		} else {
-			$message  = '--' . $boundary . $this->newline;
+			$header .= 'Reply-To: =?UTF-8?B?' . base64_encode($this->getReplyTo()) . '?= <' . $this->getReplyTo() . '>' . $this->newline;
+		}
+
+		$header .= 'Return-Path: ' . $this->getFrom() . $this->newline;
+		$header .= 'X-Mailer: ' . self::XMAILER_SIGN . ' with PHP/' . (defined('PHP_MAJOR_VERSION') ? PHP_MAJOR_VERSION : phpversion()) . $this->newline;
+		$header .= 'Content-Type: multipart/mixed; boundary="' . $boundary . '"' . $this->newline . $this->newline;
+
+		$message = '--' . $boundary . $this->newline;
+
+		if (empty($this->getHtml())) {
+			$message .= 'Content-Type: text/plain; charset="utf-8"' . $this->newline;
+			$message .= 'Content-Transfer-Encoding: base64' . $this->newline . $this->newline;
+			$message .= chunk_split(base64_encode($this->getText()), 950) . $this->newline;
+		} else {
 			$message .= 'Content-Type: multipart/alternative; boundary="' . $boundary . '_alt"' . $this->newline . $this->newline;
 			$message .= '--' . $boundary . '_alt' . $this->newline;
 			$message .= 'Content-Type: text/plain; charset="utf-8"' . $this->newline;
-			$message .= 'Content-Transfer-Encoding: 8bit' . $this->newline . $this->newline;
+			$message .= 'Content-Transfer-Encoding: base64' . $this->newline . $this->newline;
 
-			if ($this->text) {
-				$message .= $this->text . $this->newline;
+			if (!empty($this->getText())) {
+				$message .= chunk_split(base64_encode($this->getText()), 950) . $this->newline;
 			} else {
-				$message .= 'This is a HTML email and your email client software does not support HTML email!' . $this->newline;
+				$message .= chunk_split(base64_encode('This is a HTML email and your email client software does not support HTML email!'), 950) . $this->newline;
 			}
 
 			$message .= '--' . $boundary . '_alt' . $this->newline;
 			$message .= 'Content-Type: text/html; charset="utf-8"' . $this->newline;
-			$message .= 'Content-Transfer-Encoding: 8bit' . $this->newline . $this->newline;
-			$message .= $this->html . $this->newline;
+			$message .= 'Content-Transfer-Encoding: base64' . $this->newline . $this->newline;
+			$message .= chunk_split(base64_encode($this->getHtml()), 950) . $this->newline;
 			$message .= '--' . $boundary . '_alt--' . $this->newline;
 		}
 
-		foreach ($this->attachments as $attachment) {
-			if (file_exists($attachment['file'])) {
-				$handle = fopen($attachment['file'], 'r');
-				
-				$content = fread($handle, filesize($attachment['file']));
-				
-				fclose($handle);
+		if (!empty($this->getAttachments())) {
+			foreach ($this->getAttachments() as $attachment) {
+				if (is_file($attachment['file'])) {
+					$handle = fopen($attachment['file'], 'r');
 
-				$message .= '--' . $boundary . $this->newline;
-				$message .= 'Content-Type: application/octetstream; name="' . basename($attachment['file']) . '"' . $this->newline;
-				$message .= 'Content-Transfer-Encoding: base64' . $this->newline;
-				$message .= 'Content-Disposition: attachment; filename="' . basename($attachment['filename']) . '"' . $this->newline;
-				$message .= 'Content-ID: <' . basename($attachment['filename']) . '>' . $this->newline;
-				$message .= 'X-Attachment-Id: ' . basename($attachment['filename']) . $this->newline . $this->newline;
-				$message .= chunk_split(base64_encode($content));
+					$content = fread($handle, filesize($attachment['file']));
+
+					fclose($handle);
+
+					$message .= '--' . $boundary . $this->newline;
+					$message .= 'Content-Type: application/octet-stream; name="' . basename($attachment['file']) . '"' . $this->newline;
+					$message .= 'Content-Transfer-Encoding: base64' . $this->newline;
+					$message .= 'Content-Disposition: attachment; filename="' . basename($attachment['filename']) . '"' . $this->newline;
+					$message .= 'Content-ID: <' . urlencode(basename($attachment['filename'])) . '>' . $this->newline;
+					$message .= 'X-Attachment-Id: ' . urlencode(basename($attachment['filename'])) . $this->newline . $this->newline;
+					$message .= chunk_split(base64_encode($content), 950);
+				}
 			}
 		}
 
 		$message .= '--' . $boundary . '--' . $this->newline;
-
+		
 		return $this->driver->send($to, $message, $header);
 	}
 }
