@@ -98,9 +98,6 @@ class Action implements ActionInterface {
 	 * @return void 
 	 */
 	private function normal($route, $args = array()) {
-		$path = '';
-		$pathC = "";
-		
 		$parts = explode('/', str_replace('../', '', (string)$route));
 
 		$parts = array_map(function($part){
