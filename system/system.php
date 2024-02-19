@@ -354,16 +354,8 @@ final class startEngineExacTI {
     public function checkRegistry($key){
         //mail
 		if(!isset($this->registry->$key) && $key == 'mail'){
-			$this->mail = new Mail();
-			$this->mail->protocol = $this->config->get('config_mail_protocol');
-			if($this->config->get('config_mail_protocol') == 'smtp'){
-				$this->mail->parameter = $this->config->get('config_mail_parameter');
-				$this->mail->hostname = $this->config->get('config_smtp_host');
-				$this->mail->username = $this->config->get('config_smtp_username');
-				$this->mail->password = $this->config->get('config_smtp_password');
-				$this->mail->port = $this->config->get('config_smtp_port');
-				$this->mail->timeout = $this->config->get('config_smtp_timeout');
-			}
+            /** @var \Phacil\Framework\Mail\Api\MailInterface */
+			$this->mail = $this->registry->getInstance(\Phacil\Framework\Mail\Api\MailInterface::class);
 		}
 
 		// Translate

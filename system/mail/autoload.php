@@ -1,3 +1,371 @@
 <?php
+/*
+ * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
 
-include DIR_SYSTEM.'mail/mail.php';
+namespace Phacil\Framework;
+
+use Phacil\Framework\Mail\Api\MailInterface;
+use Phacil\Framework\Config;
+
+/** 
+ * @since 1.0.0
+ * @package Phacil\Framework 
+ */
+class Mail implements MailInterface {
+
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $to;
+
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $from;
+
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $sender;
+
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $subject;
+
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $text;
+
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $html;
+
+	/**
+	 * 
+	 * @var array
+	 */
+	protected $attachments = array();
+
+	/**
+	 * 
+	 * @var string
+	 */
+	public $protocol = 'mail';
+
+	/**
+	 * 
+	 * @var string
+	 */
+	public $newline = "\n";
+
+	/**
+	 * 
+	 * @var string
+	 */
+	public $crlf = "\r\n";
+
+	/**
+	 * 
+	 * @var bool
+	 */
+	public $verp = false;
+
+
+	/**
+	 * 
+	 * @var string
+	 */
+	protected $parameter = '';
+
+	/**
+	 * 
+	 * @var \Phacil\Framework\Config
+	 */
+	private $config;
+
+	/**
+	 * 
+	 * @var \Phacil\Framework\Mail\Api\DriverInterface
+	 */
+	private $driver;
+
+	private $replyTo;
+
+	/**
+	 * @param \Phacil\Framework\Config $config 
+	 * @param \Phacil\Framework\Registry $registry 
+	 * @return void 
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	public function __construct(
+		Config $config,
+		\Phacil\Framework\Registry $registry
+	) {
+		$this->config = $config;
+
+		$this->protocol = $this->config->get('config_mail_protocol') ?: $this->protocol;
+
+		if (!\Phacil\Framework\Registry::checkPreferenceExist(\Phacil\Framework\Mail\Api\DriverInterface::class)) {
+			if($this->protocol == self::PROTOCOL_SMTP) {
+				\Phacil\Framework\Registry::addDIPreference(\Phacil\Framework\Mail\Api\DriverInterface::class, \Phacil\Framework\Mail\Drivers\SMTP::class);
+			}
+			if($this->protocol == self::PROTOCOL_MAIL) {
+				\Phacil\Framework\Registry::addDIPreference(\Phacil\Framework\Mail\Api\DriverInterface::class, \Phacil\Framework\Mail\Drivers\Native::class);
+			}
+		}
+
+		/** @var \Phacil\Framework\Mail\Api\DriverInterface */
+		$this->driver = $registry->getInstance(\Phacil\Framework\Mail\Api\DriverInterface::class, [$this]);
+	}
+
+	/** @inheritdoc */
+	public function getVerp(){
+		return $this->verp;
+	}
+
+	/** @inheritdoc */
+	public function getFrom() {
+		return $this->from;
+	}
+
+	public function getParameter()
+	{
+		return $this->parameter;
+	}
+
+	/** @inheritdoc */
+	public function getConfig() {
+		return $this->config;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setTo($to) {
+		$this->to = $to;
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getTo() {
+		return $this->to;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setFrom($from) {
+		$this->from = $from;
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setSender($sender) {
+		$this->sender = html_entity_decode($sender, ENT_QUOTES, 'UTF-8');
+		return $this;
+	}
+
+	/** @inheritdoc  */
+	public function getSender() {
+		return $this->sender;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setSubject($subject) {
+		$this->subject = html_entity_decode($subject, ENT_QUOTES, 'UTF-8');
+		return $this;
+	}
+
+	/** @inheritdoc  */
+	public function getSubject()
+	{
+		return $this->subject;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setText($text) {
+		$this->text = $text;
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getText()
+	{
+		return $this->text;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setHtml($html) {
+		$this->html = $html;
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getHtml()
+	{
+		return $this->html;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setReplyTo($replyTo) {
+		$this->replyTo = $replyTo;
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getReplyTo() {
+		return $this->replyTo;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function addAttachment($file, $filename = '') {
+		if (!$filename) {
+			$filename = basename($file);
+		}
+				
+		$this->attachments[] = [
+			'filename' => $filename,
+			'file'     => $file
+		];
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getAttachments() {
+		return $this->attachments;
+	}
+
+	protected function validade() {
+		if (!$this->to || !is_string($this->to)) {
+			throw new \Phacil\Framework\Exception\InvalidArgumentException('A valid e-mail To is required!');
+		}
+
+		if (!$this->from || !is_string($this->from)) {
+			throw new \Phacil\Framework\Exception\InvalidArgumentException('Valid e-mail From required!');
+		}
+
+		if (!$this->sender || !is_string($this->sender)) {
+			throw new \Phacil\Framework\Exception\InvalidArgumentException('A valid email sender is required!');
+		}
+
+		if (!$this->subject || !is_string($this->subject)) {
+			throw new \Phacil\Framework\Exception\InvalidArgumentException('A valid email subject is required!');
+		}
+
+		if ((!$this->text) && (!$this->html)) {
+			throw new \Phacil\Framework\Exception\InvalidArgumentException('E-Mail message required!');
+		}
+	}
+
+	/** @inheritdoc */
+	public function send() {
+		$this->validade();
+
+		if (is_array($this->to)) {
+			$to = implode(',', $this->to);
+		} else {
+			$to = $this->to;
+		}
+
+		$boundary = '----=_NextPart_' . md5(time());
+
+		$header = '';
+		
+		$header .= 'MIME-Version: 1.0' . $this->newline;
+		
+		if ($this->protocol != self::PROTOCOL_MAIL) {
+			$header .= 'To: ' . $to . $this->newline;
+			$header .= 'Subject: ' . $this->subject . $this->newline;
+		}
+		
+		$header .= 'Date: ' . date("D, d M Y H:i:s O") . $this->newline;
+		$header .= 'From: ' . '=?UTF-8?B?' . base64_encode($this->sender) . '?=' . '<' . $this->from . '>' . $this->newline;
+		$header .= 'Reply-To: ' . $this->sender . '<' . $this->from . '>' . $this->newline;
+		$header .= 'Return-Path: ' . $this->from . $this->newline;
+		$header .= 'X-Mailer: '.self::XMAILER_SIGN.' with PHP/' . (defined('PHP_MAJOR_VERSION') ? PHP_MAJOR_VERSION : phpversion() ). $this->newline;
+		$header .= 'Content-Type: multipart/related; boundary="' . $boundary . '"' . $this->newline;
+
+		if (!$this->html) {
+			$message  = '--' . $boundary . $this->newline;
+			$message .= 'Content-Type: text/plain; charset="utf-8"' . $this->newline;
+			$message .= 'Content-Transfer-Encoding: 8bit' . $this->newline . $this->newline;
+			$message .= $this->text . $this->newline;
+		} else {
+			$message  = '--' . $boundary . $this->newline;
+			$message .= 'Content-Type: multipart/alternative; boundary="' . $boundary . '_alt"' . $this->newline . $this->newline;
+			$message .= '--' . $boundary . '_alt' . $this->newline;
+			$message .= 'Content-Type: text/plain; charset="utf-8"' . $this->newline;
+			$message .= 'Content-Transfer-Encoding: 8bit' . $this->newline . $this->newline;
+
+			if ($this->text) {
+				$message .= $this->text . $this->newline;
+			} else {
+				$message .= 'This is a HTML email and your email client software does not support HTML email!' . $this->newline;
+			}
+
+			$message .= '--' . $boundary . '_alt' . $this->newline;
+			$message .= 'Content-Type: text/html; charset="utf-8"' . $this->newline;
+			$message .= 'Content-Transfer-Encoding: 8bit' . $this->newline . $this->newline;
+			$message .= $this->html . $this->newline;
+			$message .= '--' . $boundary . '_alt--' . $this->newline;
+		}
+
+		foreach ($this->attachments as $attachment) {
+			if (file_exists($attachment['file'])) {
+				$handle = fopen($attachment['file'], 'r');
+				
+				$content = fread($handle, filesize($attachment['file']));
+				
+				fclose($handle);
+
+				$message .= '--' . $boundary . $this->newline;
+				$message .= 'Content-Type: application/octetstream; name="' . basename($attachment['file']) . '"' . $this->newline;
+				$message .= 'Content-Transfer-Encoding: base64' . $this->newline;
+				$message .= 'Content-Disposition: attachment; filename="' . basename($attachment['filename']) . '"' . $this->newline;
+				$message .= 'Content-ID: <' . basename($attachment['filename']) . '>' . $this->newline;
+				$message .= 'X-Attachment-Id: ' . basename($attachment['filename']) . $this->newline . $this->newline;
+				$message .= chunk_split(base64_encode($content));
+			}
+		}
+
+		$message .= '--' . $boundary . '--' . $this->newline;
+
+		return $this->driver->send($to, $message, $header);
+	}
+}

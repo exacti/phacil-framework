@@ -115,6 +115,7 @@ final class Registry {
 	 * 
 	 * @param string|object|null $class (optional)
 	 * @param array $args (optional)
+	 * @param bool $onlyCheckInstances (Optional) if true, don't create an auto-instance
 	 * 
 	 * @return \Phacil\Framework\Registry
 	 * @since 2.0.0

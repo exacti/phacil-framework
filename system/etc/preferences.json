@@ -6,6 +6,7 @@
 		"Phacil\\Framework\\Databases\\Object\\ItemInterface": "Phacil\\Framework\\Databases\\Object\\Item",
 		"Phacil\\Framework\\Api\\Database": "Phacil\\Framework\\Database",
 		"Cm\\RedisSession\\Handler\\ConfigInterface": "Phacil\\Framework\\Session\\Redis\\Config",
-		"Cm\\RedisSession\\Handler\\LoggerInterface": "Phacil\\Framework\\Session\\Redis\\Logger"
+		"Cm\\RedisSession\\Handler\\LoggerInterface": "Phacil\\Framework\\Session\\Redis\\Logger",
+		"Phacil\\Framework\\Mail\\Api\\MailInterface": "Phacil\\Framework\\Mail"
 	}
 }
