@@ -133,7 +133,7 @@ class MySQLi implements Databases {
 	
 	/** @return void  */
 	public function __destruct() {
-		$this->connection->close();
+		//$this->connection->close();
 	}
 
 	/**
@@ -165,15 +165,15 @@ class MySQLi implements Databases {
 
 			$stmt = $this->connection->prepare($sql);
 
+			if (!$stmt) {
+				throw new \Phacil\Framework\Exception('Error preparing query: ' . $this->connection->error);
+			}
+
 			array_unshift($bindParams, $types);
 			call_user_func_array([$stmt, 'bind_param'], $bindParams);
 		} else {
 			$stmt = $this->connection->prepare($sql);
-		}
-
-		if ($stmt === false) {
-			throw new \Phacil\Framework\Exception('Error preparing query: ' . $this->connection->error);
-		}
+		}		
 
 		$result_exec = $stmt->execute();
 

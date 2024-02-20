@@ -94,7 +94,7 @@ class Database implements DatabaseApi {
 	 * {@inheritdoc}
 	 */
 	public function __destruct() {
-		unset($this->driver);
+		//unset($this->driver);
 	 }
 
 	/**

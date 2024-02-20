@@ -6,7 +6,7 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-namespace Phacil\Framework\Session\Redis;
+namespace Phacil\Framework\Session\Handlers;
 
 use Cm\RedisSession\Handler\ConfigInterface;
 use Cm\RedisSession\Handler\LoggerInterface;
@@ -14,8 +14,7 @@ use Cm\RedisSession\ConnectionFailedException;
 use Cm\RedisSession\ConcurrentConnectionsExceededException;
 use Phacil\Framework\Exception;
 
-class Handler implements \SessionHandlerInterface {
-
+class Redis implements \Phacil\Framework\Session\Api\HandlerInterface {
 
 	private $savePath;
 
@@ -72,8 +71,10 @@ class Handler implements \SessionHandlerInterface {
 		return $this->connection[$pid];
 	}
 
+	/** {@inheritdoc} */
 	function setName($name){
 		$this->name = $name;
+		return $this;
 	}
 
 	/**

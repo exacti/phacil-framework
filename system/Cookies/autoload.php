@@ -9,6 +9,7 @@
 namespace Phacil\Framework;
 
 use Phacil\Framework\Cookies\SameSite;
+use Phacil\Framework\Cookies\Config as CookieConfig;
 
 /**
  * @since 2.0.0
@@ -20,51 +21,56 @@ class Cookies {
 	 * 
 	 * @var int
 	 */
-	private $expiry = 0;
+	private $expiry;
 
 	/**
 	 * 
 	 * @var string
 	 */
-	private $path = '/';
+	private $path;
 
 	/**
 	 * 
 	 * @var string
 	 */
-	private $domain = '';
+	private $domain;
 
 	/**
 	 * 
 	 * @var bool
 	 */
-	private $secure = true;
+	private $secure;
 
 	/**
 	 * 
 	 * @var bool
 	 */
-	private $httpOnly = true;
-
-	private $sameSite = SameSite::STRICT;
+	private $httpOnly;
 
 	/**
 	 * 
-	 * @param int $expiry 
-	 * @param string $path 
-	 * @param string $domain 
-	 * @param bool $secure 
-	 * @param bool $httpOnly 
-	 * @param string $sameSite 
+	 * @var string
+	 */
+	private $sameSite;
+
+	/**
+	 * 
+	 * @var \Phacil\Framework\Cookies\Config
+	 */
+	private $config;
+
+	private $cookie_key = null;
+
+	private $cookie_value = null;
+
+	/**
+	 * @param \Phacil\Framework\Cookies\Config $config 
 	 * @return void 
 	 */
-	public function __construct($expiry = 0, $path = '/', $domain = "", $secure = true, $httpOnly = true, $sameSite = SameSite::STRICT){
-		$this->expiry = $expiry;
-		$this->path = $path;
-		$this->domain = $domain;
-		$this->secure = $secure;
-		$this->httpOnly = $httpOnly;
-		$this->sameSite = $sameSite;
+	public function __construct(
+		CookieConfig $config
+	){
+		$this->config = $config;
 	}
 
 	/**
@@ -78,27 +84,27 @@ class Cookies {
 	{
 		if (version_compare(phpversion(), "7.3.0", "<")) {
 			if($isRaw){
-				return setrawcookie($name, $value, $this->expiry, $this->path . "; samesite=".$this->sameSite, $this->domain, $this->secure, $this->httpOnly);
+				return setrawcookie($name, $value, $this->getExpires(), $this->getPath() . "; samesite=".$this->getSameSite(), $this->getDomain(), $this->getSecure(), $this->getHttpOnly());
 			}
-			return setcookie($name, $value, $this->expiry, $this->path. "; samesite=".$this->sameSite, $this->domain, $this->secure, $this->httpOnly);
+			return setcookie($name, $value, $this->getExpires(), $this->getPath(). "; samesite=".$this->getSameSite(), $this->getDomain(), $this->getSecure(), $this->getHttpOnly());
 		} else {
 			if ($isRaw) {
 				return setrawcookie($name, $value, [
-					'expires' 	=> $this->expiry, 
-					'path'		=> $this->path,
-					'domain' 	=> $this->domain, 
-					'secure' 	=> $this->secure,
-					'httponly' 	=> $this->httpOnly,
-					'samesite'	=> $this->sameSite
+					'expires' 	=> $this->getExpires(), 
+					'path'		=> $this->getPath(),
+					'domain' 	=> $this->getDomain(), 
+					'secure' 	=> $this->getSecure(),
+					'httponly' 	=> $this->getHttpOnly(),
+					'samesite'	=> $this->getSameSite()
 				]);
 			}
 			return setcookie($name, $value, [
-				'expires' 	=> $this->expiry,
-				'path'		=> $this->path,
-				'domain' 	=> $this->domain,
-				'secure' 	=> $this->secure,
-				'httponly' 	=> $this->httpOnly,
-				'samesite'	=> $this->sameSite
+				'expires' 	=> $this->getExpires(),
+				'path'		=> $this->getPath(),
+				'domain' 	=> $this->getDomain(),
+				'secure' 	=> $this->getSecure(),
+				'httponly' 	=> $this->getHttpOnly(),
+				'samesite'	=> $this->getSameSite()
 			]);
 		}
 		//return $this;
@@ -123,6 +129,11 @@ class Cookies {
 		return $this;
 	}
 
+	/** @return int|string  */
+	public function getExpires(){
+		return $this->expiry ?: $this->config->getExpires();
+	}
+
 	/**
 	 * @param string $path 
 	 * @return $this 
@@ -130,6 +141,11 @@ class Cookies {
 	public function setPath($path) {
 		$this->path = $path;
 		return $this;
+	}
+
+	/** @return string  */
+	public function getPath(){
+		return $this->path ?: $this->config->getPath();
 	}
 
 	/**
@@ -141,6 +157,11 @@ class Cookies {
 		return $this;
 	}
 
+	/** @return string  */
+	public function getDomain() {
+		return $this->domain ?: $this->config->getDomain();
+	}
+
 	/**
 	 * @param bool $secure 
 	 * @return $this 
@@ -148,6 +169,11 @@ class Cookies {
 	public function setSecure($secure) {
 		$this->secure = $secure;
 		return $this;
+	}
+
+	/** @return bool|string  */
+	public function getSecure() {
+		return $this->secure ?: $this->config->getSecure();
 	}
 
 	/**
@@ -159,6 +185,11 @@ class Cookies {
 		return $this;
 	}
 
+	/** @return bool|string  */
+	public function getHttpOnly() {
+		return $this->httpOnly !== null ? $this->httpOnly :$this->config->getHttpOnly();
+	}
+
 	/**
 	 * 
 	 * @param \Phacil\Framework\Cookies\SameSite $sameSite 
@@ -167,6 +198,73 @@ class Cookies {
 	public function setSameSite(SameSite $sameSite) {
 		$this->sameSite = $sameSite->getValue();
 		return $this;
+	}
+
+	/** @return string  */
+	public function getSameSite(){
+		return $this->sameSite ?: $this->config->getSameSite();
+	}
+
+	/**
+	 * @param string $cookieName 
+	 * @return mixed|null 
+	 */
+	public function getCookieValue($cookieName){
+		return \Phacil\Framework\Request::COOKIE($cookieName);
+	}
+
+	/**
+	 * @param string $cookieName 
+	 * @return mixed|null 
+	 */
+	public function get($cookieName){
+		return $this->getCookieValue($cookieName);
+	}
+
+	/**
+	 * @param string $cookieName 
+	 * @param mixed $value 
+	 * @return bool 
+	 */
+	public function set($cookieName, $value) {
+		if($this->setCookie($cookieName, $value)){
+			\Phacil\Framework\Request::COOKIE($cookieName, $value);
+			return true;
+		}
+		return false;
+	}
+
+	public function setKey($key) {
+		if(!is_string($key)) throw new \Phacil\Framework\Exception\InvalidArgumentException('Invalid cookie key value');
+
+		$this->cookie_key = $key;
+		return $this;
+	}
+
+	/**
+	 * @param mixed $value 
+	 * @return $this 
+	 */
+	public function setValue($value) {	
+		$this->cookie_value = $value;
+		return $this;
+	}
+
+	/**
+	 * @return bool 
+	 * @throws \Phacil\Framework\Exception\InvalidArgumentException 
+	 */
+	public function save() {
+		if(!empty($this->cookie_key)) {
+			return $this->set($this->cookie_key, $this->cookie_value);
+		}
+
+		throw new \Phacil\Framework\Exception\InvalidArgumentException('Cookie key value is required.');
+	}
+
+	/** @return array  */
+	public function getCookies() {
+		return \Phacil\Framework\Request::COOKIE();
 	}
 
 	/**

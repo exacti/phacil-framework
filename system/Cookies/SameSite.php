@@ -8,6 +8,10 @@
 
 namespace Phacil\Framework\Cookies;
 
+/**
+ * @since 2.0.0
+ * @package Phacil\Framework\Cookies
+ */
 class SameSite {
 
 	const STRICT = 'Strict';

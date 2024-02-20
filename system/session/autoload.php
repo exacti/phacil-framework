@@ -8,14 +8,13 @@
 
 namespace Phacil\Framework;
 
-use Phacil\Framework\Config;
+use Phacil\Framework\Config as ConfigFramework;
+use Phacil\Framework\Cookies\Config as CookieConfig;
 
 /** 
  * The session manipulation class
  * 
  * You can activate the Redis session instead use the default PHP session manipulation.
- * 
- * @param bool $redis Active or not the Redis session
  * 
  * @since 1.0.0
  * @package Phacil\Framework 
@@ -63,28 +62,26 @@ class Session
 
     /**
      * 
-     * @var \Phacil\Framework\Cookies\SameSite
+     * @var \Phacil\Framework\Cookies\Config
      */
-    private $sameSite;
+    private $cookieConfig;
 
     /**
      * 
-     * @param bool $redis 
-     * @param string|null $redisDSN 
-     * @param int|null $redisPort 
-     * @param string|null $redisPass 
-     * @param int|null $redis_expire 
-     * @param string $redis_prefix 
+     * @param \Phacil\Framework\Registry $registry 
+     * @param \Phacil\Framework\Config $config 
+     * @param \Phacil\Framework\Cookies\Config $cookieConfig 
      * @return void 
+     * @throws \Phacil\Framework\Exception 
      */
     public function __construct(
         \Phacil\Framework\Registry $registry,
-        Config $config,
-        \Phacil\Framework\Cookies\SameSite $sameSite
+        ConfigFramework $config,
+        CookieConfig $cookieConfig
     ) {
         $this->registry = $registry;
 
-        $this->sameSite = $sameSite;
+        $this->cookieConfig = $cookieConfig;
 
         $this->name = (Config::SESSION_PREFIX() ?: 'SESS') . (isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
@@ -116,17 +113,19 @@ class Session
 
         ini_set('session.use_cookies', 'On');
         ini_set('session.use_trans_sid', 'Off');
-        ini_set('session.cookie_httponly', 1);
-        if ($this->isSecure())
-            ini_set('session.cookie_secure', 1);
+        ini_set('session.cookie_httponly', $this->cookieConfig->getHttpOnly());
+        ini_set('session.cookie_secure', $this->cookieConfig->getSecure());
 
         if (version_compare(phpversion(), "7.3.0", "<")) {
-            session_set_cookie_params(0, '/; samesite=' . $this->sameSite->getValue());
+            session_set_cookie_params($this->cookieConfig->getExpires(), $this->cookieConfig->getPath().'; samesite=' . $this->cookieConfig->getSameSite(), $this->cookieConfig->getDomain(), $this->cookieConfig->getSecure(), $this->cookieConfig->getHttpOnly());
         } else {
             session_set_cookie_params([
-                'lifetime' => 0,
-                'path' => '/',
-                'samesite' => $this->sameSite->getValue()
+                'lifetime' => $this->cookieConfig->getExpires(),
+                'path' => $this->cookieConfig->getPath(),
+                'samesite' => $this->cookieConfig->getSameSite(),
+                'domain' => $this->cookieConfig->getDomain(),
+                'secure' => $this->cookieConfig->getSecure(),
+                'httponly' => $this->cookieConfig->getHttpOnly(),
             ]);
         }
         //session_id(md5());
@@ -152,7 +151,11 @@ class Session
         if (!$redis)
             return false;
 
-        $this->saveHandler = $this->registry->getInstance(\Phacil\Framework\Session\Redis\Handler::class);
+        if (!\Phacil\Framework\Registry::checkPreferenceExist(\Phacil\Framework\Session\Api\HandlerInterface::class)) {
+            \Phacil\Framework\Registry::addDIPreference(\Phacil\Framework\Session\Api\HandlerInterface::class, \Phacil\Framework\Session\Handlers\Redis::class);
+        }
+
+        $this->saveHandler = $this->registry->getInstance(\Phacil\Framework\Session\Api\HandlerInterface::class);
 
         $this->saveHandler->setName($this->name);
 
@@ -190,15 +193,6 @@ class Session
             session_unset();
             session_destroy();
         }
-    }
-
-    /** 
-     * Check if is secure (SSL) connection
-     * @return bool  
-     */
-    private function isSecure()
-    {
-        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 
     /**

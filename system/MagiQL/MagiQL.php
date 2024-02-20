@@ -53,6 +53,45 @@ class MagiQL extends Builder {
 		return $this->db->execute($query, $values);
 	}
 
+	/**
+	 * @param string $tableName 
+	 * @return bool 
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	public function isTableExists($tableName) {
+		if($this->db->getDBTypeId() == \Phacil\Framework\Interfaces\Databases::LIST_DB_TYPE_ID['MYSQL']){
+			$sql = 'SELECT (1) AS tbl_exists FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = :v1 AND TABLE_SCHEMA = :v2';
+			$result = $this->db->execute($sql, [
+				':v1' => $tableName,
+				':v2' => \Phacil\Framework\Config::DB_DATABASE()
+			]);
+		}
+		if($this->db->getDBTypeId() == \Phacil\Framework\Interfaces\Databases::LIST_DB_TYPE_ID['MSSQL']){
+			$sql = "SELECT OBJECT_ID(:v1, 'U') AS table_id";
+			$result = $this->db->execute($sql, [
+				':v1' => $tableName
+			]);
+		}
+		if($this->db->getDBTypeId() == \Phacil\Framework\Interfaces\Databases::LIST_DB_TYPE_ID['POSTGRE']){
+			$sql = "SELECT 1 FROM information_schema.tables WHERE table_name = :v1";
+			$result = $this->db->execute($sql, [
+				':v1' => $tableName
+			]);
+		}
+		if($this->db->getDBTypeId() == \Phacil\Framework\Interfaces\Databases::LIST_DB_TYPE_ID['SQLLITE3']){
+			$sql = "SELECT name FROM sqlite_master WHERE type='table' AND name=:v1";
+			$result = $this->db->execute($sql, [
+				':v1' => $tableName
+			]);
+		}
+
+		if($result && $result->getNumRows() > 0){
+			return true;
+		}
+
+		return false;
+	}
+
 	public function __call($name, $arguments = array()){
 
 		return call_user_func_array([$this->queryObj, $name], $arguments);
