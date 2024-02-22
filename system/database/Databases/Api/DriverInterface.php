@@ -1,15 +1,20 @@
 <?php
 
 /*
- * Copyright © 2021 ExacTI Technology Solutions. All rights reserved.
+ * Copyright © 2024 ExacTI Technology Solutions. All rights reserved.
  * GPLv3 General License.
  * https://exacti.com.br
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
- namespace Phacil\Framework\Interfaces;
+ namespace Phacil\Framework\Databases\Api;
 
- interface Databases {
+ /**
+  * @since 2.0.0
+  * @package Phacil\Framework\Databases\Api
+  * @api
+  */
+ interface DriverInterface {
 
 	const LIST_DB_TYPE_ID = [
 		"NULL" => 0,
@@ -67,12 +72,6 @@
 	 * Check is connected on database
 	 * @return bool  */
 	public function isConnected();
-
-	/** 
-	 * Destroy the connection
-	 * 
-	 * @return void  */
-	public function __destruct();
 
 	/**
 	 * Execute a prepared statement with parameters

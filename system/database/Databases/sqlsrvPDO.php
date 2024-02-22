@@ -9,9 +9,9 @@
 namespace Phacil\Framework\Databases;
 
 use \PDO as PDONative;
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface;
 
-class sqlsrvPDO implements Databases {
+class sqlsrvPDO implements DriverInterface {
 
     const DB_TYPE = 'Microsoft SQL Server Database';
 
@@ -36,15 +36,7 @@ class sqlsrvPDO implements Databases {
     private $affectedRows = 0;
 
     /**
-     * 
-     * @param string $hostname 
-     * @param string $username 
-     * @param string $password 
-     * @param string $database 
-     * @param string $port 
-     * @param string $charset 
-     * @return void 
-     * @throws \Phacil\Framework\Exception 
+     * {@inheritdoc}
      */
     public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
         try {
@@ -81,10 +73,7 @@ class sqlsrvPDO implements Databases {
 
     /**
      * 
-     * @param string $sql 
-     * @param array $params 
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-     * @throws \Phacil\Framework\Exception 
+     * @inheritdoc
      */
     public function query($sql, $params = array()) {
         $this->statement = $this->connection->prepare($sql);
@@ -119,14 +108,13 @@ class sqlsrvPDO implements Databases {
     }
 
     /**
-     * @param string $value 
-     * @return string 
+     * @inheritdoc
      */
     public function escape($value) {
         return str_replace(array("\\", "\0", "\n", "\r", "\x1a", "'", '"'), array("\\\\", "\\0", "\\n", "\\r", "\Z", "\'", '\"'), $value);
     }
 
-    /** @return int  */
+    /** @inheritdoc */
     public function countAffected() {
         if ($this->statement) {
             return $this->statement->rowCount();
@@ -135,12 +123,12 @@ class sqlsrvPDO implements Databases {
         }
     }
 
-    /** @return string  */
+    /** @inheritdoc */
     public function getLastId() {
         return $this->connection->lastInsertId();
     }
 
-    /** @return bool  */
+    /** @inheritdoc  */
     public function isConnected() {
         if ($this->connection) {
             return true;
@@ -149,18 +137,8 @@ class sqlsrvPDO implements Databases {
         }
     }
 
-    /** @return void  */
-    public function __destruct() {
-        unset($this->connection);
-    }
-
     /**
-     * Execute a prepared statement with parameters
-     *
-     * @param string $sql SQL query with named placeholders
-     * @param array $params Associative array of parameters
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-     * @throws \Phacil\Framework\Exception 
+     * @inheritdoc
      */
     public function execute($sql, array $params = [])
     {

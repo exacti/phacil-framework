@@ -9,13 +9,13 @@
 namespace Phacil\Framework\Databases;
 
 use PDO;
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface;
 
 /** 
  * Alternative PDO MySQL connection method.
  * 
  * @package Phacil\Framework\Databases */
-class mPDO implements Databases {
+class mPDO implements DriverInterface {
 
 	const DB_TYPE = 'MySQL';
 
@@ -39,6 +39,7 @@ class mPDO implements Databases {
 	 */
 	private $statement = null;
 	
+	/** @inheritdoc */
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'UTF8') {
 		try {
 			$dsn = "mysql:host={$hostname};port={$port};dbname={$database};charset={$charset}";
@@ -67,6 +68,7 @@ class mPDO implements Databases {
 		}
 	}
 
+	/** {@inheritdoc} */
 	public function query($sql, $params = array()) {
 		$this->statement = $this->connection->prepare($sql);
 		
@@ -117,16 +119,15 @@ class mPDO implements Databases {
 		return $this->connection->lastInsertId();
 	}
 	
+	/**
+	 * {@inheritdoc}
+	 */
 	public function isConnected() {
 		if ($this->connection) {
 			return true;
 		} else {
 			return false;
 		}
-	}
-	
-	public function __destruct() {
-		unset($this->connection);
 	}
 
 	/**

@@ -16,7 +16,7 @@ namespace Phacil\Framework\Databases;
  * @deprecated 2.0.0 Use MySQLi class driver instead.
  * @see \Phacil\Framework\Databases\MySQLi
  * */
-class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
+class MySQL_legacy implements \Phacil\Framework\Databases\Api\DriverInterface {
 
 	const DB_TYPE = 'MySQL';
 
@@ -24,6 +24,7 @@ class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 
 	private $connection;
 	
+	/** {@inheritdoc} */
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8') {
 		if (!$this->connection = \mysql_connect($hostname, $username, $password)) {
       		throw new \Phacil\Framework\Exception('Error: Could not make a database connection using ' . $username . '@' . $hostname);
@@ -42,10 +43,7 @@ class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 	public function isConnected() { }
 		
 	/**
-	 * 
-	 * @param string $sql 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-	 * @throws \Phacil\Framework\Exception 
+	 * {@inheritdoc}
 	 */
   	public function query($sql) {
 		$resource = \mysql_query($sql, $this->connection);
@@ -91,19 +89,10 @@ class MySQL_legacy implements \Phacil\Framework\Interfaces\Databases {
 
   	public function getLastId() {
     	return \mysql_insert_id($this->connection);
-  	}	
-	
-	public function __destruct() {
-		\mysql_close($this->connection);
-	}
+  	}
 
 	/**
-	 * Execute a prepared statement with parameters
-	 *
-	 * @param string $sql SQL query with named placeholders
-	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-	 * @throws \Phacil\Framework\Exception
+	 * @inheritdoc
 	 */
 	public function execute($sql, array $params = [])
 	{

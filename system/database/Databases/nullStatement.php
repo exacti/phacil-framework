@@ -8,14 +8,14 @@
 
 namespace Phacil\Framework\Databases;
 
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface;
 
 /**
  * Nullable fake simulated DB connection.
  * 
  * @package Phacil\Framework\Databases
  */
-final class nullStatement implements Databases {
+final class nullStatement implements DriverInterface {
     //private $connection;
 
     const DB_TYPE = NULL;
@@ -69,10 +69,6 @@ final class nullStatement implements Databases {
     }
 
     public function getLastId() {
-        return NULL;
-    }
-
-    public function __destruct() {
         return NULL;
     }
 

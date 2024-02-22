@@ -8,10 +8,10 @@
 
 namespace Phacil\Framework\Databases;
 
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface as DatabasesDriver;
 
 /** @package Phacil\Framework\Databases */
-class MySQL_PDO implements Databases
+class MySQL_PDO implements DatabasesDriver
 {
 
     const DB_TYPE = 'MySQL';
@@ -24,6 +24,7 @@ class MySQL_PDO implements Databases
      * @var \PDO
      */
     private $dbh;
+
     /**
      * List of connection settings
      *
@@ -32,26 +33,23 @@ class MySQL_PDO implements Databases
     private $options = array(
         'PDO::ATTR_ERRMODE' => \PDO::ERRMODE_SILENT
     );
+
     /**
      * The number of rows affected by the last operation
      *
      * @var int
      */
     private $affectedRows = 0;
+
     /**
      * The data for the database connection
      *
      * @var \stdClass
      */
     private $params = array();
+
     /**
-     * Sets the connection and connects to the database
-     *
-     * @param string $host server Address
-     * @param string $user Username
-     * @param string $pass Password
-     * @param string $name The database name
-     * @param string $charset Encoding connection
+     * @inheritdoc
      */
     public function __construct($host, $user, $pass, $name, $port = '3306', $charset = 'utf8mb4')
     {
@@ -68,6 +66,7 @@ class MySQL_PDO implements Databases
         $this->connect();
     }
 
+    /** @inheritdoc */
     public function isConnected() { 
         if ($this->dbh) {
 			return true;
@@ -91,10 +90,7 @@ class MySQL_PDO implements Databases
     }
     
     /**
-     * Query the database
-     * @param string $sql 
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-     * @throws \PDOException 
+     * @inheritdoc
      */
     public function query($sql)
     {
@@ -110,6 +106,7 @@ class MySQL_PDO implements Databases
         }
         return null;
     }
+
     /**
      * Concludes the string in quotation marks to be used in the query
      *
@@ -120,24 +117,23 @@ class MySQL_PDO implements Databases
     {
         return $this->dbh ? str_replace("'", "", $this->dbh->quote($string)) : null;
     }
+
     /**
-     * Gets the number of rows affected by the last operation
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function countAffected()
     {
         return $this->affectedRows;
     }
+
     /**
-     * Gets the ID of the last inserted row or sequence of values
-     *
-     * @return int
+     * @inheritdoc
      */
     public function getLastId()
     {
         return $this->dbh ? $this->dbh->lastInsertId() : 0;
     }
+
     /**
      * Gets the name of the driver
      *
@@ -147,6 +143,7 @@ class MySQL_PDO implements Databases
     {
         return $this->dbh ? $this->dbh->getAttribute(\PDO::ATTR_DRIVER_NAME) : null;
     }
+
     /**
      * Get information about the version of the client libraries that are used by the PDO driver
      *
@@ -156,6 +153,7 @@ class MySQL_PDO implements Databases
     {
         return $this->dbh ? $this->dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION) : null;
     }
+
     /**
      * Closing a database connection
      */
@@ -163,18 +161,9 @@ class MySQL_PDO implements Databases
     {
         $this->dbh = null;
     }
-    public function __destruct()
-    {
-        $this->close();
-    }
 
     /**
-     * Execute a prepared statement with parameters
-     *
-     * @param string $sql SQL query with named placeholders
-     * @param array $params Associative array of parameters
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-     * @throws \Phacil\Framework\Exception 
+     * @inheritdoc
      */
     public function execute($sql, array $params = [])
     {

@@ -8,11 +8,10 @@
 
 namespace Phacil\Framework\Databases;
 
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface;
 use \SQLite3 as nativeSQLite3;
-use \stdClass;
 
-class SQLite3 implements Databases {
+class SQLite3 implements DriverInterface {
 
     const DB_TYPE = 'SQLite3';
 
@@ -101,12 +100,6 @@ class SQLite3 implements Databases {
     public function isConnected() {
         return ($this->connection) ? true : false;
     }
-
-    /** @return void  */
-    public function __destruct() {
-        $this->connection->close();
-    }
-
 
     /**
      * Execute a prepared statement with parameters

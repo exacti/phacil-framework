@@ -8,9 +8,10 @@
 
 namespace Phacil\Framework\Databases;
 
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface;
 
-class Postgre implements Databases {
+/** @package Phacil\Framework\Databases */
+class Postgre implements DriverInterface {
 
 	const DB_TYPE = 'Postgre';
 
@@ -23,15 +24,7 @@ class Postgre implements Databases {
 	private $link;
 
 	/**
-	 * 
-	 * @param string $hostname 
-	 * @param string $username 
-	 * @param string $password 
-	 * @param string $database 
-	 * @param string $port 
-	 * @param string $charset 
-	 * @return void 
-	 * @throws \Phacil\Framework\Exception 
+	 * @inheritdoc
 	 */
 	public function __construct($hostname, $username, $password, $database, $port = '5432', $charset = 'UTF8') {
 		if (!$this->link = pg_connect('host=' . $hostname . ' port=' . $port .  ' user=' . $username . ' password='	. $password . ' dbname=' . $database)) {
@@ -93,27 +86,15 @@ class Postgre implements Databases {
 	}
 	
 	/**
-	 * @return mixed 
-	 * @throws Exception 
+	 * @inheritdoc
 	 */
 	public function getLastId() {
 		$query = $this->query("SELECT LASTVAL() AS `id`");
-		return $query->row['id'];
+		return $query->getRow()->getValue('id');
 	}
-	
-	/** @return void  */
-	public function __destruct() {
-		pg_close($this->link);
-	}
-
 
 	/**
-	 * Execute a prepared statement with parameters
-	 *
-	 * @param string $sql SQL query with named placeholders
-	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-	 * @throws \Phacil\Framework\Exception
+	 * {@inheritdoc}
 	 */
 	public function execute($sql, array $params = [])
 	{

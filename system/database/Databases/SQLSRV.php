@@ -8,9 +8,10 @@
 
 namespace Phacil\Framework\Databases;
 
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface;
 
-class SQLSRV implements Databases {
+/** @package Phacil\Framework\Databases */
+class SQLSRV implements DriverInterface {
 
     const DB_TYPE = 'Microsoft SQL Server Database';
 
@@ -23,13 +24,7 @@ class SQLSRV implements Databases {
     private $link;
 
     /**
-     * @param string $hostname 
-     * @param string $username 
-     * @param string $password 
-     * @param string $database 
-     * @param string $port 
-     * @param string $charset 
-     * @return void 
+     * @inheritdoc
      */
     public function __construct($hostname, $username, $password, $database, $port = '1443', $charset = 'utf8') {
         /*
@@ -61,9 +56,7 @@ class SQLSRV implements Databases {
 
     /**
      * 
-     * @param string $sql 
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-     * @throws \Phacil\Framework\Exception 
+     * @inheritdoc
      */
     public function query($sql) {
         $resource = \sqlsrv_query($this->link, $sql);
@@ -98,8 +91,7 @@ class SQLSRV implements Databases {
     }
 
     /**
-     * @param string $value 
-     * @return string 
+     * @inheritdoc
      */
     public function escape($value) {
         $unpacked = unpack('H*hex', $value);
@@ -107,12 +99,12 @@ class SQLSRV implements Databases {
         return '0x' . $unpacked['hex'];
     }
 
-    /** @return int  */
+    /** @inheritdoc */
     public function countAffected() {
         return \sqlsrv_rows_affected($this->link);
     }
 
-    /** @return false|int  */
+    /** @inheritdoc  */
     public function getLastId() {
         $last_id = false;
 
@@ -127,18 +119,8 @@ class SQLSRV implements Databases {
         return $last_id;
     }
 
-    /** @return void  */
-    public function __destruct() {
-        \sqlsrv_close($this->link);
-    }
-
     /**
-     * Execute a prepared statement with parameters
-     *
-     * @param string $sql SQL query with named placeholders
-     * @param array $params Associative array of parameters
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-     * @throws \Phacil\Framework\Exception 
+     * {@inheritdoc}
      */
     public function execute($sql, array $params = [])
     {

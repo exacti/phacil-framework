@@ -15,7 +15,7 @@ namespace Phacil\Framework\Databases;
  * @deprecated 2.0.0
  * @see \Phacil\Framework\Databases\sqlsrvPDO
  * @package Phacil\Framework\Databases */
-class MSSQL implements \Phacil\Framework\Interfaces\Databases
+class MSSQL implements \Phacil\Framework\Databases\Api\DriverInterface
 {
 
 	const DB_TYPE = 'Microsoft SQL Server Database';
@@ -24,6 +24,7 @@ class MSSQL implements \Phacil\Framework\Interfaces\Databases
 
 	private $connection;
 
+	/** @inheritdoc */
 	public function __construct($hostname, $username, $password, $database, $port = '1443', $charset = 'utf8')
 	{
 		if (!$this->connection = \mssql_connect($hostname, $username, $password)) {
@@ -39,6 +40,7 @@ class MSSQL implements \Phacil\Framework\Interfaces\Databases
 		\mssql_query("SET CHARACTER_SET_CONNECTION=utf8", $this->connection);
 	}
 
+	/** @inheritdoc */
 	public function query($sql)
 	{
 		$resource = \mssql_query($sql, $this->connection);
@@ -97,23 +99,14 @@ class MSSQL implements \Phacil\Framework\Interfaces\Databases
 		return $last_id;
 	}
 
+	/** @inheritdoc */
 	function isConnected()
 	{
+		return !empty($this->connection);
 	}
 
-	public function __destruct()
-	{
-		\mssql_close($this->connection);
-	}
 
-	/**
-	 * Execute a prepared statement with parameters
-	 *
-	 * @param string $sql SQL query with named placeholders
-	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-	 * @throws \Phacil\Framework\Exception
-	 */
+	/** @inheritdoc */
 	public function execute($sql, array $params = [])
 	{
 		$sql = str_replace(array_keys($params), array_values($params), $sql);

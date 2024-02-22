@@ -9,13 +9,13 @@
 namespace Phacil\Framework\Databases;
 
 use PDO;
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface;
 
 /** 
  * Alternative PDO Oracle connection method.
  * 
  * @package Phacil\Framework\Databases */
-class Oracle_PDO implements Databases
+class Oracle_PDO implements DriverInterface
 {
 
 	const DB_TYPE = 'Oracle';
@@ -144,11 +144,6 @@ class Oracle_PDO implements Databases
 		} else {
 			return false;
 		}
-	}
-
-	public function __destruct()
-	{
-		unset($this->connection);
 	}
 
 	/**

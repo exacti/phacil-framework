@@ -8,7 +8,7 @@
 
 namespace Phacil\Framework\Databases;
 
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface as Databases;
 
 /**
  * Oracle driver connector
@@ -94,10 +94,6 @@ class Oracle implements Databases {
 	
 	public function isConnected() {
 		return $this->connection;
-	}
-	
-	public function __destruct() {
-        \oci_close($this->connection);
 	}
 
 	/**

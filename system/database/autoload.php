@@ -9,7 +9,7 @@
 
 namespace Phacil\Framework;
 
-use Phacil\Framework\Interfaces\Databases as DatabaseInterface;
+use Phacil\Framework\Databases\Api\DriverInterface as DatabaseInterface;
 use Phacil\Framework\Config;
 use Phacil\Framework\Api\Database as DatabaseApi;
 

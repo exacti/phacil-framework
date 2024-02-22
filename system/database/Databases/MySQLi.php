@@ -9,7 +9,7 @@
 namespace Phacil\Framework\Databases;
 
 use MySQLi as GlobalMysqli;
-use Phacil\Framework\Interfaces\Databases;
+use Phacil\Framework\Databases\Api\DriverInterface;
 
 /** 
  * Default driver to connect a MySQL/MariaDB databases.
@@ -17,7 +17,7 @@ use Phacil\Framework\Interfaces\Databases;
  * Works on most of PHP instalations 
  * 
  * @package Phacil\Framework\Databases */
-class MySQLi implements Databases {
+class MySQLi implements DriverInterface {
 	/**
 	 * 
 	 * @var GlobalMysqli
