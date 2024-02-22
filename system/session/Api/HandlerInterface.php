@@ -16,6 +16,13 @@ namespace Phacil\Framework\Session\Api;
 interface HandlerInterface extends \SessionHandlerInterface {
 
 	/**
+	 * Session max lifetime
+	 */
+	const DEFAULT_SESSION_LIFETIME = 1800;
+
+	const DEFAULT_SESSION_FIRST_LIFETIME = 600;
+
+	/**
 	 * Get the number of failed lock attempts
 	 *
 	 * @return int

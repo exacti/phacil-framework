@@ -19,6 +19,8 @@ class Encryption {
     private $method;
     private $cipher;
 
+    private $hash_algo = 'sha256';
+
     /**
      * @param string $key 
      * @param string $opensslCipher 
@@ -45,11 +47,44 @@ class Encryption {
     }
 
     /**
+     * @param string $hashAlgorithm 
+     * @return $this 
+     * @throws \Phacil\Framework\Exception\InvalidArgumentException 
+     */
+    public function setHashAlgorithm($hashAlgorithm) {
+        if (!in_array($hashAlgorithm, hash_algos())) {
+            throw new \Phacil\Framework\Exception\InvalidArgumentException("The hash algorithm '${hashAlgorithm}' is not available.");
+        } 
+        $this->hash_algo = $hashAlgorithm;
+        return $this;
+    }
+
+    /**
+     * @param string $hashAlgorithm 
+     * @return $this 
+     * @throws \Phacil\Framework\Exception\InvalidArgumentException 
+     */
+    public function setHashAlgo($hashAlgorithm){
+        return $this->setHashAlgorithm($hashAlgorithm);
+    }
+
+    /** @return string  */
+    public function getHashAlgorithm() {
+        return $this->hash_algo;
+    }
+
+    /** @return string  */
+    public function getHashAlgo(){
+        return $this->getHashAlgorithm();
+    }
+
+    /**
      * @param string $value 
      * @return string|false 
      */
     public function hash($value) {
-        return hash('sha256', $value, true);
+        //return hash_hmac()
+        return hash($this->getHashAlgorithm(), $value);
     }
 
     /**

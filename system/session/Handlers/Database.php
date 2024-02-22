@@ -10,6 +10,7 @@
 
 use Phacil\Framework\Api\Database as FrameworkDatabase;
 use Phacil\Framework\Encryption;
+use Phacil\Framework\Config as FrameworkConfig;
 
 /**
  * Data base session save handler
@@ -44,24 +45,37 @@ class Database implements \Phacil\Framework\Session\Api\HandlerInterface
 	 */
 	private $encryptor;
 
+	private $config;
 	
+	/**
+	 * @param \Phacil\Framework\Api\Database $resource 
+	 * @param \Phacil\Framework\Encryption $encryptor 
+	 * @return void 
+	 */
 	public function __construct(
 		FrameworkDatabase $resource,
-		Encryption $encryptor
+		Encryption $encryptor,
+		FrameworkConfig $config
 	) {
 		$this->_sessionTable = self::TABLE_NAME;
 		$this->connection = $resource->query();
 		$this->checkConnection();
 		$this->encryptor = $encryptor;
+		$this->config = $config;
 	}
 
 	public function getFailedLockAttempts() { }
 
 	public function setName($name) { }
 
+	/**
+	 * @param string $hash 
+	 * @return string|false 
+	 */
 	private function hashed($hash) {
-		//return $this->encryptor->hash($hash);
-		return $hash;
+		//$this->encryptor->setHashAlgo('sha256');
+		return $this->encryptor->hash($hash) ?: $hash;
+		//return $hash;
 	}
 
 	/**
@@ -82,6 +96,16 @@ class Database implements \Phacil\Framework\Session\Api\HandlerInterface
 				"The database storage table doesn't exist. Verify the table and try again."
 			);
 		}
+	}
+
+	/** @return int  */
+	protected function getLifetime() {
+		return (int)$this->config->get('session_expire') ?: self::DEFAULT_SESSION_LIFETIME;
+	}
+
+	/** @return int  */
+	protected function getFirstLifetime() {
+		return (int)$this->config->get('session_first_lifetime') ?: self::DEFAULT_SESSION_FIRST_LIFETIME;
 	}
 
 	/**
@@ -130,6 +154,11 @@ class Database implements \Phacil\Framework\Session\Api\HandlerInterface
 			return null;
 		}
 
+		if($data->getRow()->getValue(self::COLUMN_EXPIRES) < time()){
+			$this->destroy($sessionId);
+			return null;
+		}
+
 		$data = $data->getRow()->getValue(self::COLUMN_DATA);
 
 		// check if session data is a base64 encoded string
@@ -157,7 +186,7 @@ class Database implements \Phacil\Framework\Session\Api\HandlerInterface
 
 		// encode session serialized data to prevent insertion of incorrect symbols
 		$sessionData = base64_encode($sessionData);
-		$bind = [self::COLUMN_EXPIRES => time(), self::COLUMN_DATA => $sessionData];
+		$bind = [self::COLUMN_EXPIRES => time() + $this->getLifetime(), self::COLUMN_DATA => $sessionData];
 
 		if ($exists->getNumRows() > 0) {
 			$update = $this->connection->update($this->_sessionTable, $bind);
@@ -165,6 +194,7 @@ class Database implements \Phacil\Framework\Session\Api\HandlerInterface
 			$update->load();
 		} else {
 			$bind[self::COLUMN_ID] = $hashedSessionId;
+			$bind[self::COLUMN_EXPIRES] = time() + $this->getFirstLifetime();
 			$this->connection->insert($this->_sessionTable, $bind)->load();
 		}
 		return true;
@@ -195,7 +225,8 @@ class Database implements \Phacil\Framework\Session\Api\HandlerInterface
 	public function gc($maxLifeTime)
 	{
 		$del = $this->connection->delete($this->_sessionTable);
-		$del->where()->lessThan(self::COLUMN_EXPIRES, time() - $maxLifeTime);
+		//$del->where()->lessThan(self::COLUMN_EXPIRES, time() - $maxLifeTime);
+		$del->where()->lessThan(self::COLUMN_EXPIRES, time());
 		return $del->load();
 	}
 }

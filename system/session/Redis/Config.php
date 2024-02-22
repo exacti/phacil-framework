@@ -203,7 +203,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getFirstLifetime()
 	{
-		return (int)$this->config->get('session_redis_first_lifetime') ?: (self::PARAM_FIRST_LIFETIME);
+		return (int)$this->config->get('session_first_lifetime') ?: (\Phacil\Framework\Session\Api\HandlerInterface::DEFAULT_SESSION_FIRST_LIFETIME);
 	}
 
 	/**
@@ -219,7 +219,7 @@ class Config implements ConfigInterface {
 	 */
 	public function getLifetime()
 	{
-		return (int)$this->config->get('session_redis_expire') ?: self::PARAM_SESSION_LIFETIME;
+		return (int)$this->config->get('session_expire') ?: \Phacil\Framework\Session\Api\HandlerInterface::DEFAULT_SESSION_LIFETIME;
 	}
 
 	/**
