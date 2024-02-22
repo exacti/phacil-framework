@@ -21,6 +21,9 @@ class ReflectionClass extends \ReflectionClass{
 	 * @return \Phacil\Framework\PHPDocParser 
 	 */
 	public function getDocCommentParse() {
+		if (!$this->getDocComment())
+			return false;
+		
 		$docParse = new \Phacil\Framework\PHPDocParser($this->getDocComment());
 
 		$docParse->parse();

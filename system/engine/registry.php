@@ -7,6 +7,9 @@
  */
 
  namespace Phacil\Framework;
+
+ use Phacil\Framework\ReflectionClass;
+ use Phacil\Framework\ReflectionMethod;
  
 /** 
  * The registration of all objects on this Framework.
