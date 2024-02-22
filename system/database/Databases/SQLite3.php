@@ -24,15 +24,7 @@ class SQLite3 implements DriverInterface {
     private $connection;
 
     /**
-     * 
-     * @param string $hostname 
-     * @param string $username 
-     * @param string $password 
-     * @param string $database 
-     * @param string $port 
-     * @param string $charset 
-     * @return void 
-     * @throws \Phacil\Framework\Exception 
+     * {@inheritdoc}
      */
     public function __construct($hostname, $username = null, $password = null, $database, $port = '3306', $charset = 'utf8mb4')
     {
@@ -45,9 +37,7 @@ class SQLite3 implements DriverInterface {
 
     /**
      * 
-     * @param string $sql 
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-     * @throws \Phacil\Framework\Exception 
+     * @inheritdoc
      */
     public function query($sql){
         //$query = $this->connection->query($sql);
@@ -79,35 +69,29 @@ class SQLite3 implements DriverInterface {
     }
 
     /**
-     * @param string $value 
-     * @return string 
+     * {@inheritdoc}
      */
     public function escape($value) {
         return $this->connection->escapeString($value);
     }
 
-    /** @return int  */
+    /** {@inheritdoc} */
     public function countAffected() {
         return $this->connection->changes();
     }
-    
-    /** @return int  */
+
+    /** {@inheritdoc} */
     public function getLastId() {
         return $this->connection->lastInsertRowID();
     }
 
-    /** @return bool  */
+    /** {@inheritdoc} */
     public function isConnected() {
         return ($this->connection) ? true : false;
     }
 
     /**
-     * Execute a prepared statement with parameters
-     *
-     * @param string $sql SQL query with named placeholders
-     * @param array $params Associative array of parameters
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-     * @throws \Phacil\Framework\Exception 
+     * {@inheritdoc}
      */
     public function execute($sql, array $params = [])
     {

@@ -352,23 +352,33 @@ final class startEngineExacTI {
      * @return true|null 
      */
     public function checkRegistry($key){
-        //mail
-		if(!isset($this->registry->$key) && $key == 'mail'){
-            /** @var \Phacil\Framework\Mail\Api\MailInterface */
-			$this->mail = $this->registry->getInstance(\Phacil\Framework\Mail\Api\MailInterface::class);
-		}
+        if(isset($this->registry->$key)) return $this->registry->$key;
 
-		// Translate
-		if(!isset($this->registry->$key) && $key == 'translate'){
-			$this->translate = $this->registry->getInstance(\Phacil\Framework\Translate::class);
-		}
+        switch ($key) {
+            case 'mail':
+                /** @var \Phacil\Framework\Mail\Api\MailInterface */
+                $this->registry->$key = $this->registry->getInstance(\Phacil\Framework\Mail\Api\MailInterface::class);
+                break;
+            
+            case 'translate':
+                $this->registry->$key = $this->registry->getInstance(\Phacil\Framework\Translate::class);
+                break;
+            
+            case 'session':
+                $this->registry->$key = $this->registry->getInstance(\Phacil\Framework\Session::class);
+                break;
+            
+            case 'document':
+                /** @var \Phacil\Framework\Api\Document */
+                $this->registry->$key = $this->registry->getInstance(\Phacil\Framework\Api\Document::class);
+                break;
+            
+            default:
+                $objectToCreate = false;
+                break;
+        }
 
-		// Session
-		if(!isset($this->registry->$key) && $key == 'session'){
-			$this->session = $this->registry->getInstance(\Phacil\Framework\Session::class);
-		}
-
-        return (isset($this->registry->$key)) ?: NULL;
+        return isset($this->registry->$key) ? $this->registry->$key : null;
     }
 
     /** @return \Phacil\Framework\Registry  */
@@ -536,9 +546,6 @@ if($engine->config->get('config_compression'))
 
 // Session
 $engine->session = $engine->getRegistry()->create(\Phacil\Framework\Session::class);
-
-// Document
-$engine->document = new Document();
 
 // Custom registrations
 $engine->extraRegistrations();

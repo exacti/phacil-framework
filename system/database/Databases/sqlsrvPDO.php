@@ -72,8 +72,7 @@ class sqlsrvPDO implements DriverInterface {
     }
 
     /**
-     * 
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function query($sql, $params = array()) {
         $this->statement = $this->connection->prepare($sql);
@@ -108,7 +107,7 @@ class sqlsrvPDO implements DriverInterface {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function escape($value) {
         return str_replace(array("\\", "\0", "\n", "\r", "\x1a", "'", '"'), array("\\\\", "\\0", "\\n", "\\r", "\Z", "\'", '\"'), $value);

@@ -49,7 +49,7 @@ class MySQL_PDO implements DatabasesDriver
     private $params = array();
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function __construct($host, $user, $pass, $name, $port = '3306', $charset = 'utf8mb4')
     {
@@ -88,9 +88,9 @@ class MySQL_PDO implements DatabasesDriver
             throw new \Phacil\Framework\Exception($exception->getMessage());
         }
     }
-    
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function query($sql)
     {
@@ -112,6 +112,7 @@ class MySQL_PDO implements DatabasesDriver
      *
      * @param mixed $string shielded line
      * @return string Returns shielded line or to FALSE , if the driver does not support screening
+     * @inheritdoc
      */
     public function escape($string = null)
     {
@@ -127,7 +128,7 @@ class MySQL_PDO implements DatabasesDriver
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLastId()
     {
@@ -163,7 +164,7 @@ class MySQL_PDO implements DatabasesDriver
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function execute($sql, array $params = [])
     {

@@ -22,7 +22,7 @@ interface Serializer
 	 *
 	 * @param string|int|float|bool|array|null $data
 	 * @return string|bool
-	 * @throws \InvalidArgumentException
+	 * @throws \Phacil\Framework\Exception\InvalidArgumentException
 	 * @since 2.0.0
 	 */
 	public function serialize($data);
@@ -32,7 +32,7 @@ interface Serializer
 	 *
 	 * @param string $string
 	 * @return string|int|float|bool|array|null
-	 * @throws \InvalidArgumentException
+	 * @throws \Phacil\Framework\Exception\InvalidArgumentException
 	 * @since 2.0.0
 	 */
 	public function unserialize($string);

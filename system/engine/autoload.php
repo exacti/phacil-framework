@@ -95,6 +95,7 @@
 		'Interfaces\\Model',
 		'Interfaces\\Url',
 		'Api\\Database',
+		'Api\\Document',
 		'Exception',
 		'Render',
 		'Debug',

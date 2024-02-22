@@ -24,7 +24,7 @@ class Postgre implements DriverInterface {
 	private $link;
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function __construct($hostname, $username, $password, $database, $port = '5432', $charset = 'UTF8') {
 		if (!$this->link = pg_connect('host=' . $hostname . ' port=' . $port .  ' user=' . $username . ' password='	. $password . ' dbname=' . $database)) {
@@ -41,10 +41,7 @@ class Postgre implements DriverInterface {
 	}
 
 	/**
-	 * 
-	 * @param string $sql 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-	 * @throws \Phacil\Framework\Exception
+	 * {@inheritdoc}
 	 */
 	public function query($sql) {
 		$resource = pg_query($this->link, $sql);
@@ -71,22 +68,21 @@ class Postgre implements DriverInterface {
 			throw new \Phacil\Framework\Exception('Error: ' . pg_result_error($this->link) . '<br />' . $sql);
 		}
 	}
-	
+
 	/**
-	 * @param string $value 
-	 * @return string 
+	 * {@inheritdoc}
 	 */
 	public function escape($value) {
 		return pg_escape_string($this->link, $value);
 	}
-	
-	/** @return int  */
+
+	/** {@inheritdoc} */
 	public function countAffected() {
 		return pg_affected_rows($this->link);
 	}
-	
+
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function getLastId() {
 		$query = $this->query("SELECT LASTVAL() AS `id`");

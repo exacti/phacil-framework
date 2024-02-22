@@ -38,19 +38,19 @@ final class nullStatement implements DriverInterface {
 		return self::DB_TYPE_ID;
 	 }
 
+    /** {@inheritdoc} */
     public function __construct($hostname, $username, $password, $database, $charset = 'utf8mb4') {
         //$this->connection = NULL;
     }
 
+    /** {@inheritdoc} */
     public function isConnected() { 
 
         return false;
     }
 
     /**
-     * 
-     * @param string $sql 
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+     * {@inheritdoc}
      */
     public function query($sql) {
         $result = new \Phacil\Framework\Databases\Object\Result();
@@ -60,25 +60,23 @@ final class nullStatement implements DriverInterface {
         return $result;
     }
 
+    /** {@inheritdoc} */
     public function escape($value) {
         return NULL;
     }
 
+    /** {@inheritdoc} */
     public function countAffected() {
         return NULL;
     }
 
+    /** {@inheritdoc} */
     public function getLastId() {
         return NULL;
     }
 
     /**
-     * Execute a prepared statement with parameters
-     *
-     * @param string $sql SQL query with named placeholders
-     * @param array $params Associative array of parameters
-     * @return null
-     * @throws \Phacil\Framework\Exception
+     * {@inheritdoc}
      */
     public function execute($sql, array $params = [])
     {

@@ -33,16 +33,9 @@ class Oracle implements Databases {
 	 */
 	protected $error;
 
-	
+
 	/**
-	 * @param string $hostname 
-	 * @param string $username 
-	 * @param string $password 
-	 * @param string $database 
-	 * @param string $port 
-	 * @param string $charset 
-	 * @return void 
-	 * @throws Exception 
+	 * {@inheritdoc}
 	 */
 	public function __construct($hostname, $username, $password, $database, $port = '1521', $charset = 'utf8') {
 		$this->connection = \oci_connect($username, $password, $hostname.":".$port."/".$database, $charset);
@@ -56,12 +49,9 @@ class Oracle implements Databases {
         //oci_set_client_identifier($this->connection, $cid);
 
 	}
-	
+
 	/**
-	 * 
-	 * @param string $sql 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-	 * @throws \Phacil\Framework\Exception 
+	 * {@inheritdoc}
 	 */
 	public function query($sql) {
         $stid = \oci_parse($this->connection, $sql);
@@ -80,29 +70,31 @@ class Oracle implements Databases {
 			throw new \Phacil\Framework\Exception('Error: ' . oci_error()   . '<br />' . $sql);
 		}
 	}
-	
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function escape($value) {
 		return str_replace("'", "", $value);
 	}
-	
+
+	/** {@inheritdoc} */
 	public function countAffected() {
 		return NULL;
 	}
+
+	/** {@inheritdoc} */
 	public function getLastId() {
 		return NULL;
 	}
-	
+
+	/** {@inheritdoc} */
 	public function isConnected() {
 		return $this->connection;
 	}
 
 	/**
-	 * Execute a prepared statement with parameters
-	 *
-	 * @param string $sql SQL query with named placeholders
-	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-	 * @throws \Phacil\Framework\Exception
+	 * {@inheritdoc}
 	 */
 	public function execute($sql, array $params = [])
 	{

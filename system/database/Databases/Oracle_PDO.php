@@ -56,6 +56,7 @@ class Oracle_PDO implements DriverInterface
 	 */
 	private $statement = null;
 
+	/** {@inheritdoc} */
 	public function __construct($hostname, $username, $password, $database, $port = '1521', $charset = 'UTF8')
 	{
 		try {
@@ -71,10 +72,12 @@ class Oracle_PDO implements DriverInterface
 		}
 		$this->rowCount = 0;
 	}
+
 	public function prepare($sql)
 	{
 		$this->statement = $this->connection->prepare($sql);
 	}
+
 	public function bindParam($parameter, $variable, $data_type = \PDO::PARAM_STR, $length = 0)
 	{
 		if ($length) {
@@ -84,6 +87,7 @@ class Oracle_PDO implements DriverInterface
 		}
 	}
 
+	/** {@inheritdoc} */
 	public function query($sql, $params = array())
 	{
 		$this->statement = $this->connection->prepare($sql);
@@ -120,10 +124,14 @@ class Oracle_PDO implements DriverInterface
 			return $result;
 		}
 	}
+
+	/** {@inheritdoc} */
 	public function escape($value)
 	{
 		return str_replace(array("\\", "\0", "\n", "\r", "\x1a", "'", '"'), array("\\\\", "\\0", "\\n", "\\r", "\Z", "\'", '\"'), $value);
 	}
+
+	/** {@inheritdoc} */
 	public function countAffected()
 	{
 		if ($this->statement) {
@@ -132,11 +140,14 @@ class Oracle_PDO implements DriverInterface
 			return $this->rowCount;
 		}
 	}
+
+	/** {@inheritdoc} */
 	public function getLastId()
 	{
 		return $this->connection->lastInsertId();
 	}
 
+	/** {@inheritdoc} */
 	public function isConnected()
 	{
 		if ($this->connection) {
@@ -147,12 +158,7 @@ class Oracle_PDO implements DriverInterface
 	}
 
 	/**
-	 * Execute a prepared statement with parameters
-	 *
-	 * @param string $sql SQL query with named placeholders
-	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-	 * @throws \Phacil\Framework\Exception 
+	 * {@inheritdoc}
 	 */
 	public function execute($sql, array $params = [])
 	{

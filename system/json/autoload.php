@@ -26,14 +26,14 @@ class Json implements Serializer
 	 *
 	 * @param string|int|float|bool|array|null $data
 	 * @return string|bool
-	 * @throws \InvalidArgumentException
+	 * @throws \Phacil\Framework\Exception\InvalidArgumentException
 	 * @since 2.0.0
 	 */
 	static public function encode($data)
 	{
 		$result = \json_encode($data);
 		if (false === $result) {
-			throw new \InvalidArgumentException("Unable to serialize value. Error: " . self::json_last_error_msg());
+			throw new \Phacil\Framework\Exception\InvalidArgumentException("Unable to serialize value. Error: " . self::json_last_error_msg());
 		}
 		return $result;
 	}
@@ -43,14 +43,14 @@ class Json implements Serializer
 	 *
 	 * @param string $string
 	 * @return string|int|float|bool|array|null
-	 * @throws \InvalidArgumentException
+	 * @throws \Phacil\Framework\Exception\InvalidArgumentException
 	 * @since 2.0.0
 	 */
 	static public function decode($string, $array = true)
 	{
 		$result = \json_decode($string, $array);
 		if (json_last_error() !== JSON_ERROR_NONE) {
-			throw new \InvalidArgumentException("Unable to unserialize value. Error: " . self::json_last_error_msg());
+			throw new \Phacil\Framework\Exception\InvalidArgumentException("Unable to unserialize value. Error: " . self::json_last_error_msg());
 		}
 		return $result;
 	}

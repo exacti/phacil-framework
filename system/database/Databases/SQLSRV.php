@@ -24,7 +24,7 @@ class SQLSRV implements DriverInterface {
     private $link;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function __construct($hostname, $username, $password, $database, $port = '1443', $charset = 'utf8') {
         /*
@@ -55,8 +55,7 @@ class SQLSRV implements DriverInterface {
     }
 
     /**
-     * 
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function query($sql) {
         $resource = \sqlsrv_query($this->link, $sql);

@@ -9,9 +9,10 @@
 namespace Phacil\Framework;
 
 use Phacil\Framework\Config;
+use Phacil\Framework\Api\Document as DocumentInterface;
 
 /** @package Phacil\Framework */
-class Document {
+class Document implements DocumentInterface {
 	private $title;
 	private $description;
 	private $keywords;	
@@ -21,8 +22,7 @@ class Document {
 	private $fbmetas = array();
 	
 	/**
-	 * @param string $title 
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function setTitle($title) {
 		if(Config::PATTERSITETITLE()) {
@@ -31,42 +31,38 @@ class Document {
 			$this->title = $title;
 		}
 	}
-	
-	/** @return string  */
+
+	/** {@inheritdoc}  */
 	public function getTitle() {
 		return $this->title;
 	}
-	
+
 	/**
-	 * @param string $description 
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function setDescription($description) {
 		$this->description = $description;
 	}
-	
-	/** @return string  */
+
+	/** {@inheritdoc} */
 	public function getDescription() {
 		return $this->description;
 	}
-	
+
 	/**
-	 * @param string $keywords 
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function setKeywords($keywords) {
 		$this->keywords = $keywords;
 	}
-	
-	/** @return string  */
+
+	/** {@inheritdoc} */
 	public function getKeywords() {
 		return $this->keywords;
 	}
-	
+
 	/**
-	 * @param string $href 
-	 * @param string $rel 
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function addLink($href, $rel) {
 		$this->links[md5($href)] = array(
@@ -74,8 +70,8 @@ class Document {
 			'rel'  => $rel
 		);			
 	}
-	
-	/** @return array  */
+
+	/** {@inheritdoc} */
 	public function getLinks() {
 		return $this->links;
 	}
@@ -93,15 +89,10 @@ class Document {
         }
 
         return $var;
-
     }
-	
+
 	/**
-	 * @param string $href 
-	 * @param string $rel 
-	 * @param string $media 
-	 * @param bool $minify 
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function addStyle($href, $rel = 'stylesheet', $media = 'screen', $minify = true) {
 
@@ -115,25 +106,22 @@ class Document {
 			'media' => $media
 		);
 	}
-	
-	/** @return array  */
+
+	/** {@inheritdoc} */
 	public function getStyles() {
 		return $this->styles;
-	}	
-	
+	}
+
 	/**
-	 * @param string $script 
-	 * @param int|string $sort 
-	 * @param bool $minify 
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function addScript($script, $sort = 0, $minify = true) {
 	    if($minify) $script = $this->cacheMinify($script, 'js');
         $script = $this->checkCDN($script);
 		$this->scripts[($sort)][md5($script)] = $script;			
 	}
-	
-	/** @return array  */
+
+	/** {@inheritdoc} */
 	public function getScripts() {
 		$a = $this->scripts;
 		ksort($a);
@@ -194,47 +182,47 @@ class Document {
             mkdir($dirCache, 0755, true);
         }
 
-        if (file_exists($file) and Config::CACHE_MINIFY()) {
-            if($type == "js") {
-                if(file_exists($cachedFile) and Config::CACHE_JS_CSS()) {
-                    return $cacheFile;
-                } else {
+        if (is_file($file) and Config::CACHE_MINIFY()) {
+			switch ($type) {
+				case 'js':
+					if (file_exists($cachedFile) and Config::CACHE_JS_CSS()) {
+						return $cacheFile;
+					} else {
+						$buffer = file_get_contents($file);
 
-                    include_once Config::DIR_SYSTEM()."ecompress/JSMin.php";
+						$buffer = preg_replace('/<!--(.*)-->/Uis', '', $buffer);
 
-                    $buffer = file_get_contents($file);
+						/** @var \Phacil\Framework\ECompress\JSMin */
+						$buffer = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\ECompress\JSMin::class, [$buffer]);
 
-                    $buffer = preg_replace('/<!--(.*)-->/Uis', '', $buffer);
+						$buffer = $buffer->min();
 
-                    $buffer = \JSMin::minify($buffer);
+						file_put_contents($cachedFile, $buffer);
 
-                    file_put_contents($cachedFile, $buffer);
+						return $cacheFile;
+					}
+					break;
+				case 'css':
+					if (file_exists($cachedFile) && Config::CACHE_JS_CSS()) {
+						return $cacheFile;
+					} else {
+						$buffer = file_get_contents($file);
 
-                    return $cacheFile;
+						if($buffer){
+							/** @var \Phacil\Framework\ECompress\cssMin */
+							$cssMin = \Phacil\Framework\Registry::getInstance()->getInstance(\Phacil\Framework\ECompress\cssMin::class);
 
-                }
+							file_put_contents($cachedFile, $cssMin->minify($buffer));
 
-
-            }elseif($type == "css") {
-                if(file_exists($cachedFile) && Config::CACHE_JS_CSS()) {
-                    return $cacheFile;
-                } else {
-
-                    include_once Config::DIR_SYSTEM()."ecompress/cssMin.php";
-
-                    $buffer = file_get_contents($file);
-
-                    $buffer = minimizeCSS($buffer);
-
-                    file_put_contents($cachedFile, $buffer);
-
-                    return $cacheFile;
-
-                }
-
-            } else {
-                return $ref;
-            }
+							return $cacheFile;
+						}
+						return $ref;
+					}
+					break;
+				default:
+					return $ref;
+					break;
+			}
         } else {
             return $ref;
         }

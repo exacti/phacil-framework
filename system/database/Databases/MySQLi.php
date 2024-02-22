@@ -35,14 +35,7 @@ class MySQLi implements DriverInterface {
 	const DB_TYPE_ID = self::LIST_DB_TYPE_ID['MYSQL'];
 
 	/**
-	 * @param string $hostname 
-	 * @param string $username 
-	 * @param string $password 
-	 * @param string $database 
-	 * @param string $port 
-	 * @param string $charset 
-	 * @return void 
-	 * @throws \Phacil\Framework\Exception 
+	 * {@inheritdoc}
 	 */
 	public function __construct($hostname, $username, $password, $database, $port = '3306', $charset = 'utf8mb4') {
 		try {
@@ -81,10 +74,7 @@ class MySQLi implements DriverInterface {
 	 }
 
 	/**
-	 * Execute the SQl Query
-	 * @param string $sql 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
-	 * @throws \Phacil\Framework\Exception 
+	 * {@inheritdoc}
 	 */
 	public function query($sql) {
 		$query = $this->connection->query($sql);
@@ -102,47 +92,31 @@ class MySQLi implements DriverInterface {
 			throw new \Phacil\Framework\Exception('Error: ' . $this->connection->error  . '<br />Error No: ' . $this->connection->errno . '<br />' . $sql);
 		}
 	}
-	
+
 	/**
-	 * Important escape to prevent SQL injection.
-	 * 
-	 * @param string $value 
-	 * @return string 
+	 * {@inheritdoc}
 	 */
 	public function escape($value) {
 		return $this->connection->real_escape_string($value);
 	}
-	
-	/** 
-	 * Number of affected rows
-	 * 
-	 * @return int  */
+
+	/** {@inheritdoc} */
 	public function countAffected() {
 		return $this->connection->affected_rows;
 	}
 
-	/** @return int|string  */
+	/** {@inheritdoc} */
 	public function getLastId() {
 		return $this->connection->insert_id;
 	}
-	
-	/** @return bool  */
+
+	/** {@inheritdoc} */
 	public function isConnected() {
 		return $this->connection->ping();
 	}
-	
-	/** @return void  */
-	public function __destruct() {
-		//$this->connection->close();
-	}
 
 	/**
-	 * Execute a prepared statement with parameters
-	 *
-	 * @param string $sql SQL query with named placeholders
-	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-	 * @throws \Phacil\Framework\Exception 
+	 * {@inheritdoc}
 	 */
 	public function execute($sql, array $params = [])
 	{

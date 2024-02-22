@@ -30,7 +30,6 @@ class ResultCacheIterator extends \CachingIterator implements ResultInterface {
 	 */
 	public $data = null;
 	
-
 	/**
 	 * 
 	 * @var \Phacil\Framework\Databases\Object\Result

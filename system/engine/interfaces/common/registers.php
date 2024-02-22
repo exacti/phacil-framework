@@ -23,7 +23,7 @@ namespace Phacil\Framework\Interfaces\Common;
  * @property \Phacil\Framework\Log $log
  * @property \Phacil\Framework\Caches $cache
  * @property \Phacil\Framework\Response $response
- * @property \Phacil\Framework\Document $document
+ * @property \Phacil\Framework\Api\Document $document
  * @property \Phacil\Framework\Front $front
  * @property \Phacil\Framework\Translate $translate
  * @package Phacil\Framework\Interfaces 

@@ -105,9 +105,13 @@ class mPDO implements DriverInterface {
 			return $result;
 		}
 	}
+
+	/** {@inheritdoc} */
 	public function escape($value) {
 		return str_replace(array("\\", "\0", "\n", "\r", "\x1a", "'", '"'), array("\\\\", "\\0", "\\n", "\\r", "\Z", "\'", '\"'), $value);
 	}
+
+	/** {@inheritdoc} */
 	public function countAffected() {
 		if ($this->statement) {
 			return $this->statement->rowCount();
@@ -115,6 +119,8 @@ class mPDO implements DriverInterface {
 			return $this->rowCount;
 		}
 	}
+
+	/** {@inheritdoc} */
 	public function getLastId() {
 		return $this->connection->lastInsertId();
 	}
@@ -131,12 +137,7 @@ class mPDO implements DriverInterface {
 	}
 
 	/**
-	 * Execute a prepared statement with parameters
-	 *
-	 * @param string $sql SQL query with named placeholders
-	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
-	 * @throws \Phacil\Framework\Exception 
+	 * {@inheritdoc}
 	 */
 	public function execute($sql, array $params = [])
 	{

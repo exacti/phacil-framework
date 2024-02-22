@@ -27,5 +27,3 @@ switch($tipe) {
 		require_once(DIR_SYSTEM.'system.php');
 		break;
 }
-
-

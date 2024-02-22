@@ -74,16 +74,19 @@ class MSSQL implements \Phacil\Framework\Databases\Api\DriverInterface
 		}
 	}
 
+	/** {@inheritdoc} */
 	public function escape($value)
 	{
 		return \mssql_real_escape_string($value, $this->connection);
 	}
 
+	/** {@inheritdoc} */
 	public function countAffected()
 	{
 		return \mssql_rows_affected($this->connection);
 	}
 
+	/** {@inheritdoc} */
 	public function getLastId()
 	{
 		$last_id = false;

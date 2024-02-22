@@ -78,21 +78,24 @@ class MySQL_legacy implements \Phacil\Framework\Databases\Api\DriverInterface {
 			throw new \Phacil\Framework\Exception('Error: ' . \mysql_error($this->connection) . '<br />Error No: ' . mysql_errno($this->connection) . '<br />' . $sql);
     	}
   	}
-	
+
+	/** {@inheritdoc} */
 	public function escape($value) {
 		return \mysql_real_escape_string($value, $this->connection);
 	}
-	
+
+	/** {@inheritdoc} */
   	public function countAffected() {
     	return \mysql_affected_rows($this->connection);
   	}
 
+	/** {@inheritdoc} */
   	public function getLastId() {
     	return \mysql_insert_id($this->connection);
   	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function execute($sql, array $params = [])
 	{
