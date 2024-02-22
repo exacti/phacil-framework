@@ -1,5 +1,13 @@
 <?php
 /**
+ * Copyright © 2024 ExacTI Technology Solutions. All rights reserved.
+ * GPLv3 General License.
+ * https://exacti.com.br
+ * Phacil PHP Framework - https://github.com/exacti/phacil-framework
+ */
+
+ namespace Phacil\Framework\ECompress;
+/**
  * JSMin.php - modified PHP implementation of Douglas Crockford's JSMin.
  *
  * <code>
@@ -163,7 +171,7 @@ class JSMin {
      * ACTION_DELETE_A_B = Get the next B.
      *
      * @param int $command
-     * @throws JSMin_UnterminatedRegExpException|JSMin_UnterminatedStringException
+     * @throws \Phacil\Framework\ECompress\Exceptions\JSMin\UnterminatedRegExpException|\Phacil\Framework\ECompress\Exceptions\JSMin\UnterminatedStringException
      */
     protected function action($command)
     {
@@ -206,7 +214,7 @@ class JSMin {
                         }
                         if ($this->isEOF($this->a)) {
                             $byte = $this->inputIndex - 1;
-                            throw new JSMin_UnterminatedStringException(
+                            throw new \Phacil\Framework\ECompress\Exceptions\JSMin\UnterminatedStringException(
                                 "JSMin: Unterminated String at byte {$byte}: {$str}");
                         }
                         $str .= $this->a;
@@ -243,7 +251,7 @@ class JSMin {
                                     $pattern .= $this->a;
                                 }
                                 if ($this->isEOF($this->a)) {
-                                    throw new JSMin_UnterminatedRegExpException(
+                                    throw new \Phacil\Framework\ECompress\Exceptions\JSMin\UnterminatedRegExpException(
                                         "JSMin: Unterminated set in RegExp at byte "
                                         . $this->inputIndex .": {$pattern}");
                                 }
@@ -258,7 +266,7 @@ class JSMin {
                             $pattern .= $this->a;
                         } elseif ($this->isEOF($this->a)) {
                             $byte = $this->inputIndex - 1;
-                            throw new JSMin_UnterminatedRegExpException(
+                            throw new \Phacil\Framework\ECompress\Exceptions\JSMin\UnterminatedRegExpException(
                                 "JSMin: Unterminated RegExp at byte {$byte}: {$pattern}");
                         }
                         $this->output .= $this->a;
@@ -395,7 +403,7 @@ class JSMin {
     /**
      * Consume a multiple line comment from input (possibly retaining it)
      *
-     * @throws JSMin_UnterminatedCommentException
+     * @throws \Phacil\Framework\ECompress\Exceptions\JSMin\UnterminatedCommentException
      */
     protected function consumeMultipleLineComment()
     {
@@ -420,7 +428,7 @@ class JSMin {
                     return;
                 }
             } elseif ($get === null) {
-                throw new JSMin_UnterminatedCommentException(
+                throw new \Phacil\Framework\ECompress\Exceptions\JSMin\UnterminatedCommentException(
                     "JSMin: Unterminated comment at byte {$this->inputIndex}: /*{$comment}");
             }
             $comment .= $get;
@@ -450,7 +458,3 @@ class JSMin {
         return $get;
     }
 }
-
-class JSMin_UnterminatedStringException extends Exception {}
-class JSMin_UnterminatedCommentException extends Exception {}
-class JSMin_UnterminatedRegExpException extends Exception {}

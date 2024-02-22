@@ -35,13 +35,32 @@ class Encryption {
         } else {
             $this->method = 'base64';
         }
-
     }
 
+    /**
+     * @param string $cipher 
+     * @return $this 
+     */
+    public function setCipher($cipher) {
+        $this->cipher = $cipher;
+        return $this;
+    }
+
+    /** @return string  */
+    public function getCipher() {
+        return $this->cipher;
+    }
+
+    /**
+     * @param string $key 
+     * @return $this 
+     */
     public function setKey($key) {
         $this->key = $this->hash($key);
+        return $this;
     }
 
+    /** @return string|false  */
     public function getKey() {
         return $this->key;
     }
@@ -68,12 +87,12 @@ class Encryption {
         return $this->setHashAlgorithm($hashAlgorithm);
     }
 
-    /** @return string  */
+    /** @return string */
     public function getHashAlgorithm() {
         return $this->hash_algo;
     }
 
-    /** @return string  */
+    /** @return string */
     public function getHashAlgo(){
         return $this->getHashAlgorithm();
     }
@@ -90,7 +109,7 @@ class Encryption {
     /**
      * 
      * @param mixed $value 
-     * @param mixed|null $key 
+     * @param string|null $key 
      * @return string 
      */
     public function encrypt ($value, $key = NULL) {
@@ -106,7 +125,7 @@ class Encryption {
     /**
      * 
      * @param mixed $value 
-     * @param mixed|null $key 
+     * @param string|null $key 
      * @return string|false 
      */
     public function decrypt ($value, $key = NULL) {
