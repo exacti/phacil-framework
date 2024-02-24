@@ -12,6 +12,8 @@ namespace Phacil\Framework\Exception;
 /**
  * Exception thrown if a length is invalid.
  * 
+ * @since 2.0.0
+ * @api
  * @package Phacil\Framework\Exception
  */
 class LengthException extends \Phacil\Framework\Exception\LogicException {

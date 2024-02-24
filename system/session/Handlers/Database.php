@@ -14,9 +14,13 @@ use Phacil\Framework\Config as FrameworkConfig;
 
 /**
  * Data base session save handler
+ * @since 2.0.0
+ * @package Phacil\Framework\Session;
  */
 class Database implements \Phacil\Framework\Session\Api\HandlerInterface
 {
+	const SHORT_NAME = 'database';
+
 	const TABLE_NAME = 'session';
 
 	const COLUMN_DATA = 'session_data';

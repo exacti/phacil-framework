@@ -11,6 +11,9 @@ namespace Phacil\Framework\Exception;
 
 /**
  * Exception thrown if an argument is not of the expected type.
+ * 
+ * @since 2.0.0
+ * @api
  * @package Phacil\Framework\Exception
  */
 class InvalidArgumentException extends \Phacil\Framework\Exception\LogicException {

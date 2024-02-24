@@ -14,7 +14,14 @@ use Cm\RedisSession\ConnectionFailedException;
 use Cm\RedisSession\ConcurrentConnectionsExceededException;
 use Phacil\Framework\Exception;
 
+/**
+ * Redis handler for PHP Session
+ * 
+ * @since 2.0.0
+ * @package Phacil\Framework\Session\Handlers
+ */
 class Redis implements \Phacil\Framework\Session\Api\HandlerInterface {
+	const SHORT_NAME = 'redis';
 
 	private $savePath;
 

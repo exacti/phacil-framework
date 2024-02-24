@@ -12,6 +12,8 @@ namespace Phacil\Framework\Exception;
 /**
  * Exception thrown when performing an invalid operation on an empty container, such as removing an element.
  * 
+ * @since 2.0.0
+ * @api
  * @package Phacil\Framework\Exception
  */
 class UnderflowException extends \Phacil\Framework\Exception\RuntimeException {

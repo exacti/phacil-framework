@@ -68,6 +68,12 @@ class Session
 
     /**
      * 
+     * @var \Phacil\Framework\Config
+     */
+    private $config;
+
+    /**
+     * 
      * @param \Phacil\Framework\Registry $registry 
      * @param \Phacil\Framework\Config $config 
      * @param \Phacil\Framework\Cookies\Config $cookieConfig 
@@ -83,11 +89,12 @@ class Session
 
         $this->cookieConfig = $cookieConfig;
 
+        $this->config = $config;
+
         $this->name = (Config::SESSION_PREFIX() ?: 'SESS') . (isset($_SERVER['REMOTE_ADDR']) ? md5($_SERVER['REMOTE_ADDR']) : md5(date("dmY")));
 
-        //define('SESSION_PREFIX_INTERNAL_REDIS', Config::REDIS_SESSION_PREFIX() ?: 'phacil_');
-
-        $this->redis($config->get('session_redis'));
+        if($config->get('session_handler'))
+            $this->selectHandler();
 
         if (!session_id()) {
             $this->openSession();
@@ -108,7 +115,6 @@ class Session
      */
     private function openSession()
     {
-
         $this->closeSession();
 
         ini_set('session.use_cookies', 'On');
@@ -134,14 +140,44 @@ class Session
     }
 
     /**
+     * Check and iniciate a session handler
+     * @return bool 
+     * @throws \Phacil\Framework\Exception 
+     * @throws \Phacil\Framework\Exception\NotFoundException 
+     */
+    private function selectHandler() {
+        if($this->config->get("session_handler") && !\Phacil\Framework\Registry::checkPreferenceExist(\Phacil\Framework\Session\Api\HandlerInterface::class)){
+            switch($this->config->get("session_handler")){
+                case \Phacil\Framework\Session\Handlers\Redis::SHORT_NAME:
+                    \Phacil\Framework\Registry::addDIPreference(\Phacil\Framework\Session\Api\HandlerInterface::class, \Phacil\Framework\Session\Handlers\Redis::class);
+                    break;
+                case \Phacil\Framework\Session\Handlers\Database::SHORT_NAME:
+                    \Phacil\Framework\Registry::addDIPreference(\Phacil\Framework\Session\Api\HandlerInterface::class, \Phacil\Framework\Session\Handlers\Database::class);
+                    break;
+                case \Phacil\Framework\Session\Handlers\File::SHORT_NAME:
+                    \Phacil\Framework\Registry::addDIPreference(\Phacil\Framework\Session\Api\HandlerInterface::class, \Phacil\Framework\Session\Handlers\File::class);
+                    break;
+                default:
+                    if(!class_exists($this->config->get("session_handler"))) throw new \Phacil\Framework\Exception\NotFoundException("Session Handler class not found.");
+                    
+                    \Phacil\Framework\Registry::addDIPreference(\Phacil\Framework\Session\Api\HandlerInterface::class, $this->config->get("session_handler"));
+                    break;
+            }
+
+            $this->saveHandler = $this->registry->getInstance(\Phacil\Framework\Session\Api\HandlerInterface::class);
+
+            $this->saveHandler->setName($this->name);
+
+            return $this->registerSaveHandler();
+        }
+
+        return false;
+    }
+
+    /**
      * Check and iniciate the Redis connection
      * 
      * @param bool $redis 
-     * @param string|null $redisDSN 
-     * @param string|null $redisPort 
-     * @param string|null $redisPass 
-     * @param int|null $redis_expire 
-     * @param string $redis_prefix 
      * 
      * @since 2.0.0
      * @return bool

@@ -12,6 +12,8 @@ namespace Phacil\Framework\Exception;
 /**
  * Exception thrown if a callback refers to an undefined function or if some arguments are missing.
  * 
+ * @since 2.0.0
+ * @api
  * @package Phacil\Framework\Exception
  */
 class BadFunctionCallException extends \Phacil\Framework\Exception\LogicException {

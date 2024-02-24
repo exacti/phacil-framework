@@ -28,6 +28,8 @@ if (interface_exists('Throwable')) {
  * 
  * Note: PHP classes cannot implement the \Throwable interface directly, and must instead extend \Exception. You can implement this interface on any class.
  * 
+ * @since 2.0.0
+ * @api
  * @package Phacil\Framework\Exception
  */
 interface Throwable extends ThrowableBase {

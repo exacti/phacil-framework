@@ -12,6 +12,8 @@ namespace Phacil\Framework\Exception;
 /**
  * Exception thrown when adding an element to a full container.
  * 
+ * @since 2.0.0
+ * @api
  * @package Phacil\Framework\Exception
  */
 class OverflowException extends \Phacil\Framework\Exception\RuntimeException {

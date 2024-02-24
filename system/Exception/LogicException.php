@@ -11,6 +11,8 @@ namespace Phacil\Framework\Exception;
 /**
  * Exception that represents error in the program logic. This kind of exception should lead directly to a fix in your code.
  * 
+ * @since 2.0.0
+ * @api
  * @package Phacil\Framework\Exception
  */
 class LogicException extends \Phacil\Framework\Exception {

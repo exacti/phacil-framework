@@ -11,6 +11,9 @@ namespace Phacil\Framework\Exception;
 
 /**
  * Exception for Rest API.
+ * 
+ * @since 2.0.0
+ * @api
  * @package Phacil\Framework\Exception
  */
 class RESTException extends \Phacil\Framework\Exception\WebApiException {
