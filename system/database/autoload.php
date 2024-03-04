@@ -12,6 +12,7 @@ namespace Phacil\Framework;
 use Phacil\Framework\Databases\Api\DriverInterface as DatabaseInterface;
 use Phacil\Framework\Config;
 use Phacil\Framework\Api\Database as DatabaseApi;
+use Phacil\Framework\Exception;
 
 /** 
  * Principal class to load databases drivers
@@ -32,19 +33,19 @@ class Database implements DatabaseApi {
 	 * @var string[]
 	 */
 	static public $legacyDrivers = [
-		'mpdo' 			=> '\Phacil\Framework\Databases\mPDO',
-		'mysql' 		=> '\Phacil\Framework\Databases\MySQL',
-		'dbmysqli' 		=> '\Phacil\Framework\Databases\DBMySQLi',
-		'mssql' 		=> '\Phacil\Framework\Databases\MSSQL',
-		'mysql_legacy' 	=> '\Phacil\Framework\Databases\MySQL_legacy',
-		'mysql_pdo' 	=> '\Phacil\Framework\Databases\MySQL_PDO',
-		'mysqli' 		=> '\Phacil\Framework\Databases\MySQLi',
-		'nullstatement' => '\Phacil\Framework\Databases\nullStatement',
-		'oracle' 		=> '\Phacil\Framework\Databases\Oracle',
-		'postgre' 		=> '\Phacil\Framework\Databases\Postgre',
-		'sqlite3_db' 	=> '\Phacil\Framework\Databases\SQLite3',
-		'sqlsrv' 		=> '\Phacil\Framework\Databases\SQLSRV',
-		'sqlsrvpdo' 	=> '\Phacil\Framework\Databases\sqlsrvPDO'
+		'mpdo' 			=> 'Phacil\Framework\Databases\Driver\mPDO',
+		'mysql' 		=> 'Phacil\Framework\Databases\Driver\MySQL',
+		'dbmysqli' 		=> 'Phacil\Framework\Databases\Driver\DBMySQLi',
+		'mssql' 		=> 'Phacil\Framework\Databases\Driver\MSSQL',
+		'mysql_legacy' 	=> 'Phacil\Framework\Databases\Driver\MySQL_legacy',
+		'mysql_pdo' 	=> 'Phacil\Framework\Databases\Driver\MySQL_PDO',
+		'mysqli' 		=> 'Phacil\Framework\Databases\Driver\MySQLi',
+		'nullstatement' => 'Phacil\Framework\Databases\Driver\nullStatement',
+		'oracle' 		=> 'Phacil\Framework\Databases\Driver\Oracle',
+		'postgre' 		=> 'Phacil\Framework\Databases\Driver\Postgre',
+		'sqlite3_db' 	=> 'Phacil\Framework\Databases\Driver\SQLite3',
+		'sqlsrv' 		=> 'Phacil\Framework\Databases\Driver\SQLSRV',
+		'sqlsrvpdo' 	=> 'Phacil\Framework\Databases\Driver\sqlsrvPDO'
 	];
 	
 	/**
@@ -58,27 +59,32 @@ class Database implements DatabaseApi {
 	 * {@inheritdoc}
 	 */
 	public function __construct($driver, $hostname, $username, $password, $database) {
-
-        $driverClass = (isset(self::$legacyDrivers[strtolower($driver)])) ? self::$legacyDrivers[strtolower($driver)] : $driver;
+		$driverClass = (isset(self::$legacyDrivers[strtolower($driver)])) ? self::$legacyDrivers[strtolower($driver)] : $driver;
 
 		try {
-            $this->createDriver(new $driverClass($hostname, $username, $password, $database));
-        } catch (\Exception $th) {
-            throw new \Phacil\Framework\Exception($driver. ' not loaded. '.$th->getMessage(), $th->getCode());
-        }		
-		
+			$this->createDriver(
+				\Phacil\Framework\Registry::getInstance()->create($driverClass, [
+					$hostname,
+					$username,
+					$password,
+					$database
+				])
+			);
+		} catch (\Exception $th) {
+			throw new \Phacil\Framework\Exception($driver . ' not loaded. ' . $th->getMessage(), $th->getCode());
+		}
 	}
 
 	/**
 	 * @param DatabaseInterface $driverObject 
-	 * @return never 
+	 * @return void 
 	 * @throws Exception 
 	 */
 	private function createDriver(DatabaseInterface $driverObject)
 	{
 		try {
             $this->driver = $driverObject;
-        } catch (Exception $th) {
+        } catch (\Exception $th) {
             throw new Exception('Error: Could not create the driver! '.$th->getMessage());
         }
 	}
@@ -93,28 +99,17 @@ class Database implements DatabaseApi {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __destruct() {
-		//unset($this->driver);
-	 }
-
-	/**
-	 * {@inheritdoc}
-	 */
   	public function query($sql = null, $cacheUse = true) {
 		if(!$sql) {
-			return new \Phacil\Framework\MagiQL($this);
+			return \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\MagiQL::class, [$this]);
 		}
 		
 		if(Config::SQL_CACHE() && $cacheUse == true) {
-			
 			return $this->Cache($sql);
-			
-		} else {
-			
-			return $this->driver->query($sql);
-		}		
+		} 
 		
-  	}
+		return $this->driver->query($sql);
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -128,7 +123,7 @@ class Database implements DatabaseApi {
 	 */
   	public function countAffected() {
 		return $this->driver->countAffected();
-  	}
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -180,40 +175,47 @@ class Database implements DatabaseApi {
     }
 	
 	/**
+	 * 
 	 * @param string $sql 
-	 * @return object 
-	 * @throws PhpfastcacheInvalidArgumentException 
+	 * @return mixed 
+	 * @throws \Phacil\Framework\Exception 
+	 * @throws \Phpfastcache\Exceptions\PhpfastcacheInvalidArgumentException 
 	 */
 	private function Cache($sql) {
-		if(class_exists('\Phacil\Framework\Caches')) {
-			$cache = new Caches();
-		
-			if (stripos($sql, "select") !== false) {
+		/**
+		 * @var \Phacil\Framework\Caches
+		 */
+		$cache = \Phacil\Framework\Registry::getInstance(Caches::class);
 
-				if($cache->check($this->cachePrefix.md5($sql))) {
-					
-					return $cache->get($this->cachePrefix.md5($sql));
-					
-				} else {
-					$cache->set($this->cachePrefix.md5($sql), $this->driver->query($sql));
-
-					return $this->driver->query($sql);
-				}
-			} else {
-				return $this->driver->query($sql);
-			}
-		} else {
-			return $this->driver->query($sql);
+		if($cache->check($this->cachePrefix.md5($sql))) {
+			return $cache->get($this->cachePrefix.md5($sql));	
 		}
+		
+		$query = $this->driver->query($sql);
+		if($query instanceof \Phacil\Framework\Databases\Object\ResultInterface){
+			$cache->set($this->cachePrefix.md5($sql), $query);
+
+			return $query;
+		}
+		
+		return $query;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function createSubBase($nome, $object) {
-
-        $this->$nome = $object;
+	public function createSubBase($name, DatabaseApi $object) {
+        $this->$name = $object;
+		return $this;
     }
+
+	public function get($name){
+		return $this->$name;
+	}
+
+	public function id($name) { 
+		return $this->get($name);
+	}
 
 	/**
 	 * {@inheritdoc}
