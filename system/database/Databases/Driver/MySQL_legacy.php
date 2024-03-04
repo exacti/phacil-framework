@@ -6,7 +6,7 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-namespace Phacil\Framework\Databases;
+namespace Phacil\Framework\Databases\Driver;
 
 /** 
  * Legacy class to connect a MySQL with PHP 5 legacy driver.

@@ -6,7 +6,7 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-namespace Phacil\Framework\Databases;
+namespace Phacil\Framework\Databases\Driver;
 
 use MySQLi as GlobalMysqli;
 use Phacil\Framework\Databases\Api\DriverInterface;

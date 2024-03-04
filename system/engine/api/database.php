@@ -34,13 +34,6 @@ interface Database {
 	 **/
 	public function isConnected();
 
-	/** 
-	 * Destroy the connection
-	 * 
-	 * @return void  
-	 */
-	public function __destruct();
-
 	/**
 	 * Execute the SQL Query
 	 * 
@@ -88,11 +81,11 @@ interface Database {
 	public function pagination($sql, $pageNum_exibe = 1, $maxRows_exibe = 10, $cache = true, $sqlTotal = null);
 
 	/**
-	 * @param string $nome 
-	 * @param object $object 
-	 * @return void 
+	 * @param string $name 
+	 * @param \Phacil\Framework\Api\Database $object 
+	 * @return $this 
 	 */
-	public function createSubBase($nome, $object);
+	public function createSubBase($name, \Phacil\Framework\Api\Database $object);
 
 	/**
 	 * Execute a prepared statement with parameters
