@@ -22,7 +22,7 @@ class MagiQL extends Builder {
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Database
+	 * @var \Phacil\Framework\Api\Database
 	 */
 	private $db;
 
@@ -52,6 +52,14 @@ class MagiQL extends Builder {
 		$query = $this->write($obj);
 		$values = $this->getValues();
 		return $this->db->execute($query, $values);
+	}
+
+	/**
+	 * 
+	 * @return \Phacil\Framework\Api\Database 
+	 */
+	public function getDb() { 
+		return $this->db;
 	}
 
 	/**

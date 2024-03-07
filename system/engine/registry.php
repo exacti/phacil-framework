@@ -120,7 +120,7 @@ final class Registry {
 	 * @param array $args (optional)
 	 * @param bool $onlyCheckInstances (Optional) if true, don't create an auto-instance
 	 * 
-	 * @return \Phacil\Framework\Registry
+	 * @return \Phacil\Framework\Registry|object|null
 	 * @since 2.0.0
 	 */
 	static public function getInstance($class = null, $args = [], $onlyCheckInstances = false) {
@@ -134,7 +134,7 @@ final class Registry {
 
 		if (isset(self::$autoInstances[($classObj)])) return self::$autoInstances[($classObj)];
 
-		foreach ($registry->instances as $key => $value) {
+		foreach ($registry->instances as $value) {
 			if(!is_object($value)) continue;
 			
 			if(get_class($value) == $classObj) {$return = $value; break; }
@@ -157,11 +157,12 @@ final class Registry {
 	}
 
 	/**
-	 * @param string $class 
-	 * @param array $args 
+	 * Force the creation of an instance of a class, even if it already exists.
+	 * 
+	 * @param string $class Class full qualified name
+	 * @param array $args (Optional) An array with the arguments to pass to the constructor
 	 * @return mixed 
-	 * @throws \ReflectionException 
-	 * @throws \Exception 
+	 * @throws \Phacil\Framework\Exception\ReflectionException 
 	 * @throws \Phacil\Framework\Exception 
 	 */
 	public function create($class, $args = array()) {

@@ -72,7 +72,7 @@ class Encryption {
      */
     public function setHashAlgorithm($hashAlgorithm) {
         if (!in_array($hashAlgorithm, hash_algos())) {
-            throw new \Phacil\Framework\Exception\InvalidArgumentException("The hash algorithm '${hashAlgorithm}' is not available.");
+            throw new \Phacil\Framework\Exception\InvalidArgumentException("The hash algorithm '{$hashAlgorithm}' is not available.");
         } 
         $this->hash_algo = $hashAlgorithm;
         return $this;

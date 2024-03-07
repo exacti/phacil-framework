@@ -124,39 +124,48 @@ class SQLSRV implements DriverInterface {
     public function execute($sql, array $params = [])
     {
         if (!empty($params)) {
+            foreach ($params as $placeholder => &$param) {
+
+                //$stmt->bind_param($this->getParamType($param), $param);
+                $bindParams[] = &$param;
+
+                if (is_string($placeholder))
+                    $sql = str_replace($placeholder, '?', $sql);
+            }
             // Bind parameters if there are any
-            $stmt = \sqlsrv_prepare($this->link, $sql, $params);
-
-            if ($stmt === false) {
-                throw new \Phacil\Framework\Exception('Error preparing query: ' . \sqlsrv_errors());
-            }
-
-            $result = \sqlsrv_execute($stmt);
-
-            if ($result === false) {
-                throw new \Phacil\Framework\Exception('Error executing query: ' . \sqlsrv_errors());
-            }
-
-            // Processar resultados se for um SELECT
-            if (\sqlsrv_has_rows($stmt)) {
-                $data = [];
-                while ($row = \sqlsrv_fetch_array($stmt, \SQLSRV_FETCH_ASSOC)) {
-                    $data[] = $row;
-                }
-
-                /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
-                $resultObj->setNumRows(\sqlsrv_num_rows($stmt));
-
-                return $resultObj;
-            }
-
-            // Se não for um SELECT, apenas retornar verdadeiro
-            return true;
+            $stmt = \sqlsrv_prepare($this->link, $sql, $bindParams);
         } else {
-            // Se não há parâmetros, executar diretamente sem consulta preparada
-            return $this->query($sql);
+             $stmt = \sqlsrv_prepare($this->link, $sql);
         }
+
+        if ($stmt === false) {
+            throw new \Phacil\Framework\Exception('Error preparing query: ' . \sqlsrv_errors());
+        }
+
+        $result = \sqlsrv_execute($stmt);
+
+        if ($result === false) {
+            $errors = \sqlsrv_errors();
+            throw new \Phacil\Framework\Exception('Error executing query: ' . json_encode($errors));
+        }
+
+        // Processar resultados se for um SELECT
+        if (\sqlsrv_has_rows($stmt)) {
+            $data = [];
+            while ($row = \sqlsrv_fetch_array($stmt, \SQLSRV_FETCH_ASSOC)) {
+                $data[] = $row;
+            }
+
+            /** @var \Phacil\Framework\Databases\Object\ResultInterface */
+            $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
+            $resultObj->setNumRows(\sqlsrv_num_rows($stmt));
+
+            return $resultObj;
+        }
+
+        // Se não for um SELECT, apenas retornar verdadeiro
+        return $result;
+        
     }
 
     /**

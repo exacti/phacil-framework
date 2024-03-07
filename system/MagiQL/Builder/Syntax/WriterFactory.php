@@ -10,6 +10,7 @@
 namespace Phacil\Framework\MagiQL\Builder\Syntax;
 
 use Phacil\Framework\MagiQL\Api\BuilderInterface;
+use Phacil\Framework\Databases\Api\DriverInterface as DatabaseDriverInterface;
 
 /**
  * Class WriterFactory.
@@ -46,6 +47,30 @@ final class WriterFactory
      */
     public static function createSelectWriter(BuilderInterface $writer, PlaceholderWriter $placeholderWriter)
     {
+        /** @var \Phacil\Framework\MagiQL $writer */
+        
+        switch ($writer->getDb()->getDBTypeId()) {
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['MYSQL']:
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['SQLLITE3']:
+                return new SelectWriter($writer, $placeholderWriter);
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['MSSQL']:
+                return new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\MSSQL\SelectWriter($writer, $placeholderWriter);
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['POSTGRE']:
+                return new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\PostgreSQL\SelectWriter($writer, $placeholderWriter);
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['ORACLE']:
+                return new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\Oracle\SelectWriter($writer, $placeholderWriter);
+                break;
+            
+            default:
+                return new SelectWriter($writer, $placeholderWriter);
+                break;
+        }
         return new SelectWriter($writer, $placeholderWriter);
     }
 
@@ -68,6 +93,23 @@ final class WriterFactory
      */
     public static function createUpdateWriter(BuilderInterface $writer, PlaceholderWriter $placeholderWriter)
     {
+        /** @var \Phacil\Framework\MagiQL $writer */
+        switch ($writer->getDb()->getDBTypeId()) {
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['MYSQL']:
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['SQLLITE3']:
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['MSSQL']:
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['ORACLE']:
+                return new UpdateWriter($writer, $placeholderWriter);
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['POSTGRE']:
+                return new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\PostgreSQL\UpdateWriter($writer, $placeholderWriter);
+                break;
+
+            default:
+                return new UpdateWriter($writer, $placeholderWriter);
+                break;
+        }
         return new UpdateWriter($writer, $placeholderWriter);
     }
 

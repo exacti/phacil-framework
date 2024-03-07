@@ -6,7 +6,7 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-namespace Phacil\Framework\Databases\Driver\Driver;
+namespace Phacil\Framework\Databases\Driver;
 
 use Phacil\Framework\Databases\Api\DriverInterface as DatabasesDriver;
 

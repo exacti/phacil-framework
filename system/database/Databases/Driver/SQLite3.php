@@ -96,11 +96,6 @@ class SQLite3 implements DriverInterface {
     public function execute($sql, array $params = [])
     {
         if (!empty($params)) {
-            // Bind parameters if there are any
-            foreach ($params as $placeholder => &$param) {
-                $sql = str_replace($placeholder, ':' . $placeholder, $sql);
-            }
-
             $stmt = $this->connection->prepare($sql);
 
             if ($stmt === false) {
@@ -108,37 +103,37 @@ class SQLite3 implements DriverInterface {
             }
 
             foreach ($params as $placeholder => &$param) {
-                $stmt->bindValue(':' . $placeholder, $param);
+                $stmt->bindValue($placeholder, $param, $this->getParamType($param));
             }
-
-            $result = $stmt->execute();
-
-            if ($result === false) {
-                throw new \Phacil\Framework\Exception('Error executing query: ' . $this->connection->lastErrorMsg());
-            }
-
-            // Processar resultados se for um SELECT
-            if ($result instanceof \SQLite3Result) {
-                $data = [];
-                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-                    $data[] = $row;
-                }
-
-                /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
-                $resultObj->setNumRows(count($data));
-
-                $result->finalize();
-
-                return $resultObj;
-            }
-
-            // Se não for um SELECT, apenas retornar verdadeiro
-            return true;
         } else {
-            // Se não há parâmetros, executar diretamente sem consulta preparada
-            return $this->query($sql);
+            $stmt = $this->connection->prepare($sql);
         }
+
+        $result = $stmt->execute();
+
+        if ($result === false) {
+            throw new \Phacil\Framework\Exception('Error executing query: ' . $this->connection->lastErrorMsg());
+        }
+
+        // Processar resultados se for um SELECT
+        if ($result instanceof \SQLite3Result) {
+            $data = [];
+            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                $data[] = $row;
+            }
+
+            /** @var \Phacil\Framework\Databases\Object\ResultInterface */
+            $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
+            $resultObj->setNumRows(count($data));
+
+            $result->finalize();
+
+            return $resultObj;
+        }
+
+        // Se não for um SELECT, apenas retornar verdadeiro
+        return true;
+        
     }
 
     /**
@@ -154,4 +149,28 @@ class SQLite3 implements DriverInterface {
 	public function getDBTypeId() {
 		return self::DB_TYPE_ID;
 	 }
+
+    private function getParamType(&$param)
+    {
+        $paramType = gettype($param);
+
+        switch ($paramType) {
+            case 'boolean':
+            case 'integer':
+                $paramType = SQLITE3_INTEGER;
+                break;
+            case 'double':
+            case 'float':
+                $paramType = SQLITE3_FLOAT;
+                break;
+            case 'NULL':
+                $paramType = SQLITE3_NULL;
+                break;
+            default:
+                $paramType = SQLITE3_TEXT;
+                break;
+        }
+
+        return $paramType;
+    }
 }

@@ -524,6 +524,9 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$engine){
     return true;
 });
 
+// Session
+$engine->session = $engine->getRegistry()->create(\Phacil\Framework\Session::class);
+
 /**
  * Caches
  * @var Caches
@@ -543,9 +546,6 @@ $engine->response->addHeader('Content-Type: text/html; charset=utf-8');
 
 if($engine->config->get('config_compression'))
     $engine->response->setCompression($engine->config->get('config_compression'));
-
-// Session
-$engine->session = $engine->getRegistry()->create(\Phacil\Framework\Session::class);
 
 // Custom registrations
 $engine->extraRegistrations();

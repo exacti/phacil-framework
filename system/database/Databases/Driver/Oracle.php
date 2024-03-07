@@ -100,7 +100,7 @@ class Oracle implements Databases {
 	{
 		// Verificar se há parâmetros e fazer o bind
 		if (!empty($params)) {
-			$sql = $this->replacePlaceholders($sql, array_keys($params));
+			//$sql = $this->replacePlaceholders($sql, array_keys($params));
 
 			$stid = \oci_parse($this->connection, $sql);
 
@@ -140,8 +140,8 @@ class Oracle implements Databases {
 	 */
 	private function replacePlaceholders($sql, $placeholders)
 	{
-		foreach ($placeholders as $placeholder) {
-			$sql = str_replace($placeholder, ':' . $placeholder, $sql);
+		foreach ($placeholders as $key => $placeholder) {
+			$sql = str_replace($placeholder, ':' . ($key + 1), $sql);
 		}
 
 		return $sql;

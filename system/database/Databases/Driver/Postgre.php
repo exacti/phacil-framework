@@ -98,28 +98,27 @@ class Postgre implements DriverInterface {
 		if (!empty($params)) {
 			$sql = $this->replacePlaceholders($sql, array_keys($params));
 			$result = pg_query_params($this->link, $sql, array_values($params));
+		} else {
+			$result = pg_query($this->link, $sql);
+		}
 
-			if ($result === false) {
-				throw new \Phacil\Framework\Exception('Error executing query: ' . pg_last_error($this->link));
-			}
+		if ($result === false) {
+			throw new \Phacil\Framework\Exception('Error executing query: ' . pg_last_error($this->link));
+		}
 
-			// Processar resultados se for um SELECT
-			$i = 0;
-			$data = [];
-			while ($row = pg_fetch_assoc($result)) {
-				$data[$i] = $row;
-				$i++;
-			}
+		// Processar resultados se for um SELECT
+		$data = pg_fetch_all($result);
+
+		if(!empty($data)) {
 
 			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
 			$resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
-			$resultObj->setNumRows($i);
+			$resultObj->setNumRows(count($data));
 
 			return $resultObj;
-		} else {
-			// Se não há parâmetros, executar diretamente sem consulta preparada
-			return $this->query($sql);
 		}
+
+		return true;
 	}
 
 	/**
@@ -131,8 +130,8 @@ class Postgre implements DriverInterface {
 	 */
 	private function replacePlaceholders($sql, $placeholders)
 	{
-		foreach ($placeholders as $placeholder) {
-			$sql = str_replace($placeholder, '$' . ($placeholders[$placeholder] + 1), $sql);
+		foreach ($placeholders as $key => $placeholder) {
+			$sql = str_replace($placeholder, '$' . ($key + 1), $sql);
 		}
 
 		return $sql;
