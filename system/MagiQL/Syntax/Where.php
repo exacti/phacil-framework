@@ -620,10 +620,10 @@ class Where implements WhereInterface
     {
         return $this->isNull;
     }
-    
+
     /**
-    * @return QueryInterface
-    */
+     * @return QueryInterface|\Phacil\Framework\MagiQL\Manipulation\AbstractBaseQuery
+     */
     public function end()
     {
        return $this->query;

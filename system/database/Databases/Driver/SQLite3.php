@@ -26,7 +26,7 @@ class SQLite3 implements DriverInterface {
     /**
      * {@inheritdoc}
      */
-    public function __construct($hostname, $username = null, $password = null, $database, $port = '3306', $charset = 'utf8mb4')
+    public function __construct($hostname, $username = null, $password = null, $database = null, $port = '3306', $charset = 'utf8mb4')
     {
         $this->connection = new nativeSQLite3($hostname.$database, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE, $password);
 
