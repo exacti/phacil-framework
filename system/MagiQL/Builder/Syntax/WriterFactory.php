@@ -82,6 +82,23 @@ final class WriterFactory
      */
     public static function createInsertWriter(\Phacil\Framework\MagiQL\Api\BuilderInterface $writer, PlaceholderWriter $placeholderWriter)
     {
+        /** @var \Phacil\Framework\MagiQL $writer */
+        switch ($writer->getDb()->getDBTypeId()) {
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['MYSQL']:
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['MSSQL']:
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['ORACLE']:
+                return new InsertWriter($writer, $placeholderWriter);
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['POSTGRE']:
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['SQLLITE3']:
+                return new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\SQLite3\InsertWriter($writer, $placeholderWriter);
+                break;
+
+            default:
+                return new InsertWriter($writer, $placeholderWriter);
+                break;
+        }
         return new InsertWriter($writer, $placeholderWriter);
     }
 
