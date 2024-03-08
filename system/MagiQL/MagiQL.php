@@ -8,10 +8,10 @@
 
 namespace Phacil\Framework;
 
-use Phacil\Framework\MagiQL\Builder;
 use Phacil\Framework\Databases\Api\DriverInterface as DatabaseDriverInterface;
+use Phacil\Framework\MagiQL\Builder\AbstractBuilder;
 
-class MagiQL extends Builder {
+class MagiQL extends AbstractBuilder {
 
 	const SELECT_KEY = 'SELECT';
 	const FROM_KEY = 'FROM';
@@ -26,8 +26,6 @@ class MagiQL extends Builder {
 	 */
 	private $db;
 
-	private $queryObj;
-
 	/**
 	 * 
 	 * @var array
@@ -37,7 +35,6 @@ class MagiQL extends Builder {
 	public function __construct(\Phacil\Framework\Api\Database $db) {
 		$this->db = $db;
 
-		$this->queryObj = new Builder();
 		parent::__construct();
 	}
 
@@ -99,11 +96,6 @@ class MagiQL extends Builder {
 		}
 
 		return false;
-	}
-
-	public function __call($name, $arguments = array()){
-
-		return call_user_func_array([$this->queryObj, $name], $arguments);
 	}
 
 }

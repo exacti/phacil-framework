@@ -96,7 +96,6 @@ final class WriterFactory
         /** @var \Phacil\Framework\MagiQL $writer */
         switch ($writer->getDb()->getDBTypeId()) {
             case DatabaseDriverInterface::LIST_DB_TYPE_ID['MYSQL']:
-            case DatabaseDriverInterface::LIST_DB_TYPE_ID['SQLLITE3']:
             case DatabaseDriverInterface::LIST_DB_TYPE_ID['MSSQL']:
             case DatabaseDriverInterface::LIST_DB_TYPE_ID['ORACLE']:
                 return new UpdateWriter($writer, $placeholderWriter);
@@ -104,6 +103,10 @@ final class WriterFactory
 
             case DatabaseDriverInterface::LIST_DB_TYPE_ID['POSTGRE']:
                 return new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\PostgreSQL\UpdateWriter($writer, $placeholderWriter);
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['SQLLITE3']:
+                return new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\SQLite3\UpdateWriter($writer, $placeholderWriter);
                 break;
 
             default:

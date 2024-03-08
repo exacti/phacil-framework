@@ -109,6 +109,9 @@ class ResultCacheIterator extends \CachingIterator implements ResultInterface {
 	 */
 	public function getRows()
 	{
+		if (!$this->num_rows)
+			$this->num_rows = $this->Iterator->count();
+		
 		return $this->rows;
 	}
 

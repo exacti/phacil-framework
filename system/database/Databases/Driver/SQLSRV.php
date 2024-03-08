@@ -158,7 +158,7 @@ class SQLSRV implements DriverInterface {
 
             /** @var \Phacil\Framework\Databases\Object\ResultInterface */
             $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
-            $resultObj->setNumRows(\sqlsrv_num_rows($stmt));
+            $resultObj->setNumRows(count($data));
 
             return $resultObj;
         }

@@ -123,6 +123,9 @@ class Result extends \ArrayIterator implements ResultInterface {
 	 * {@inheritdoc}
 	 */
 	public function getNumRows(){
+		if(!$this->num_rows)
+			$this->num_rows = $this->count();
+		
 		return $this->num_rows;
 	}
 
