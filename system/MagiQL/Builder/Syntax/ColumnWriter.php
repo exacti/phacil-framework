@@ -12,6 +12,7 @@ use Phacil\Framework\MagiQL\Api\BuilderInterface;
 use Phacil\Framework\MagiQL\Manipulation\Select;
 use Phacil\Framework\MagiQL\Syntax\Column;
 use Phacil\Framework\MagiQL\Syntax\SyntaxFactory;
+use Phacil\Framework\Databases\Api\DriverInterface as DatabaseDriverInterface;
 
 /**
  * Class ColumnWriter.
@@ -22,6 +23,8 @@ class ColumnWriter
      * @var BuilderInterface
      */
     protected $writer;
+
+    private $writerAlternative;
 
     /**
      * @var PlaceholderWriter
@@ -74,7 +77,7 @@ class ColumnWriter
 
                 if (\is_numeric($key)) {
                     /* @var Column $value */
-                    $key = $this->writer->writeTableName($value->getTable());
+                    $key = $this->getWriteObj()->writeTableName($value->getTable());
                 }
                 $column = $selectWriter->selectToColumn($key, $value);
             }
@@ -136,7 +139,7 @@ class ColumnWriter
     public function writeColumnWithAlias(Column $column)
     {
         if (($alias = $column->getAlias()) && !$column->isAll()) {
-            return $this->writeColumn($column).' AS '.$this->writer->writeColumnAlias($alias);
+            return $this->writeColumn($column).' AS '.$this->getWriteObj()->writeColumnAlias($alias);
         }
 
         return $this->writeColumn($column);
@@ -150,11 +153,52 @@ class ColumnWriter
     public function writeColumn(Column $column)
     {
         $alias = $column->getTable()->getAlias();
-        $table = ($alias) ? $this->writer->writeTableAlias($alias) : $this->writer->writeTable($column->getTable());
+        $table = ($alias) ? $this->getWriteObj()->writeTableAlias($alias) : $this->getWriteObj()->writeTable($column->getTable());
 
         $columnString = (empty($table)) ? '' : "{$table}.";
-        $columnString .= $this->writer->writeColumnName($column);
+        $columnString .= $this->getWriteObj()->writeColumnName($column);
 
         return $columnString;
+    }
+
+    /**
+     * 
+     * @return \Phacil\Framework\MagiQL\Api\BuilderInterface 
+     */
+    protected function getWriteObj()
+    {
+        if($this->writerAlternative) return $this->writerAlternative;
+
+        $writerDbType = null;
+        if (method_exists($this->writer, 'getDb')) {
+            /** @var \Phacil\Framework\MagiQL */
+            $writer = $this->writer;
+            $writerDbType = $writer->getDb()->getDBTypeId();
+            unset($writer);
+        }
+        switch ($writerDbType) {
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['MYSQL']:
+                $this->writerAlternative = new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\MySQL\ColumnTable();
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['MSSQL']:
+                $this->writerAlternative = new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\MSSQL\ColumnTable();
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['POSTGRE']:
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['SQLLITE3']:
+                $this->writerAlternative = new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\PostgreSQL\ColumnTable();
+                break;
+
+            case DatabaseDriverInterface::LIST_DB_TYPE_ID['ORACLE']:
+                $this->writerAlternative = new \Phacil\Framework\MagiQL\Builder\Syntax\Adapt\Oracle\ColumnTable();
+                break;
+
+            default:
+                $this->writerAlternative = $this->writer;
+                break;
+        }
+
+        return $this->writerAlternative;
     }
 }
