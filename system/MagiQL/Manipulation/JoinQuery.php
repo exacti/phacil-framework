@@ -80,7 +80,7 @@ class JoinQuery
     {
         return $this->join($table, $selfColumn, $refColumn, $columns, self::JOIN_LEFT);
     }
-
+    
     /**
      * @param string   $table
      * @param mixed    $selfColumn

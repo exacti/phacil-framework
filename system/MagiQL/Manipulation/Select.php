@@ -257,6 +257,16 @@ class Select extends AbstractBaseQuery
     {
         return $this->columnQuery->setColumns($columns);
     }
+    
+    /**
+     * Sets the all columns used to write the SELECT statement.
+     *
+     * @return ColumnQuery
+     */
+    public function setAllColumns()
+    {
+        return $this->setColumns([\Phacil\Framework\MagiQL\Syntax\Column::ALL]);
+    }
 
     /**
      * Allows setting a Select query as a column value.
@@ -381,7 +391,7 @@ class Select extends AbstractBaseQuery
 
     /**
      * @param int $start
-     * @param int    $count
+     * @param int $count
      *
      * @return $this
      */
@@ -389,6 +399,16 @@ class Select extends AbstractBaseQuery
     {
         $this->limitStart = $count === null ? 0 : $start;
         $this->limitCount = $count === null ? $start :$count;
+
+        return $this;
+    }
+
+    /**
+     * @param int $count 
+     * @return $this 
+     */
+    public function offset($count) {
+        $this->limitCount = (int)$count;
 
         return $this;
     }
