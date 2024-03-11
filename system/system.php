@@ -357,20 +357,20 @@ final class startEngineExacTI {
         switch ($key) {
             case 'mail':
                 /** @var \Phacil\Framework\Mail\Api\MailInterface */
-                $this->registry->$key = $this->registry->getInstance(\Phacil\Framework\Mail\Api\MailInterface::class);
+                $this->registry->set($key, $this->registry->getInstance(\Phacil\Framework\Mail\Api\MailInterface::class));
                 break;
             
             case 'translate':
-                $this->registry->$key = $this->registry->getInstance(\Phacil\Framework\Translate::class);
+                $this->registry->set($key, $this->registry->getInstance(\Phacil\Framework\Translate::class));
                 break;
             
             case 'session':
-                $this->registry->$key = $this->registry->getInstance(\Phacil\Framework\Session::class);
+                $this->registry->set($key, $this->registry->getInstance(\Phacil\Framework\Session::class));
                 break;
             
             case 'document':
                 /** @var \Phacil\Framework\Api\Document */
-                $this->registry->$key = $this->registry->getInstance(\Phacil\Framework\Api\Document::class);
+                $this->registry->set($key, $this->registry->getInstance(\Phacil\Framework\Api\Document::class));
                 break;
             
             default:
@@ -378,7 +378,7 @@ final class startEngineExacTI {
                 break;
         }
 
-        return isset($this->registry->$key) ? $this->registry->$key : null;
+        return ($this->registry->has($key)) ? $this->registry->get($key) : null;
     }
 
     /** @return \Phacil\Framework\Registry  */

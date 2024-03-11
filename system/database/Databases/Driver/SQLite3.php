@@ -116,7 +116,7 @@ class SQLite3 implements DriverInterface {
         }
 
         // Processar resultados se for um SELECT
-        if ($result instanceof \SQLite3Result) {
+        if ($result instanceof \SQLite3Result && $result->numColumns() > 0) {
             $data = [];
             while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                 $data[] = $row;

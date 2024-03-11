@@ -11,7 +11,7 @@ namespace Phacil\Framework\MagiQL\Builder\Syntax\Adapt\SQLite3;
 use Phacil\Framework\MagiQL\Builder\Syntax\InsertWriter as GenericWriter;
 use Phacil\Framework\MagiQL\Api\BuilderInterface;
 use Phacil\Framework\MagiQL\Builder\Syntax\PlaceholderWriter;
-use Phacil\Framework\MagiQL\Builder\Syntax\Adapt\SQLite3\ColumnWriter;
+//use Phacil\Framework\MagiQL\Builder\Syntax\Adapt\SQLite3\ColumnWriter;
 
 class InsertWriter extends GenericWriter
 {
@@ -22,7 +22,7 @@ class InsertWriter extends GenericWriter
 	public function __construct(BuilderInterface $writer, PlaceholderWriter $placeholder)
 	{
 		$this->writer = $writer;
-		$this->columnWriter = new ColumnWriter($this->writer, $placeholder);
+		//$this->columnWriter = new ColumnWriter($this->writer, $placeholder);
 	}
 
 	/**
@@ -32,6 +32,6 @@ class InsertWriter extends GenericWriter
 	 */
 	protected function writeQueryColumns($columns)
 	{
-		return $this->writeCommaSeparatedValues($columns, $this->columnWriter, 'writeColumnWithoutTable');
+		return $this->writeCommaSeparatedValues($columns, $this->writer, 'writeColumnName');
 	}
 }
