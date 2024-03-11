@@ -74,8 +74,8 @@ class SQLSRV implements DriverInterface {
 
                 \sqlsrv_free_stmt($resource);
 
-                /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $query = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
+                /** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+                $query = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$data]);
                 $query->setNumRows($i);
 
                 unset($data);
@@ -156,8 +156,8 @@ class SQLSRV implements DriverInterface {
                 $data[] = $row;
             }
 
-            /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-            $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
+            /** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+            $resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$data]);
             $resultObj->setNumRows(count($data));
 
             return $resultObj;

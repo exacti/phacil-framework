@@ -39,7 +39,7 @@ class Database implements \Phacil\Framework\Session\Api\HandlerInterface
 	/**
 	 * Database write connection
 	 * 
-	 * @var \Phacil\Framework\Databases\Object\ResultInterface|\Phacil\Framework\Database::Cache|\Phacil\Framework\MagiQL
+	 * @var \Phacil\Framework\Databases\Api\Object\ResultInterface|\Phacil\Framework\Database::Cache|\Phacil\Framework\MagiQL
 	 */
 	protected $connection;
 

@@ -55,8 +55,8 @@ class Postgre implements DriverInterface {
 				}
 				pg_free_result($resource);
 
-				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$query = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+				/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+				$query = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Api\Object\ResultInterface", [$data]);
 				$query->setNumRows($i);
 
 				unset($data);
@@ -111,8 +111,8 @@ class Postgre implements DriverInterface {
 
 		if(!empty($data)) {
 
-			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-			$resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+			/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+			$resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Api\Object\ResultInterface", [$data]);
 			$resultObj->setNumRows(count($data));
 
 			return $resultObj;

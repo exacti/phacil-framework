@@ -107,8 +107,8 @@ class Oracle_PDO implements DriverInterface
 				$this->statement->closeCursor();
 				$this->statement = null;
 
-				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$data]);
+				/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+				$result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$data]);
 				$result->setNumRows($this->rowCount);
 			}
 		} catch (\PDOException $e) {
@@ -179,8 +179,8 @@ class Oracle_PDO implements DriverInterface
 			$stmt->execute();
 
 			if ($stmt->columnCount()) {
-				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
+				/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+				$data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
 				$data->setNumRows($stmt->rowCount());
 				
 				$stmt->closeCursor();

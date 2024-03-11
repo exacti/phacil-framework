@@ -39,7 +39,7 @@ final class nullStatement implements DriverInterface {
 	 }
 
     /** {@inheritdoc} */
-    public function __construct($hostname, $username, $password, $database, $charset = 'utf8mb4') {
+    public function __construct($hostname = null, $username = null, $password = null, $database = null, $charset = 'utf8mb4') {
         //$this->connection = NULL;
     }
 
@@ -53,10 +53,9 @@ final class nullStatement implements DriverInterface {
      * {@inheritdoc}
      */
     public function query($sql) {
-        $result = new \Phacil\Framework\Databases\Object\Result();
-        $result->num_rows = NULL;
-        $result->row = NULL;
-        $result->rows = NULL;
+        /** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+        $result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [[]]);
+        $result->setNumRows(0);
         return $result;
     }
 
@@ -80,6 +79,6 @@ final class nullStatement implements DriverInterface {
      */
     public function execute($sql, array $params = [])
     {
-        return [null];
+        return $this->query($sql);
     }
 }

@@ -99,8 +99,8 @@ class MySQL_PDO implements DatabasesDriver
 			$sth->execute();
             //$sth= $this->dbh->query($sql);
 			$this->affectedRows = $sth->rowCount();
-            /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-            $data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$sth ? $sth->fetchAll(\PDO::FETCH_ASSOC) : array()]);
+            /** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+            $data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$sth ? $sth->fetchAll(\PDO::FETCH_ASSOC) : array()]);
             $data->setNumRows($this->affectedRows);
             return $data;
         }
@@ -185,8 +185,8 @@ class MySQL_PDO implements DatabasesDriver
             $stmt->execute();
 
             if ($stmt->columnCount()) {
-                /** @var \Phacil\Framework\Databases\Object\ResultInterface */
-                $data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
+                /** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+                $data = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$stmt->fetchAll(\PDO::FETCH_ASSOC)]);
                 $data->setNumRows($stmt->rowCount());
                 
                 $stmt->closeCursor();

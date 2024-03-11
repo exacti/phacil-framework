@@ -192,7 +192,7 @@ class Database implements DatabaseApi {
 		}
 		
 		$query = $this->driver->query($sql);
-		if($query instanceof \Phacil\Framework\Databases\Object\ResultInterface){
+		if($query instanceof \Phacil\Framework\Databases\Api\Object\ResultInterface){
 			$cache->set($this->cachePrefix.md5($sql), $query);
 
 			return $query;

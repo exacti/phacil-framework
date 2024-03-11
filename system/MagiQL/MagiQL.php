@@ -41,7 +41,7 @@ class MagiQL extends AbstractBuilder {
 	/**
 	 * 
 	 * @param \Phacil\Framework\MagiQL\Api\QueryInterface $obj 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true 
+	 * @return \Phacil\Framework\Databases\Api\Object\ResultInterface|true 
 	 * @throws \Phacil\Framework\MagiQL\Builder\BuilderException 
 	 * @throws \Phacil\Framework\Exception 
 	 */

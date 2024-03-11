@@ -59,8 +59,8 @@ class Oracle implements Databases {
 		if (!$this->connection) {
             \oci_fetch_all($stid, $res);
 
-			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-            $result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$res]);
+			/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+            $result = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Api\Object\ResultInterface", [$res]);
             $result->setNumRows(\oci_num_rows($stid));
 
             return $result;
@@ -119,8 +119,8 @@ class Oracle implements Databases {
 			$res = [];
 			\oci_fetch_all($stid, $res);
 
-			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-			$resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$res]);
+			/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+			$resultObj = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Api\Object\ResultInterface", [$res]);
 			$resultObj->setNumRows(\oci_num_rows($stid));
 
 			return $resultObj;

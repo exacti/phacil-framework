@@ -276,7 +276,7 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
 
     /**
      * 
-     * @return \Phacil\Framework\Databases\Object\ResultInterface|true|array 
+     * @return \Phacil\Framework\Databases\Api\Object\ResultInterface|true|array 
      * @throws \Phacil\Framework\Exception 
      */
     public function load() {

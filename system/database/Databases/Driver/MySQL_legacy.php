@@ -61,11 +61,11 @@ class MySQL_legacy implements \Phacil\Framework\Databases\Api\DriverInterface {
 				}
 				
 				\mysql_free_result($resource);
-				
+
 				/**
-				 * @var \Phacil\Framework\Databases\Object\ResultInterface
+				 * @var \Phacil\Framework\Databases\Api\Object\ResultInterface
 				 */
-				$query = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Object\ResultInterface", [$data]);
+				$query = \Phacil\Framework\Registry::getInstance()->create("Phacil\Framework\Databases\Api\Object\ResultInterface", [$data]);
 				$query->setNumRows($i);
 				
 				unset($data);

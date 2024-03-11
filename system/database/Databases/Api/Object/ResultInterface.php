@@ -7,7 +7,7 @@
  */
 
 
-namespace Phacil\Framework\Databases\Object;
+namespace Phacil\Framework\Databases\Api\Object;
 
 /**
  * A Database result object with all stored data
@@ -67,7 +67,7 @@ interface ResultInterface extends \Countable, \ArrayAccess, \Traversable  {
 
 	/**
 	 * 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface 
+	 * @return \Phacil\Framework\Databases\Api\Object\ResultInterface 
 	 */
 	public function __toObject();
 

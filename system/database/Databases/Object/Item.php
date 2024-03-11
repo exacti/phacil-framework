@@ -8,8 +8,8 @@
 
 namespace Phacil\Framework\Databases\Object;
 
-use ArrayObject;
-use Phacil\Framework\Databases\Object\ItemInterface as ObjectInterface;
+use ArrayObject as NativeArrayObject;
+use Phacil\Framework\Databases\Api\Object\ItemInterface as ObjectInterface;
 
 
 /**
@@ -18,7 +18,7 @@ use Phacil\Framework\Databases\Object\ItemInterface as ObjectInterface;
  * @method mixed getValues(string field, ...) 
  * @package Phacil\Framework\Databases\Object
  */
-class Item extends \ArrayObject implements ObjectInterface {
+class Item extends NativeArrayObject implements ObjectInterface {
 
 	/**
 	 * 

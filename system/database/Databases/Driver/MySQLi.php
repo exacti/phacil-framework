@@ -80,8 +80,8 @@ class MySQLi implements DriverInterface {
 		$query = $this->connection->query($sql);
 		if (!$this->connection->errno) {
 			if ($query instanceof \mysqli_result) {
-				/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-				$result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$query->fetch_all(MYSQLI_ASSOC)]);
+				/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+				$result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$query->fetch_all(MYSQLI_ASSOC)]);
 				$result->setNumRows($query->num_rows);
 				$query->close();
 				return $result;
@@ -164,8 +164,8 @@ class MySQLi implements DriverInterface {
 		// Processar resultados se for um SELECT
 		if ($result instanceof \mysqli_result) {
 			//$resultObj = new \Phacil\Framework\Databases\Object\Result($result->fetch_all(MYSQLI_ASSOC));
-			/** @var \Phacil\Framework\Databases\Object\ResultInterface */
-			$resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ResultInterface::class, [$result->fetch_all(MYSQLI_ASSOC)]);
+			/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
+			$resultObj = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$result->fetch_all(MYSQLI_ASSOC)]);
 			$resultObj->setNumRows($result->num_rows);
 
 			$result->close();

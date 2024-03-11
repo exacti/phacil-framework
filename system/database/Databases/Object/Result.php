@@ -8,7 +8,7 @@
 
 namespace Phacil\Framework\Databases\Object;
 
-use Phacil\Framework\Databases\Object\ResultInterface;
+use Phacil\Framework\Databases\Api\Object\ResultInterface;
 use Phacil\Framework\Databases\Object\ResultCacheIterator;
 
 /**
@@ -44,7 +44,7 @@ class Result extends \ArrayIterator implements ResultInterface {
 	/**
 	 * 
 	 * @param string $name 
-	 * @return \Phacil\Framework\Databases\Object\ItemInterface[]|\Phacil\Framework\Databases\Object\ItemInterface|null 
+	 * @return \Phacil\Framework\Databases\Api\Object\ItemInterface[]|\Phacil\Framework\Databases\Api\Object\ItemInterface|null 
 	 * @throws \Phacil\Framework\Exception\RuntimeException 
 	 */
 	public function __get($name) {
@@ -151,7 +151,7 @@ class Result extends \ArrayIterator implements ResultInterface {
 	/**
 	 * 
 	 * @param mixed $array 
-	 * @return \Phacil\Framework\Databases\Object\ItemInterface[] 
+	 * @return \Phacil\Framework\Databases\Api\Object\ItemInterface[] 
 	 */
 	protected function loop($array)
 	{
@@ -175,8 +175,8 @@ class Result extends \ArrayIterator implements ResultInterface {
 
 		$data = parent::offsetGet($index);
 
-		/** @var \Phacil\Framework\Databases\Object\ItemInterface */
-		$item = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ItemInterface::class, [$data]);
+		/** @var \Phacil\Framework\Databases\Api\Object\ItemInterface */
+		$item = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ItemInterface::class, [$data]);
 		return $item;
 	}
 
@@ -186,8 +186,8 @@ class Result extends \ArrayIterator implements ResultInterface {
 	#[\ReturnTypeWillChange]
 	public function current()
 	{
-		/** @var \Phacil\Framework\Databases\Object\ItemInterface */
-		$item = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ItemInterface::class, [parent::current()]);
+		/** @var \Phacil\Framework\Databases\Api\Object\ItemInterface */
+		$item = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ItemInterface::class, [parent::current()]);
 		
 		return $item;
 	}

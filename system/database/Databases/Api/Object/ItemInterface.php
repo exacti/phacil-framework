@@ -6,7 +6,7 @@
  * Phacil PHP Framework - https://github.com/exacti/phacil-framework
  */
 
-namespace Phacil\Framework\Databases\Object;
+namespace Phacil\Framework\Databases\Api\Object;
 
 /**
  * @method mixed getValue(string $field) 
@@ -19,8 +19,6 @@ interface ItemInterface extends \Countable, \IteratorAggregate, \Serializable {
 	 * @return $this 
 	 */
 	public function setData(array $data);
-
-	public function __get($key);
 
 	/**
 	 * 

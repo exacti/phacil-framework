@@ -1,9 +1,9 @@
 {
 	"preferences": {
-		"Phacil\\Framework\\Databases\\Object\\ResultInterface": "Phacil\\Framework\\Databases\\Object\\Result",
+		"Phacil\\Framework\\Databases\\Api\\Object\\ResultInterface": "Phacil\\Framework\\Databases\\Object\\Result",
 		"Phacil\\Framework\\Interfaces\\Loader": "Phacil\\Framework\\Loader",
 		"Phacil\\Framework\\Interfaces\\Url": "Phacil\\Framework\\Url",
-		"Phacil\\Framework\\Databases\\Object\\ItemInterface": "Phacil\\Framework\\Databases\\Object\\Item",
+		"Phacil\\Framework\\Databases\\Api\\Object\\ItemInterface": "Phacil\\Framework\\Databases\\Object\\Item",
 		"Phacil\\Framework\\Api\\Database": "Phacil\\Framework\\Database",
 		"Cm\\RedisSession\\Handler\\ConfigInterface": "Phacil\\Framework\\Session\\Redis\\Config",
 		"Cm\\RedisSession\\Handler\\LoggerInterface": "Phacil\\Framework\\Session\\Redis\\Logger",

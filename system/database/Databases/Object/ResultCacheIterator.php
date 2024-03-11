@@ -8,7 +8,7 @@
 
 namespace Phacil\Framework\Databases\Object;
 
-use Phacil\Framework\Databases\Object\ResultInterface;
+use Phacil\Framework\Databases\Api\Object\ResultInterface;
 
 /**
  * Result Databse iterator class with memory cache.
@@ -37,7 +37,7 @@ class ResultCacheIterator extends \CachingIterator implements ResultInterface {
 	private $Iterator;
 
 	/**
-	 * @param array|\Phacil\Framework\Databases\Object\ResultInterface $results 
+	 * @param array|\Phacil\Framework\Databases\Api\Object\ResultInterface $results 
 	 * @param int $flags 
 	 * @return $this 
 	 */
@@ -45,7 +45,7 @@ class ResultCacheIterator extends \CachingIterator implements ResultInterface {
 	{
 		if(is_array($results))
 			$this->Iterator = new \Phacil\Framework\Databases\Object\Result($results);
-		elseif($results instanceof \Phacil\Framework\Databases\Object\ResultInterface)
+		elseif($results instanceof \Phacil\Framework\Databases\Api\Object\ResultInterface)
 			$this->Iterator = $results;
 
 		parent::__construct($this->Iterator, $flags);
@@ -56,7 +56,7 @@ class ResultCacheIterator extends \CachingIterator implements ResultInterface {
 	/**
 	 * 
 	 * @param string $name 
-	 * @return \Phacil\Framework\Databases\Object\ItemInterface[]|\Phacil\Framework\Databases\Object\ItemInterface|null 
+	 * @return \Phacil\Framework\Databases\Api\Object\ItemInterface[]|\Phacil\Framework\Databases\Api\Object\ItemInterface|null 
 	 * @throws \Phacil\Framework\Exception\RuntimeException 
 	 */
 	public function __get($name)
@@ -185,8 +185,8 @@ class ResultCacheIterator extends \CachingIterator implements ResultInterface {
 
 		if(!$data) return null;
 
-		/** @var \Phacil\Framework\Databases\Object\ItemInterface */
-		$item = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Object\ItemInterface::class, [$data]);
+		/** @var \Phacil\Framework\Databases\Api\Object\ItemInterface */
+		$item = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ItemInterface::class, [$data]);
 		
 		return $item;
 	}

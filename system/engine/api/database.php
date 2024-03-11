@@ -39,7 +39,7 @@ interface Database {
 	 * 
 	 * @param string|null $sql 
 	 * @param bool $cacheUse 
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|\Phacil\Framework\Database::Cache|\Phacil\Framework\MagiQL 
+	 * @return \Phacil\Framework\Databases\Api\Object\ResultInterface|\Phacil\Framework\Database::Cache|\Phacil\Framework\MagiQL 
 	 * @throws PhpfastcacheInvalidArgumentException 
 	 */
 	public function query($sql = null, $cacheUse = true);
@@ -92,7 +92,7 @@ interface Database {
 	 *
 	 * @param string $sql SQL query with named placeholders
 	 * @param array $params Associative array of parameters
-	 * @return \Phacil\Framework\Databases\Object\ResultInterface|true
+	 * @return \Phacil\Framework\Databases\Api\Object\ResultInterface|true
 	 * @throws \Phacil\Framework\Exception 
 	 */
 	public function execute($sql, array $params = []);
