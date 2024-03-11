@@ -104,6 +104,8 @@ final class startEngineExacTI {
 
         \Phacil\Framework\Registry::addPreference(\Phacil\Framework\Config::DIR_SYSTEM()."etc/preferences.json");
 
+        \Phacil\Framework\Registry::addPreference(\Phacil\Framework\Config::DIR_APP_MODULAR()."etc/preferences.json");
+
         \Phacil\Framework\Registry::addPreferenceByRoute(self::getRoute());
 
         if($this->composer) {
@@ -373,6 +375,11 @@ final class startEngineExacTI {
                 $this->registry->set($key, $this->registry->getInstance(\Phacil\Framework\Api\Document::class));
                 break;
             
+            case 'log':
+                /** @var \Phacil\Framework\Api\Log */
+                $this->registry->set($key, $this->registry->create(\Phacil\Framework\Api\Log::class, [$this->config->get('config_error_filename')]));
+                break;
+            
             default:
                 $objectToCreate = false;
                 break;
@@ -484,9 +491,9 @@ if(!$engine->config->get('config_error_filename')){
 }
 
 /**
- * @var Log
+ * @var \Phacil\Framework\Api\Log
  */
-$engine->log = new Log($engine->config->get('config_error_filename'));
+//$engine->log = $engine->getRegistry()->create(\Phacil\Framework\Api\Log::class, [$engine->config->get('config_error_filename')]);
 
 // Error Handler
 set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$engine){
@@ -532,12 +539,6 @@ $engine->session = $engine->getRegistry()->create(\Phacil\Framework\Session::cla
  * @var Caches
  */
 $engine->cache = new Caches();
-
-/**
- * Request
- * @var Request
- */
-//$engine->request = new Request();
 
 // Response
 /** @var Response */

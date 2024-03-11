@@ -182,6 +182,7 @@ final class Registry {
 	 * @throws \Phacil\Framework\Exception If there is an error reading the JSON file or if the JSON data is invalid.
 	 */
 	static public function addPreference($jsonFilePath) {
+		$dataArray = [];
 		if (file_exists($jsonFilePath)) {
 			$jsonData = file_get_contents($jsonFilePath);
 

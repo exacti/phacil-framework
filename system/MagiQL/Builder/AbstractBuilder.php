@@ -14,6 +14,10 @@ use Phacil\Framework\Databases\Api\DriverInterface as DatabaseDriverInterface;
 use Phacil\Framework\MagiQL\Syntax\Column;
 use Phacil\Framework\MagiQL\Syntax\Table;
 
+/**
+ * @method \Phacil\Framework\Api\Database getDb() 
+ * @package Phacil\Framework\MagiQL\Builder
+ */
 abstract class AbstractBuilder extends MagiQLBuilder {
 
 	private $writerAlternative;

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Copyright © 2024 ExacTI Technology Solutions. All rights reserved.
  * GPLv3 General License.

@@ -14,7 +14,7 @@ namespace Phacil\Framework;
  * @param string $filename (optional) The name of log file. The path is automatic defined in the DIR_LOGS constant in config file. Isn't not possible to change the path. The default name is error.log.
  * @package Phacil\Framework 
  */
-final class Log {
+class Log implements \Phacil\Framework\Api\Log {
 	
 	/**
 	 * Storage the object of log file
@@ -42,15 +42,21 @@ final class Log {
 	 * @return void 
 	 */
 	public function __construct($filename = "error.log") {
+		if(!defined(self::CONFIGURATION_LOGS_CONST)){
+			if(!defined('DIR_APPLICATION'))
+				trigger_error('The '.self::CONFIGURATION_LOGS_CONST.' folder configuration is required!', E_USER_ERROR);
+
+			define(self::CONFIGURATION_LOGS_CONST, DIR_APPLICATION . 'logs/');
+		}
 		$this->filename = $filename;
-		$this->filepath = DIR_LOGS . $filename;
-		if(!is_dir(DIR_LOGS)){
+		$this->filepath = constant(self::CONFIGURATION_LOGS_CONST) . $filename;
+		if(!is_dir(constant(self::CONFIGURATION_LOGS_CONST))){
 			$old = umask(0);
-			mkdir(DIR_LOGS, 0764, true);
+			mkdir(constant(self::CONFIGURATION_LOGS_CONST), self::DIR_LOGS_PERMISSIONS, true);
 			umask($old);
 		}
-		if(!is_writable(DIR_LOGS)){
-			trigger_error('The '.DIR_LOGS.' folder must to be writeable!', E_USER_ERROR);
+		if(!is_writable(constant(self::CONFIGURATION_LOGS_CONST))){
+			trigger_error('The '. constant(self::CONFIGURATION_LOGS_CONST).' folder must to be writeable!', E_USER_ERROR);
 		}
 		$this->fileobj = fopen($this->filepath, 'a+');
 		return;

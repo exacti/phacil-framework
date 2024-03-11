@@ -103,6 +103,10 @@ class Database implements DatabaseApi {
 		if(!$sql) {
 			return \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\MagiQL::class, [$this]);
 		}
+
+		if (Config::DB_LOG_ALL()) {
+			$this->logQuery($sql, ['cacheUse' => $cacheUse]);
+		}
 		
 		if(Config::SQL_CACHE() && $cacheUse == true) {
 			return $this->Cache($sql);
@@ -222,6 +226,9 @@ class Database implements DatabaseApi {
 	 */
 	public function execute($sql, array $params = [])
 	{
+		if(Config::DB_LOG_ALL()) {
+			$this->logQuery($sql, $params);
+		}
 		return $this->driver->execute($sql, $params);
 	}
 
@@ -237,5 +244,34 @@ class Database implements DatabaseApi {
 	 */
 	public function getDBTypeId() {
 		return $this->driver->getDBTypeId();
+	}
+
+	/**
+	 * @param string $sql 
+	 * @param array $params 
+	 * @return void 
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	protected function logQuery($sql, $params = array()) {
+		if (Config::DB_LOG_ALL()) {
+			/** @var \Phacil\Framework\Databases\Api\LogInterface */
+			$logger = \Phacil\Framework\Registry::getInstance(\Phacil\Framework\Databases\Api\LogInterface::class, [\Phacil\Framework\Databases\Api\LogInterface::LOG_FILE_NAME]);
+			
+			$debugging = (\Phacil\Framework\Config::DEBUG()) ?: false;
+			$errorFormat = \Phacil\Framework\Config::DEBUG_FORMAT() ?: 'txt';
+
+			$debugStamp = [
+				'sql' => $sql,
+				'parameters' => $params,
+				//'file' => $this->getFile(),
+				'trace' => ($debugging) ? \Phacil\Framework\Debug::backtrace(true, false) : null
+			];
+
+			$logger->write(($errorFormat == 'json') ? json_encode($debugStamp) : implode(PHP_EOL, array_map(
+				[\Phacil\Framework\Exception::class, 'convertArray'],
+				$debugStamp,
+				array_keys($debugStamp)
+			)));
+		}
 	}
 }
