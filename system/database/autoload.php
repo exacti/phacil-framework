@@ -267,7 +267,7 @@ class Database implements DatabaseApi {
 				'trace' => ($debugging) ? \Phacil\Framework\Debug::backtrace(true, false) : null
 			];
 
-			$logger->write(($errorFormat == 'json') ? json_encode($debugStamp) : implode(PHP_EOL, array_map(
+			$logger->info(($errorFormat == 'json') ? json_encode($debugStamp) : implode(PHP_EOL, array_map(
 				[\Phacil\Framework\Exception::class, 'convertArray'],
 				$debugStamp,
 				array_keys($debugStamp)

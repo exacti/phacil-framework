@@ -14,6 +14,7 @@ namespace Phacil\Framework;
  * @since 1.0.0
  * @package Phacil\Framework
  * @property \Phacil\Framework\Api\Database $db 
+ * @property \Phacil\Framework\Api\Log $log 
  */
 final class startEngineExacTI {
 
@@ -497,26 +498,36 @@ if(!$engine->config->get('config_error_filename')){
 
 // Error Handler
 set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$engine){
-
+    $showPrepend = false;
     switch ($errno) {
         case E_NOTICE:
         case E_USER_NOTICE:
             $error = 'Notice';
+            $logFunction = 'notice';
             break;
         case E_WARNING:
         case E_USER_WARNING:
             $error = 'Warning';
+            $logFunction = 'warning';
             break;
         case E_ERROR:
+            $error = 'Fatal Error';
+            $logFunction = 'critical';
+            break;
         case E_USER_ERROR:
             $error = 'Fatal Error';
+            $logFunction = 'error';
             break;
         case E_DEPRECATED:
         case E_USER_DEPRECATED:
             $error = 'Deprecated';
+            $logFunction = 'warning';
+            $showPrepend = true;
             break;
         default:
             $error = $engine->constantName($errno, 'Core');
+            $logFunction = 'write';
+            $showPrepend = true;
             break;
     }
 
@@ -525,7 +536,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$engine){
     }
 
     if ($engine->config->get('config_error_log')) {
-        $engine->log->write( $error . ':  ' . $errstr . ' in ' . $errfile . ' on line ' . $errline.' | Phacil '.$engine->version(). ' on PHP '.$engine->phpversion);
+        $engine->log->$logFunction(($showPrepend ?  $error . ':  ' : '') . $errstr . ' in ' . $errfile . ' on line ' . $errline.' | Phacil '.$engine->version(). ' on PHP '.$engine->phpversion);
     }
 
     return true;
