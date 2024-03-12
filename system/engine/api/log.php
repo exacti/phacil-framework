@@ -70,6 +70,24 @@ interface Log
 	public function getFileName();
 
 	/**
+	 * @param string $logformat 
+	 * @return $this 
+	 */
+	public function setLogformat($logformat);
+
+	/**
+	 * @param bool $remove 
+	 * @return $this 
+	 */
+	public function setRemoveUsedContextFields($remove = false);
+
+	/**
+	 * @param bool $allow 
+	 * @return $this 
+	 */
+	public function setAllowInlineLineBreaks($allow = true);
+
+	/**
 	 * Return the log file path
 	 * 
 	 * @since 2.0.0
@@ -103,9 +121,9 @@ interface Log
 	 * System is unusable.
 	 *
 	 * @param string  $message
-	 * @param mixed[] $context
+	 * @param array $context
 	 *
-	 * @return void
+	 * @return int|false
 	 */
 	public function emergency($message, array $context = array());
 
@@ -116,9 +134,9 @@ interface Log
 	 * trigger the SMS alerts and wake you up.
 	 *
 	 * @param string  $message
-	 * @param mixed[] $context
+	 * @param array $context
 	 *
-	 * @return void
+	 * @return int|false
 	 */
 	public function alert($message, array $context = array());
 
@@ -128,9 +146,9 @@ interface Log
 	 * Example: Application component unavailable, unexpected exception.
 	 *
 	 * @param string  $message
-	 * @param mixed[] $context
+	 * @param array $context
 	 *
-	 * @return void
+	 * @return int|false
 	 */
 	public function critical($message, array $context = array());
 
@@ -139,9 +157,9 @@ interface Log
 	 * be logged and monitored.
 	 *
 	 * @param string  $message
-	 * @param mixed[] $context
+	 * @param array $context
 	 *
-	 * @return void
+	 * @return int|false
 	 */
 	public function error($message, array $context = array());
 
@@ -152,9 +170,9 @@ interface Log
 	 * that are not necessarily wrong.
 	 *
 	 * @param string  $message
-	 * @param mixed[] $context
+	 * @param array $context
 	 *
-	 * @return void
+	 * @return int|false
 	 */
 	public function warning($message, array $context = array());
 
@@ -162,9 +180,9 @@ interface Log
 	 * Normal but significant events.
 	 *
 	 * @param string  $message
-	 * @param mixed[] $context
+	 * @param array $context
 	 *
-	 * @return void
+	 * @return int|false
 	 */
 	public function notice($message, array $context = array());
 
@@ -174,9 +192,9 @@ interface Log
 	 * Example: User logs in, SQL logs.
 	 *
 	 * @param string  $message
-	 * @param mixed[] $context
+	 * @param array $context
 	 *
-	 * @return void
+	 * @return int|false
 	 */
 	public function info($message, array $context = array());
 
@@ -184,22 +202,22 @@ interface Log
 	 * Detailed debug information.
 	 *
 	 * @param string  $message
-	 * @param mixed[] $context
+	 * @param array $context
 	 *
-	 * @return void
+	 * @return int|false
 	 */
 	public function debug($message, array $context = array());
 
 	/**
 	 * Logs with an arbitrary level.
 	 *
-	 * @param string  $level
 	 * @param string $message
+	 * @param string $level (Optional)
 	 * @param array  $context (Optional)
 	 *
 	 * @return int|false 
 	 *
 	 * @throws \Phacil\Framework\Exception\InvalidArgumentException
 	 */
-	public function log($level, $message, array $context = array());
+	public function log($message, $level = self::INFO, array $context = array());
 }

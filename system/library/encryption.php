@@ -7,4 +7,4 @@
  */
 
 
-class_alias('\Phacil\Framework\Encryption', 'Encryption');
+class_alias(\Phacil\Framework\Encryption::class, 'Encryption');

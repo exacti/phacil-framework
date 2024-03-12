@@ -38,7 +38,6 @@ class Log implements \Phacil\Framework\Api\Log {
 	private $filepath;
 
 	/**
-	 * 
 	 * @var \Phacil\Framework\Api\Log[]
 	 */
 	private $extraLoggers = [];
@@ -46,6 +45,9 @@ class Log implements \Phacil\Framework\Api\Log {
 	/** @var bool */
 	protected $removeUsedContextFields = false;
 
+	/**
+	 * @var bool
+	 */
 	protected $allowInlineLineBreaks = true;
 
 	/**
@@ -55,8 +57,7 @@ class Log implements \Phacil\Framework\Api\Log {
 	protected $format = "[%datetime%] %channel%.%level_name%: %message% %context% %extra% | %route%";
 
 	/**
-	 * @param string $filename (optional) The name of log file. The path is automatic defined in the DIR_LOGS constant in config file. Isn't not possible to change the path. The default name is error.log.
-	 * @return void 
+	 * {@inheritdoc}
 	 */
 	public function __construct($filename = \Phacil\Framework\Api\Log::DEFAULT_FILE_NAME) {
 		if(!defined(self::CONFIGURATION_LOGS_CONST)){
@@ -95,11 +96,7 @@ class Log implements \Phacil\Framework\Api\Log {
 	}
 
 	/**
-	 * Write the error message in the log file
-	 * 
-	 * @param string $message 
-	 * @return int|false
-	 * @since 1.0.0
+	 * {@inheritdoc}
 	 */
 	public function write($message) {
 		return $this->writeToFile('[' . $this->getDateTime() . '] - ' . print_r($message, true)." | ".$_SERVER['REQUEST_URI'] . " | " . \Phacil\Framework\startEngineExacTI::getRoute());
@@ -144,10 +141,7 @@ class Log implements \Phacil\Framework\Api\Log {
 	}
 
 	/**
-	 * Return the log file name
-	 * 
-	 * @since 2.0.0
-	 * @return string 
+	 * {@inheritdoc}
 	 */
 	public function getFileName()
 	{
@@ -155,10 +149,7 @@ class Log implements \Phacil\Framework\Api\Log {
 	}
 
 	/**
-	 * Return the log file path
-	 * 
-	 * @since 2.0.0
-	 * @return string 
+	 * {@inheritdoc}
 	 */
 	public function getFilePath()
 	{
@@ -166,13 +157,31 @@ class Log implements \Phacil\Framework\Api\Log {
 	}
 
 	/**
-	 * Return last lines of log archive
-	 * 
-	 * @param string|null $filepath (optional) Path of file. Default is the log file.
-	 * @param int $lines (optional) Lines to be readed. Default value is 10.
-	 * @param bool $adaptive (optional) Default value is true.
-	 * @return false|string 
-	 * @since 2.0.0
+	 * @inheritdoc
+	 */
+	public function setLogformat($logformat) {
+		$this->format = $logformat;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setRemoveUsedContextFields($remove = false) {
+		$this->removeUsedContextFields = $remove;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setAllowInlineLineBreaks($allow = true){
+		$this->allowInlineLineBreaks = $allow;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
 	 */
 	public function tail($filepath = null, $lines = 10, $adaptive = true)
 	{
@@ -231,13 +240,7 @@ class Log implements \Phacil\Framework\Api\Log {
 	}
 
 	/**
-	 * Return first lines of log archive
-	 * 
-	 * @param string|null $filepath (optional) Path of file. Default is the log file.
-	 * @param int $lines (optional) Lines to be readed. Default value is 10.
-	 * @param bool $adaptive (optional) Default value is true.
-	 * @return false|string 
-	 * @since 2.0.0
+	 * @inheritdoc
 	 */
 	public function head($filepath = null, $lines = 10, $adaptive = true)
 	{
@@ -266,124 +269,73 @@ class Log implements \Phacil\Framework\Api\Log {
 	}
 
 	/**
-	 * System is unusable.
-	 *
-	 * @param string $message
-	 * @param array  $context
-	 *
-	 * @return void
+	 * {@inheritdoc}
 	 */
 	public function emergency($message, array $context = array())
 	{
-		$this->log(self::EMERGENCY, $message, $context);
-	}
-
-	/**
-	 * Action must be taken immediately.
-	 *
-	 * Example: Entire website down, database unavailable, etc. This should
-	 * trigger the SMS alerts and wake you up.
-	 *
-	 * @param string $message
-	 * @param array  $context
-	 *
-	 * @return void
-	 */
-	public function alert($message, array $context = array())
-	{
-		$this->log(self::ALERT, $message, $context);
-	}
-
-	/**
-	 * Critical conditions.
-	 *
-	 * Example: Application component unavailable, unexpected exception.
-	 *
-	 * @param string $message
-	 * @param array  $context
-	 *
-	 * @return void
-	 */
-	public function critical($message, array $context = array())
-	{
-		$this->log(self::CRITICAL, $message, $context);
-	}
-
-	/**
-	 * Runtime errors that do not require immediate action but should typically
-	 * be logged and monitored.
-	 *
-	 * @param string $message
-	 * @param array  $context
-	 *
-	 * @return void
-	 */
-	public function error($message, array $context = array())
-	{
-		$this->log(self::ERROR, $message, $context);
-	}
-
-	/**
-	 * Exceptional occurrences that are not errors.
-	 *
-	 * Example: Use of deprecated APIs, poor use of an API, undesirable things
-	 * that are not necessarily wrong.
-	 *
-	 * @param string $message
-	 * @param array  $context
-	 *
-	 * @return void
-	 */
-	public function warning($message, array $context = array())
-	{
-		$this->log(self::WARNING, $message, $context);
-	}
-
-	/**
-	 * Normal but significant events.
-	 *
-	 * @param string $message
-	 * @param array  $context
-	 *
-	 * @return void
-	 */
-	public function notice($message, array $context = array())
-	{
-		$this->log(self::NOTICE, $message, $context);
-	}
-
-	/**
-	 * Interesting events.
-	 *
-	 * Example: User logs in, SQL logs.
-	 *
-	 * @param string $message
-	 * @param array  $context
-	 *
-	 * @return void
-	 */
-	public function info($message, array $context = array())
-	{
-		$this->log(self::INFO, $message, $context);
-	}
-
-	/**
-	 * Detailed debug information.
-	 *
-	 * @param string $message
-	 * @param array  $context
-	 *
-	 * @return void
-	 */
-	public function debug($message, array $context = array())
-	{
-		$this->log(self::DEBUG, $message, $context);
+		return $this->log($message, self::EMERGENCY, $context);
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function log($level = self::INFO, $message = null, array $context = array()) {
+	public function alert($message, array $context = array())
+	{
+		return $this->log($message, self::ALERT, $context);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function critical($message, array $context = array())
+	{
+		return $this->log($message, self::CRITICAL, $context);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function error($message, array $context = array())
+	{
+		return $this->log($message, self::ERROR, $context);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function warning($message, array $context = array())
+	{
+		return $this->log($message, self::WARNING, $context);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function notice($message, array $context = array())
+	{
+		return $this->log($message, self::NOTICE, $context);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function info($message, array $context = array())
+	{
+		return $this->log($message, self::INFO, $context);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function debug($message, array $context = array())
+	{
+		return $this->log($message, self::DEBUG, $context);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function log($message = null, $level = self::INFO, array $context = array()) {
 		$record = [
 			'message' => $message,
 			'context' => $context,
@@ -508,6 +460,12 @@ class Log implements \Phacil\Framework\Api\Log {
 		return $this->replaceNewlines($this->convertToString($value));
 	}
 
+	/**
+	 * @param mixed $format 
+	 * @param mixed $record 
+	 * @return string 
+	 * @throws \RuntimeException 
+	 */
 	protected function interpolate($format, $record)
 	{
 		$replace = [];

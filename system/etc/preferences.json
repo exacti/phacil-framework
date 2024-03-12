@@ -10,6 +10,8 @@
 		"Phacil\\Framework\\Mail\\Api\\MailInterface": "Phacil\\Framework\\Mail",
 		"Phacil\\Framework\\Api\\Document": "Phacil\\Framework\\Document",
 		"Phacil\\Framework\\Api\\Log": "Phacil\\Framework\\Log",
-		"Phacil\\Framework\\Databases\\Api\\LogInterface": "Phacil\\Framework\\Log"
+		"Phacil\\Framework\\Databases\\Api\\LogInterface": "Phacil\\Framework\\Log",
+		"Phacil\\Framework\\Interfaces\\Serializer": "Phacil\\Framework\\Json",
+		"Phacil\\Framework\\MagiQL\\Api\\Factory": "Phacil\\Framework\\MagiQL\\Factory"
 	}
 }
