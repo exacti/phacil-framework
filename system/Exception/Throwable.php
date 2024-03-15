@@ -34,5 +34,8 @@ if (interface_exists('Throwable')) {
  */
 interface Throwable extends ThrowableBase {
 
+	const DEFAULT_EXCEPTION_FILE = 'exception.log';
+
+	const DEFAULT_WEBEXCEPTION_FILE = 'web_exception.log';
 }
 

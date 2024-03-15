@@ -15,6 +15,7 @@ namespace Phacil\Framework;
  * @package Phacil\Framework
  * @property \Phacil\Framework\Api\Database $db 
  * @property \Phacil\Framework\Api\Log $log 
+ * @property \Phacil\Framework\Config $config 
  */
 final class startEngineExacTI {
 
@@ -190,7 +191,7 @@ final class startEngineExacTI {
                     throw new \Exception("Can't load minimun config constants, please check your config file!");
                 }
 
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 exit($e->getMessage());
             }
 
@@ -243,7 +244,7 @@ final class startEngineExacTI {
         try {
             $tzc = @date_default_timezone_set($utc);
             if (!$tzc){
-                throw new \ErrorException($utc. " not found in PHP Compiler.");
+                throw new \Phacil\Framework\Exception\ErrorException($utc. " not found in PHP Compiler.");
             }
         } catch (\ErrorException $e) {
             $trace = ($e->getTrace());
@@ -381,6 +382,11 @@ final class startEngineExacTI {
                 $this->registry->set($key, $this->registry->create(\Phacil\Framework\Api\Log::class, [$this->config->get('config_error_filename')]));
                 break;
             
+            case 'cache':
+                /** @var \Phacil\Framework\Caches */
+                $this->registry->set($key, $this->registry->getInstance(\Phacil\Framework\Caches::class));
+                break;
+            
             default:
                 $objectToCreate = false;
                 break;
@@ -394,6 +400,59 @@ final class startEngineExacTI {
         return self::$instance->registry;
     }
 
+    /** @return null|array|string  */
+    public function isDeveloperMode() {
+        //return $this->config->get('config_developer_mode');
+        return \Phacil\Framework\Config::DEBUG() && $this->config->get('config_error_display');
+    }
+
+    /**
+     * @param \Exception $e 
+     * @return never 
+     * @throws \ReflectionException 
+     * @throws \Exception 
+     * @throws \Phacil\Framework\Exception 
+     */
+    public function terminate(\Exception $e)
+    {
+        /** @var Response $response */
+        $response = $this->registry->getInstance(\Phacil\Framework\Response::class);
+        $response->clearHeaders();
+        $response->code(500);
+        $response->addHeader('Content-Type', 'text/plain');
+        $response->setOutput('');
+        if ($this->isDeveloperMode()) {
+            $response->addHeader('Content-Type', 'text/html');
+            //$response->setBody($e);
+            $response->setParcialOutput(sprintf("<strong>%s</strong>", get_class($e)).PHP_EOL);
+            $response->setParcialOutput(sprintf("<pre>%s</pre>", $e->getMessage()) . PHP_EOL);
+            //print_r(\Phacil\Framework\Debug::backtrace(true));
+            $response->setParcialOutput(\Phacil\Framework\Debug::trace($e->getTrace(), true, true) . PHP_EOL);
+
+            if($e->getPrevious()) {
+                $p = $e->getPrevious();
+                $response->setParcialOutput(sprintf("<strong>%s</strong>", get_class($p)) . PHP_EOL);
+                $response->setParcialOutput(sprintf("<pre>%s</pre>", $p->getMessage()) . PHP_EOL);
+                //print_r(\Phacil\Framework\Debug::backtrace(true));
+                $response->setParcialOutput(\Phacil\Framework\Debug::trace($p->getTrace(), true, true) . PHP_EOL);
+            }
+            //print_r($e->getTraceAsString());
+        } else {
+            $message = "An error has happened during application run. See exception log for details.\n";
+            try {
+                if (!$this->registry) {
+                    throw new \DomainException();
+                }
+                $this->log->critical($e);
+            } catch (\Exception $e) {
+                $message .= "Could not write error message to log. Please use developer mode to see the message.\n";
+            }
+            $response->setOutput($message);
+        }
+        $response->output();
+        exit(1);
+    }
+
 }
 
 /** 
@@ -401,186 +460,192 @@ final class startEngineExacTI {
  * */
 $engine = startEngineExacTI::getInstance();
 
-// Registry
-/** @var \Phacil\Framework\startEngineExacTI $engine */
-$engine->engine = $engine;
+try {
 
-// Loader
-/**
- * @var \Phacil\Framework\Interfaces\Loader
- */
-$engine->load = $engine->getRegistry()->create(\Phacil\Framework\Interfaces\Loader::class, [$engine->registry]);
+    // Registry
+    /** @var \Phacil\Framework\startEngineExacTI $engine */
+    $engine->engine = $engine;
 
-// Config
-/** @var Config */
-$engine->config = new Config();
+    // Loader
+    /**
+     * @var \Phacil\Framework\Interfaces\Loader
+     */
+    $engine->load = $engine->getRegistry()->create(\Phacil\Framework\Interfaces\Loader::class, [$engine->registry]);
 
-// Exception Handler
-set_exception_handler(function ($e) use (&$engine) {
-    if ($engine->config->get('config_error_display')) {
-        echo '<p><strong>' . get_class($e) . '</strong>: ' . $e->getMessage() . ' in <strong><em>' . str_replace(\Phacil\Framework\Config::DIR_APPLICATION(), '', $e->getFile()) . '</em></strong> on line <strong>' . $e->getLine() . '</strong></p>';
-    }
+    // Config
+    /** @var Config */
+    $engine->config = $engine->getRegistry()->create(\Phacil\Framework\Config::class);
 
-    if (get_class($e) != 'Phacil\Framework\Exception') {
-        $exception = new \Phacil\Framework\Exception();
-        $exception->setObject($e);
-    }
+    // Exception Handler
+    set_exception_handler(function ($e) use (&$engine) {
+        if ($engine->config->get('config_error_display')) {
+            echo '<p><strong>' . get_class($e) . '</strong>: ' . $e->getMessage() . ' in <strong><em>' . str_replace(\Phacil\Framework\Config::DIR_APPLICATION(), '', $e->getFile()) . '</em></strong> on line <strong>' . $e->getLine() . '</strong></p>';
+        }
+
+        if (get_class($e) != 'Phacil\Framework\Exception') {
+            $exception = new \Phacil\Framework\Exception();
+            $exception->setObject($e);
+        }
 
 
-    if ($engine->config->get('config_error_log')) {
-        $engine->log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
-    }
-});
+        if ($engine->config->get('config_error_log')) {
+            $engine->log->write(get_class($e) . ':  ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+        }
+    });
 
-if(\Phacil\Framework\Config::DB_DRIVER())
-    $engine->db = $engine->getRegistry()->create(\Phacil\Framework\Api\Database::class, [
-        \Phacil\Framework\Config::DB_DRIVER(), 
-        \Phacil\Framework\Config::DB_HOSTNAME(), 
-        \Phacil\Framework\Config::DB_USERNAME(), 
-        \Phacil\Framework\Config::DB_PASSWORD(), 
-        \Phacil\Framework\Config::DB_DATABASE()
-    ]);
+    if (\Phacil\Framework\Config::DB_DRIVER())
+        $engine->db = $engine->getRegistry()->create(\Phacil\Framework\Api\Database::class, [
+            \Phacil\Framework\Config::DB_DRIVER(),
+            \Phacil\Framework\Config::DB_HOSTNAME(),
+            \Phacil\Framework\Config::DB_USERNAME(),
+            \Phacil\Framework\Config::DB_PASSWORD(),
+            \Phacil\Framework\Config::DB_DATABASE()
+        ]);
 
-// Settings
-if(!empty($configs)){
-    foreach ($configs as $key => $confValue) {
-        $engine->config->set($key, $confValue);
-    }
-}
-
-if(\Phacil\Framework\Config::USE_DB_CONFIG() === true) {
-
-    $query = (\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) ? $engine->db->query(\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) : $engine->db->query()->select()->from('settings')->orderBy('setting_id', \Phacil\Framework\MagiQL\Api\Syntax\OrderBy::ASC)->load();
-
-    foreach ($query as $setting) {
-        if (!$setting['serialized']) {
-            $engine->config->set($setting['key'], $setting['value']);
-        } else {
-            $engine->config->set($setting['key'], unserialize($setting['value']));
+    // Settings
+    if (!empty($configs)) {
+        foreach ($configs as $key => $confValue) {
+            $engine->config->set($key, $confValue);
         }
     }
-}
 
+    if (\Phacil\Framework\Config::USE_DB_CONFIG() === true) {
 
-$engine->config->set('config_url', \Phacil\Framework\Config::HTTP_URL());
-$engine->config->set('config_ssl', \Phacil\Framework\Config::HTTPS_URL());
+        $query = (\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) ? $engine->db->query(\Phacil\Framework\Config::CUSTOM_DB_CONFIG()) : $engine->db->query()->select()->from('settings')->orderBy('setting_id', \Phacil\Framework\MagiQL\Api\Syntax\OrderBy::ASC)->load();
 
-//timezone
-if($engine->config->get('date_timezone')){
-    $engine->setTimezone($engine->config->get('date_timezone'));
-}
-
-// Site Title
-if($engine->config->get('PatternSiteTitle') == true) {
-    define('PATTERSITETITLE', $engine->config->get('PatternSiteTitle'));
-} else {
-    define('PATTERSITETITLE', false);
-}
-
-// Url
-/**
- * @var \Phacil\Framework\Interfaces\Url
- */
-$engine->url = $engine->getRegistry()->create(\Phacil\Framework\Interfaces\Url::class, [
-    $engine->config->get('config_url'), 
-    $engine->config->get('config_use_ssl') ? $engine->config->get('config_ssl') : $engine->config->get('config_url')
-]);
-
-// Log
-if(!$engine->config->get('config_error_filename')){
-    $engine->config->set('config_error_filename', 'error.log');
-}
-
-/**
- * @var \Phacil\Framework\Api\Log
- */
-//$engine->log = $engine->getRegistry()->create(\Phacil\Framework\Api\Log::class, [$engine->config->get('config_error_filename')]);
-
-// Error Handler
-set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$engine){
-    $showPrepend = false;
-    switch ($errno) {
-        case E_NOTICE:
-        case E_USER_NOTICE:
-            $error = 'Notice';
-            $logFunction = 'notice';
-            break;
-        case E_WARNING:
-        case E_USER_WARNING:
-            $error = 'Warning';
-            $logFunction = 'warning';
-            break;
-        case E_ERROR:
-            $error = 'Fatal Error';
-            $logFunction = 'critical';
-            break;
-        case E_USER_ERROR:
-            $error = 'Fatal Error';
-            $logFunction = 'error';
-            break;
-        case E_DEPRECATED:
-        case E_USER_DEPRECATED:
-            $error = 'Deprecated';
-            $logFunction = 'warning';
-            $showPrepend = true;
-            break;
-        default:
-            $error = $engine->constantName($errno, 'Core');
-            $logFunction = 'write';
-            $showPrepend = true;
-            break;
+        foreach ($query as $setting) {
+            if (!$setting['serialized']) {
+                $engine->config->set($setting['key'], $setting['value']);
+            } else {
+                $engine->config->set($setting['key'], unserialize($setting['value']));
+            }
+        }
     }
 
-    if ($engine->config->get('config_error_display')) {
-        echo '<p><strong>' . $error . '</strong>: ' . $errstr . ' in <em>' . str_replace(\Phacil\Framework\Config::DIR_APPLICATION(), "", $errfile) . '</em> on line <strong>' . $errline . '</strong></p>';
+
+    $engine->config->set('config_url', \Phacil\Framework\Config::HTTP_URL());
+    $engine->config->set('config_ssl', \Phacil\Framework\Config::HTTPS_URL());
+
+    //timezone
+    if ($engine->config->get('date_timezone')) {
+        $engine->setTimezone($engine->config->get('date_timezone'));
     }
 
-    if ($engine->config->get('config_error_log')) {
-        $engine->log->$logFunction(($showPrepend ?  $error . ':  ' : '') . $errstr . ' in ' . $errfile . ' on line ' . $errline.' | Phacil '.$engine->version(). ' on PHP '.$engine->phpversion);
+    // Site Title
+    if ($engine->config->get('PatternSiteTitle') == true) {
+        define('PATTERSITETITLE', $engine->config->get('PatternSiteTitle'));
+    } else {
+        define('PATTERSITETITLE', false);
     }
 
-    return true;
-});
+    // Url
+    /**
+     * @var \Phacil\Framework\Interfaces\Url
+     */
+    $engine->url = $engine->getRegistry()->create(\Phacil\Framework\Interfaces\Url::class, [
+        $engine->config->get('config_url'),
+        $engine->config->get('config_use_ssl') ? $engine->config->get('config_ssl') : $engine->config->get('config_url')
+    ]);
 
-// Session
-$engine->session = $engine->getRegistry()->create(\Phacil\Framework\Session::class);
-
-/**
- * Caches
- * @var Caches
- */
-$engine->cache = new Caches();
-
-// Response
-/** @var Response */
-$engine->response = $engine->registry->getInstance(\Phacil\Framework\Response::class);
-$engine->response->addHeader('Content-Type: text/html; charset=utf-8');
-
-if($engine->config->get('config_compression'))
-    $engine->response->setCompression($engine->config->get('config_compression'));
-
-// Custom registrations
-$engine->extraRegistrations();
-
-// Front Controller
-$frontController = new Front($engine->registry);
-
-// SEO URL's
-$frontController->addPreAction(new Action((string) 'url/seo_url', [], \Phacil\Framework\Interfaces\Action::SYSTEM));
-
-//extraPreActions
-if($engine->controllerPreActions()){
-    foreach ($engine->controllerPreActions() as $action){
-        $frontController->addPreAction(new Action($action));
+    // Log
+    if (!$engine->config->get('config_error_filename')) {
+        $engine->config->set('config_error_filename', 'error.log');
     }
+
+    /**
+     * @var \Phacil\Framework\Api\Log
+     */
+    //$engine->log = $engine->getRegistry()->create(\Phacil\Framework\Api\Log::class, [$engine->config->get('config_error_filename')]);
+
+    // Error Handler
+    set_error_handler(function ($errno, $errstr, $errfile, $errline) use (&$engine) {
+        $showPrepend = false;
+        switch ($errno) {
+            case E_NOTICE:
+            case E_USER_NOTICE:
+                $error = 'Notice';
+                $logFunction = 'notice';
+                break;
+            case E_WARNING:
+            case E_USER_WARNING:
+                $error = 'Warning';
+                $logFunction = 'warning';
+                break;
+            case E_ERROR:
+                $error = 'Fatal Error';
+                $logFunction = 'critical';
+                break;
+            case E_USER_ERROR:
+                $error = 'Fatal Error';
+                $logFunction = 'error';
+                break;
+            case E_DEPRECATED:
+            case E_USER_DEPRECATED:
+                $error = 'Deprecated';
+                $logFunction = 'warning';
+                $showPrepend = true;
+                break;
+            default:
+                $error = $engine->constantName($errno, 'Core');
+                $logFunction = 'write';
+                $showPrepend = true;
+                break;
+        }
+
+        if ($engine->config->get('config_error_display')) {
+            echo '<p><strong>' . $error . '</strong>: ' . $errstr . ' in <em>' . str_replace(\Phacil\Framework\Config::DIR_APPLICATION(), "", $errfile) . '</em> on line <strong>' . $errline . '</strong></p>';
+        }
+
+        if ($engine->config->get('config_error_log')) {
+            $engine->log->$logFunction(($showPrepend ?  $error . ':  ' : '') . $errstr . ' in ' . $errfile . ' on line ' . $errline . ' | Phacil ' . $engine->version() . ' on PHP ' . $engine->phpversion);
+        }
+
+        return true;
+    });
+
+    // Session
+    $engine->session = $engine->getRegistry()->create(\Phacil\Framework\Session::class);
+
+    /**
+     * Caches
+     * @var Caches
+     */
+    //$engine->cache = new Caches();
+
+    // Response
+    /** @var Response */
+    $engine->response = $engine->registry->getInstance(\Phacil\Framework\Response::class);
+    $engine->response->addHeader('Content-Type', 'text/html; charset=utf-8');
+
+    if ($engine->config->get('config_compression'))
+        $engine->response->setCompression($engine->config->get('config_compression'));
+
+    // Custom registrations
+    $engine->extraRegistrations();
+
+    // Front Controller
+    $frontController = new Front($engine->registry);
+
+    // SEO URL's
+    $frontController->addPreAction(new Action((string) 'url/seo_url', [], \Phacil\Framework\Interfaces\Action::SYSTEM));
+
+    //extraPreActions
+    if ($engine->controllerPreActions()) {
+        foreach ($engine->controllerPreActions() as $action) {
+            $frontController->addPreAction(new Action($action));
+        }
+    }
+
+    // Router
+    $action = new Action(startEngineExacTI::getRoute());
+
+    // Dispatch
+    $not_found = \Phacil\Framework\Config::NOT_FOUND() ?: \Phacil\Framework\Config::NOT_FOUND('error/not_found');
+    $frontController->dispatch($action, ($not_found));
+
+    // Output
+    $engine->response->output();
+} catch (\Exception $th) {
+    $engine->terminate($th);
+    //throw new \Exception($th->getMessage(), $th->getCode(), $th);
 }
-
-// Router
-$action = new Action(startEngineExacTI::getRoute());
-
-// Dispatch
-$not_found = \Phacil\Framework\Config::NOT_FOUND() ?: \Phacil\Framework\Config::NOT_FOUND('error/not_found');
-$frontController->dispatch($action, ($not_found));
-
-// Output
-$engine->response->output();

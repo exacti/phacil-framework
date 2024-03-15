@@ -42,6 +42,13 @@ class WebApiException extends \Phacil\Framework\Exception {
 	const FAULT_CODE_RECEIVER = 'Receiver';
 
 	/**
+	 * @var \Phacil\Framework\Config
+	 */
+	private $config;
+
+	protected $exceptionFile = \Phacil\Framework\Exception\Throwable::DEFAULT_WEBEXCEPTION_FILE;
+
+	/**
 	 * Construct the exception. Note: The message is NOT binary safe.
 	 * 
 	 * @param string|array $message 
@@ -50,7 +57,14 @@ class WebApiException extends \Phacil\Framework\Exception {
 	 * @return void 
 	 */
 	public function __construct($message = "", int $code = 400, $previous = null) {
+		/** @var \Phacil\Framework\Config */
+		$this->config = \Phacil\Framework\Registry::getInstance(\Phacil\Framework\Config::class);
 		parent::__construct((is_array($message) ? \Phacil\Framework\Json::encode($message) : $message), $code, $previous);
+	}
+
+	public function __destruct() {
+		if($this->config->get('config_registry_webexceptions'))
+			parent::__destruct();
 	}
 
 }

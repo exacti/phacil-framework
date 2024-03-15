@@ -24,6 +24,8 @@ class Exception extends \Exception implements \Phacil\Framework\Exception\Throwa
 
 	protected $heritageTrace = false;
 
+	protected $exceptionFile = self::DEFAULT_EXCEPTION_FILE;
+
 	/**
 	 * 
 	 * @param \Exception $object 
@@ -46,14 +48,26 @@ class Exception extends \Exception implements \Phacil\Framework\Exception\Throwa
 		$debugging = (\Phacil\Framework\Config::DEBUG()) ?: false;
 		$this->errorFormat = \Phacil\Framework\Config::DEBUG_FORMAT() ?: $this->errorFormat;
 
-		$log = new \Phacil\Framework\Log("exception.log");
+		$log = new \Phacil\Framework\Log($this->exceptionFile);
 
 		$errorStamp = [
-			'error' => $this->getMessage(),
+			'message' => $this->getMessage(),
 			'line' => $this->getLine(),
 			'file' => $this->getFile(),
 			'trace' => ($debugging) ? (($this->errorFormat == 'json') ? ($this->heritageTrace ?: $this->getTrace()) : Debug::trace(($this->heritageTrace ?: $this->getTrace()))) : null
 		];
+
+		if($this->getCode() > 0)
+			$errorStamp['code'] = $this->getCode();
+
+		if($this->getCode() < 200 || $this->getCode() > 499) {
+			$log->critical(($this->errorFormat == 'json') ? json_encode($errorStamp) : implode(PHP_EOL, array_map(
+				[self::class, 'convertArray'],
+				$errorStamp,
+				array_keys($errorStamp)
+			)));
+			return;
+		}
 		$log->write(($this->errorFormat == 'json') ? json_encode($errorStamp) : implode(PHP_EOL, array_map(
 			[self::class,'convertArray'],
 			$errorStamp,

@@ -347,11 +347,7 @@ class Log implements \Phacil\Framework\Api\Log {
 			'route' => \Phacil\Framework\startEngineExacTI::getRoute(),
 		];
 
-		$trated = $this->logTreatment($record);
-		
-		$log = $this->interpolate($this->format, $trated);
-
-		return $this->writeToFile($log);
+		return $this->writeToFile($this->interpolate($this->format, $this->logTreatment($record)));
 	}
 
 	/**

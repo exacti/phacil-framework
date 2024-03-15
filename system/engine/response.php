@@ -88,6 +88,10 @@ final class Response {
 		$this->output = $output;
 	}
 
+	public function setParcialOutput($output) {
+		$this->output .= ($output ?: '');
+	}
+
 	/**
 	 * @param mixed $data 
 	 * @param int $level 
@@ -140,9 +144,9 @@ final class Response {
 						else 
 							header($key.": ".$header, true);
 
-					} catch (Exception $th) {
+					} catch (\Exception $th) {
 						//throw $th;
-						throw new Exception("Error Processing Header ".$key, 1);
+						throw new Exception("Error Processing Header ".$key, 1, $th);
 					}
 					
 				}
@@ -167,5 +171,14 @@ final class Response {
 	public function code($code, $description = null){
 		$this->addHeader("HTTP/1.1 ".$code.(($description) ? " ". $description : ""));
         $this->addHeader("Status: ".$code."");
+	}
+
+	/**
+	 * Clean all seted headers
+	 * @return $this 
+	 */
+	public function clearHeaders() {
+		$this->headers = [];
+		return $this;
 	}
 }

@@ -56,22 +56,26 @@ final class Front implements frontInterface {
   	 */
   	public function dispatch(\Phacil\Framework\Interfaces\Action $action, $error) {
 		$this->error = $error;
-
-		$this->registry->set('route', $action->getRoute());
-			
-		foreach ($this->pre_action as $pre_action) {
-			$result = $this->execute($pre_action);
-					
-			if ($result) {
-				$action = $result;
+		try {
+			$this->registry->set('route', $action->getRoute());
 				
-				break;
+			foreach ($this->pre_action as $pre_action) {
+				$result = $this->execute($pre_action);
+						
+				if ($result) {
+					$action = $result;
+					
+					break;
+				}
 			}
+		
+			while ($action) {
+				$action = $this->execute($action);
+			}
+		} catch (\Exception $th) {
+			throw $th;
 		}
-			
-		while ($action) {
-			$action = $this->execute($action);
-		}
+		
   	}
 
 	/**
@@ -100,6 +104,8 @@ final class Front implements frontInterface {
 					}
 				} catch (\Phacil\Framework\Exception\Throwable $th) {
 					throw $th;
+				} catch (\Exception $e) {
+					throw ($e);	
 				}
 			}
 			
@@ -108,6 +114,8 @@ final class Front implements frontInterface {
 				$action = $this->callController($this->injectionClass($classAlt['class']), $method, $args);
 			} catch (\Phacil\Framework\Exception\Throwable $th) {
 				throw ($th);
+			} catch (\Exception $e) {
+				throw ($e);
 			}
 		}else {
 			$action = new Action($this->error);
@@ -138,7 +146,7 @@ final class Front implements frontInterface {
 			}
 			return $action;
 		} catch (\Exception $th) {
-			throw new Exception($th->getMessage(), $th->getCode(), $th);
+			throw ($th);
 			//throw $th;
 		}
 	}
