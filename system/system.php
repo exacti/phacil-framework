@@ -50,7 +50,7 @@ final class startEngineExacTI {
      * 
      * @var \Phacil\Framework\Registry
      */
-    static private $RegistryAlt;
+    //static private $RegistryAlt;
 
     /**
      * System pre actions loader
@@ -100,7 +100,7 @@ final class startEngineExacTI {
         // Registry
         $this->registry = new Registry();
 
-        self::$RegistryAlt = &$this->registry;
+        //self::$RegistryAlt = &$this->registry;
 
         $this->request = new Request();
 
@@ -416,14 +416,14 @@ final class startEngineExacTI {
     public function terminate(\Exception $e)
     {
         /** @var Response $response */
-        $response = $this->registry->getInstance(\Phacil\Framework\Response::class);
+        $response = $this->registry->create(\Phacil\Framework\Response::class);
         $response->clearHeaders();
         $response->code(500);
         $response->addHeader('Content-Type', 'text/plain');
         $response->setOutput('');
         if ($this->isDeveloperMode()) {
             $response->addHeader('Content-Type', 'text/html');
-            //$response->setBody($e);
+            
             $response->setParcialOutput(sprintf("<strong>%s</strong>", get_class($e)).PHP_EOL);
             $response->setParcialOutput(sprintf("<pre>%s</pre>", $e->getMessage()) . PHP_EOL);
             //print_r(\Phacil\Framework\Debug::backtrace(true));
@@ -433,19 +433,17 @@ final class startEngineExacTI {
                 $p = $e->getPrevious();
                 $response->setParcialOutput(sprintf("<strong>%s</strong>", get_class($p)) . PHP_EOL);
                 $response->setParcialOutput(sprintf("<pre>%s</pre>", $p->getMessage()) . PHP_EOL);
-                //print_r(\Phacil\Framework\Debug::backtrace(true));
                 $response->setParcialOutput(\Phacil\Framework\Debug::trace($p->getTrace(), true, true) . PHP_EOL);
             }
-            //print_r($e->getTraceAsString());
         } else {
-            $message = "An error has happened during application run. See exception log for details.\n";
+            $message = "An error has happened during application run. See exception log for details." . PHP_EOL;
             try {
                 if (!$this->registry) {
                     throw new \DomainException();
                 }
                 $this->log->critical($e);
             } catch (\Exception $e) {
-                $message .= "Could not write error message to log. Please use developer mode to see the message.\n";
+                $message .= "Could not write error message to log. Please use developer mode to see the message." . PHP_EOL;
             }
             $response->setOutput($message);
         }
@@ -538,8 +536,8 @@ try {
         define('PATTERSITETITLE', false);
     }
 
-    // Url
     /**
+     * Url
      * @var \Phacil\Framework\Interfaces\Url
      */
     $engine->url = $engine->getRegistry()->create(\Phacil\Framework\Interfaces\Url::class, [
