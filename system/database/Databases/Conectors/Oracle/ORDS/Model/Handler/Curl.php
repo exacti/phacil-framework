@@ -12,6 +12,11 @@ namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model\Handler;
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface;
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector;
 
+/**
+ * Tested with Apex 23+
+ * 
+ * @package Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model\Handler
+ */
 class Curl implements HandleInterface {
 	/**
 	 * 
@@ -20,7 +25,7 @@ class Curl implements HandleInterface {
 	private $curl;
 
 	/**
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Conector
+	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector
 	 */
 	private $conector;
 

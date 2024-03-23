@@ -12,6 +12,7 @@ namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model;
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector;
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface;
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query as QueryApi;
+use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Helper\Data as DataHelper;
 
 class Query implements QueryApi {
 
@@ -46,16 +47,24 @@ class Query implements QueryApi {
 	private $items = [];
 
 	/**
+	 * 
+	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Helper\Data
+	 */
+	private $helper;
+
+	/**
 	 * @param \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector $conector 
 	 * @param \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface $handle 
 	 * @return $this 
 	 */
 	public function __construct(
 		Connector $conector,
-		HandleInterface $handle
+		HandleInterface $handle,
+		DataHelper $helper
 	) {
 		$this->conector = $conector;
 		$this->handle = $handle;
+		$this->helper = $helper;
 
 		return $this;
 	}
@@ -68,7 +77,7 @@ class Query implements QueryApi {
 		// Percorre os parâmetros a serem vinculados
 		foreach ($bindParams as $key => $value) {
 			// Detecta o tipo do valor e formata conforme necessário
-			$formattedValue = $this->conector->escape($value);
+			$formattedValue = $this->helper->escape($value);
 
 			if(!is_string($key))
 				$sql = preg_replace('/\?/', $formattedValue, $sql, 1);

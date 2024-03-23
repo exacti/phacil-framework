@@ -9,6 +9,10 @@
 
 namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS;
 
+/**
+ * @since 2.0.0
+ * @package Phacil\Framework\Databases\Conectors\Oracle\ORDS
+ */
 class Connector {
 
 	private $host;
@@ -45,36 +49,5 @@ class Connector {
 
 	public function getPass(){
 		return $this->pass;
-	}
-
-	public function escape($value)
-	{
-		$formattedValue = null;
-
-		switch (gettype($value)) {
-			case 'integer':
-				$formattedValue = $value; // Números inteiros não precisam de formatação
-				break;
-			case 'double':
-				$formattedValue = sprintf('%F', $value); // Formata números decimais
-				break;
-			case 'boolean':
-				$formattedValue = $value ? 'TRUE' : 'FALSE'; // Converte booleanos para strings 'TRUE' ou 'FALSE'
-				break;
-			case 'NULL':
-				$formattedValue = 'NULL'; // Valores nulos
-				break;
-			case 'object':
-				$formattedValue = "'" . serialize($value) . "'"; // Valores nulos
-				break;
-			case 'array':
-				$formattedValue = "'" . \Phacil\Framework\Json::encode($value) . "'"; // Valores nulos
-				break;
-			default:
-				// Escapa as aspas simples e adiciona aspas simples ao redor de strings
-				$formattedValue = "'" . str_replace("'", "''", $value) . "'";
-		}
-
-		return $formattedValue;
 	}
 }
