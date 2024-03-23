@@ -7,10 +7,10 @@
  * @author Bruno O. Notario <bruno@exacti.com.br>
  */
 
-namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api;
+namespace Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api;
 
 interface HandleInterface {
-	public function __construct(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector $conector);
+	public function __construct(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector $conector);
 
 	public function setOption($option, $value);
 
