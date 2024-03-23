@@ -10,7 +10,7 @@
 namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model\Handler;
 
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface;
-use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Conector;
+use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector;
 
 class Curl implements HandleInterface {
 	/**
@@ -25,7 +25,7 @@ class Curl implements HandleInterface {
 	private $conector;
 
 	public function __construct(
-		Conector $conector
+		Connector $conector
 	)
 	{
 		$this->curl = curl_init();

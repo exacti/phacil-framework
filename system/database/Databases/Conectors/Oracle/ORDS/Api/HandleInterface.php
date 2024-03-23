@@ -10,7 +10,7 @@
 namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api;
 
 interface HandleInterface {
-	public function __construct(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Conector $conector);
+	public function __construct(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector $conector);
 
 	public function setOption($option, $value);
 

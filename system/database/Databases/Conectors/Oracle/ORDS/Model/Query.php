@@ -9,14 +9,14 @@
 
 namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model;
 
-use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Conector;
+use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector;
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface;
 
 class Query {
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Conector
+	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector
 	 */
 	private $conector;
 
@@ -29,7 +29,7 @@ class Query {
 	private $items = [];
 
 	public function __construct(
-		Conector $conector,
+		Connector $conector,
 		HandleInterface $handle
 	) {
 		$this->conector = $conector;
