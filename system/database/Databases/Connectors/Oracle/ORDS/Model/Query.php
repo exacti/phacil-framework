@@ -15,13 +15,7 @@ use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query as QueryApi;
 use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Helper\Data as DataHelper;
 
 class Query implements QueryApi {
-
-	/**
-	 * 
-	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector
-	 */
-	private $conector;
-
+	
 	/**
 	 * 
 	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface
@@ -58,11 +52,9 @@ class Query implements QueryApi {
 	 * @return $this 
 	 */
 	public function __construct(
-		Connector $conector,
 		HandleInterface $handle,
 		DataHelper $helper
 	) {
-		$this->conector = $conector;
 		$this->handle = $handle;
 		$this->helper = $helper;
 
