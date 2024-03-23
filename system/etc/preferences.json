@@ -13,6 +13,7 @@
 		"Phacil\\Framework\\Databases\\Api\\LogInterface": "Phacil\\Framework\\Log",
 		"Phacil\\Framework\\Interfaces\\Serializer": "Phacil\\Framework\\Json",
 		"Phacil\\Framework\\MagiQL\\Api\\Factory": "Phacil\\Framework\\MagiQL\\Factory",
-		"Phacil\\Framework\\Databases\\Conectors\\Oracle\\ORDS\\Api\\HandleInterface": "Phacil\\Framework\\Databases\\Conectors\\Oracle\\ORDS\\Model\\Handler\\Curl"
+		"Phacil\\Framework\\Databases\\Conectors\\Oracle\\ORDS\\Api\\HandleInterface": "Phacil\\Framework\\Databases\\Conectors\\Oracle\\ORDS\\Model\\Handler\\Curl",
+		"Phacil\\Framework\\Databases\\Conectors\\Oracle\\ORDS\\Api\\Query": "Phacil\\Framework\\Databases\\Conectors\\Oracle\\ORDS\\Model\\Query"
 	}
 }

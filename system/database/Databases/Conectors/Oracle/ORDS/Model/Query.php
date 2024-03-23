@@ -11,8 +11,9 @@ namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model;
 
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector;
 use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface;
+use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query as QueryApi;
 
-class Query {
+class Query implements QueryApi {
 
 	/**
 	 * 
@@ -20,27 +21,47 @@ class Query {
 	 */
 	private $conector;
 
+	/**
+	 * 
+	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface
+	 */
 	private $handle;
 
+	/**
+	 * 
+	 * @var string
+	 */
 	private $sql;
 
+	/**
+	 * 
+	 * @var int
+	 */
 	private $num_rows = 0;
 
+	/**
+	 * 
+	 * @var array
+	 */
 	private $items = [];
 
+	/**
+	 * @param \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector $conector 
+	 * @param \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface $handle 
+	 * @return $this 
+	 */
 	public function __construct(
 		Connector $conector,
 		HandleInterface $handle
 	) {
 		$this->conector = $conector;
 		$this->handle = $handle;
+
+		return $this;
 	}
 
 	/**
-	 * @param string $sql 
-	 * @param array $bindParams 
-	 * @return $this 
-	 * @throws \Phacil\Framework\Exception\InvalidArgumentException 
+	 * @inheritdoc
 	 */
 	public function prepareSQL($sql, $bindParams = [])
 	{
@@ -61,6 +82,9 @@ class Query {
 		return $this;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function execute() {
 		if(empty($this->sql)){
 			throw new \Phacil\Framework\Exception\RuntimeException('Query is empty');
@@ -89,14 +113,19 @@ class Query {
 		}
 	}
 
+	/** {@inheritdoc} */
 	public function getNumRows() {
 		return $this->num_rows;
 	}
 
+	/** {@inheritdoc}  */
 	public function getItems() {
 		return $this->items;
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function close() {
 		$this->handle->close();
 
@@ -104,6 +133,7 @@ class Query {
 		$this->handle = \Phacil\Framework\Registry::getInstance()->create(HandleInterface::class);
 	}
 
+	/** @inheritdoc  */
 	public function getError(){
 		return $this->handle->error();
 	}

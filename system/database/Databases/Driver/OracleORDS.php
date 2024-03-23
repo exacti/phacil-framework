@@ -39,15 +39,15 @@ class OracleORDS implements DriverInterface
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Conector
+	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector
 	 */
 	private $connection = null;
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model\Query
+	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query
 	 */
-	private $statement = null;
+	private $statement;
 
 	private $rowCount;
 
@@ -55,8 +55,8 @@ class OracleORDS implements DriverInterface
 	public function __construct($hostname, $username, $password, $database, $port = '8181', $charset = 'UTF8')
 	{
 		try {
-			/** @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Conector */
-			$this->connection = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Conector::class, [
+			/** @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector */
+			$this->connection = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector::class, [
 				$hostname.$database,
 				\Phacil\Framework\Config::DB_PORT() ?: $port,
 				$username,
@@ -77,8 +77,8 @@ class OracleORDS implements DriverInterface
 	public function createStatement() {
 		$this->rowCount = 0;
 
-		/** @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model\Query */
-		$this->statement = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model\Query::class);
+		/** @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query */
+		$this->statement = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query::class);
 	}
 
 	/** {@inheritdoc} */
@@ -119,7 +119,7 @@ class OracleORDS implements DriverInterface
 			$stmt = $this->statement->prepareSQL($sql, $params)->execute();
 
 			if (!$stmt) {
-				throw new \Phacil\Framework\Exception('Error preparing query: ' . implode(', ', $this->statement->getError()));
+				throw new \Phacil\Framework\Exception('Error preparing query: ' . $this->statement->getError());
 			}
 
 			if ($stmt->getNumRows() && !empty($stmt->getItems())) {
