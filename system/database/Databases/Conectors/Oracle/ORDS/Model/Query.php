@@ -36,10 +36,6 @@ class Query {
 		$this->handle = $handle;
 	}
 
-	private function curlPLQ() {
-		
-	}
-
 	/**
 	 * @param string $sql 
 	 * @param array $bindParams 
@@ -106,5 +102,9 @@ class Query {
 
 		unset($this->handle);
 		$this->handle = \Phacil\Framework\Registry::getInstance()->create(HandleInterface::class);
+	}
+
+	public function getError(){
+		return $this->handle->error();
 	}
 }

@@ -71,39 +71,7 @@ class OracleORDS implements DriverInterface
 	/** {@inheritdoc} */
 	public function query($sql, $params = array())
 	{
-		$this->createStatement();
-		$result = false;
-		try {
-			$data = $this->statement->prepareSQL($sql, $params);
-			if ($this->statement && $this->statement->execute($params)) {
-				$data = array();
-				$this->rowCount = $this->statement->rowCount();
-				if ($this->rowCount > 0) {
-					try {
-						$data = $this->statement->fetchAll(\PDO::FETCH_ASSOC);
-					} catch (\Exception $ex) {
-					}
-				}
-				// free up resources
-				$this->statement->closeCursor();
-				$this->statement = null;
-
-				/** @var \Phacil\Framework\Databases\Api\Object\ResultInterface */
-				$result = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Api\Object\ResultInterface::class, [$data]);
-				$result->setNumRows($this->rowCount);
-			}
-		} catch (\PDOException $e) {
-			throw new \Phacil\Framework\Exception('Error: ' . $e->getMessage() . ' Error Code : ' . $e->getCode() . ' <br />' . $sql);
-		}
-		if ($result) {
-			return $result;
-		} else {
-			$result = new \Phacil\Framework\Databases\Object\Result();
-			$result->row = array();
-			$result->rows = array();
-			$result->num_rows = 0;
-			return $result;
-		}
+		return $this->execute($sql, $params);
 	}
 
 	public function createStatement() {
@@ -128,7 +96,7 @@ class OracleORDS implements DriverInterface
 	/** {@inheritdoc} */
 	public function getLastId()
 	{
-		return $this->connection->lastInsertId();
+		return null;
 	}
 
 	/** {@inheritdoc} */
@@ -151,7 +119,7 @@ class OracleORDS implements DriverInterface
 			$stmt = $this->statement->prepareSQL($sql, $params)->execute();
 
 			if (!$stmt) {
-				throw new \Phacil\Framework\Exception('Error preparing query: ' . implode(', ', $this->connection->errorInfo()));
+				throw new \Phacil\Framework\Exception('Error preparing query: ' . implode(', ', $this->statement->getError()));
 			}
 
 			if ($stmt->getNumRows() && !empty($stmt->getItems())) {
