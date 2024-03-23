@@ -7,11 +7,11 @@
  * @author Bruno O. Notario <bruno@exacti.com.br>
  */
 
-namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS;
+namespace Phacil\Framework\Databases\Connectors\Oracle\ORDS;
 
 /**
  * @since 2.0.0
- * @package Phacil\Framework\Databases\Conectors\Oracle\ORDS
+ * @package Phacil\Framework\Databases\Connectors\Oracle\ORDS
  */
 class Connector {
 

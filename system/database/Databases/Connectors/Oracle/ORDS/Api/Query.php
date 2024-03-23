@@ -7,7 +7,7 @@
  * @author Bruno O. Notario <bruno@exacti.com.br>
  */
 
-namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api;
+namespace Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api;
 
 interface Query {
 	/**

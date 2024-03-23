@@ -7,24 +7,24 @@
  * @author Bruno O. Notario <bruno@exacti.com.br>
  */
 
-namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS\Model;
+namespace Phacil\Framework\Databases\Connectors\Oracle\ORDS\Model;
 
-use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector;
-use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface;
-use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query as QueryApi;
-use Phacil\Framework\Databases\Conectors\Oracle\ORDS\Helper\Data as DataHelper;
+use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector;
+use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface;
+use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query as QueryApi;
+use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Helper\Data as DataHelper;
 
 class Query implements QueryApi {
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector
+	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector
 	 */
 	private $conector;
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface
+	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface
 	 */
 	private $handle;
 
@@ -48,13 +48,13 @@ class Query implements QueryApi {
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Helper\Data
+	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Helper\Data
 	 */
 	private $helper;
 
 	/**
-	 * @param \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector $conector 
-	 * @param \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\HandleInterface $handle 
+	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector $conector 
+	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface $handle 
 	 * @return $this 
 	 */
 	public function __construct(

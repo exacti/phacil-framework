@@ -40,13 +40,13 @@ class OracleORDS implements DriverInterface
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector
+	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector
 	 */
 	private $connection = null;
 
 	/**
 	 * 
-	 * @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query
+	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query
 	 */
 	private $statement;
 
@@ -56,8 +56,8 @@ class OracleORDS implements DriverInterface
 	public function __construct($hostname, $username, $password, $database, $port = '8181', $charset = 'UTF8')
 	{
 		try {
-			/** @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector */
-			$this->connection = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Connector::class, [
+			/** @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector */
+			$this->connection = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector::class, [
 				$hostname.$database,
 				\Phacil\Framework\Config::DB_PORT() ?: $port,
 				$username,
@@ -78,8 +78,8 @@ class OracleORDS implements DriverInterface
 	public function createStatement() {
 		$this->rowCount = 0;
 
-		/** @var \Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query */
-		$this->statement = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Conectors\Oracle\ORDS\Api\Query::class);
+		/** @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query */
+		$this->statement = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query::class);
 	}
 
 	/** {@inheritdoc} */
