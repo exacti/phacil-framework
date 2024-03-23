@@ -152,10 +152,12 @@ abstract class RESTful extends Controller {
 					new Exception($th->getMessage(), $th->getCode());
 					return $this->__callInterrupt($th->getMessage());
 				} else {
-					throw new Exception($th->getMessage(), $th->getCode());
+					throw $th;
 				}
 				
-			} catch (Exception $e) {
+			} catch (\TypeError $e) {
+				throw new \Phacil\Framework\Exception\TypeError($e->getMessage(), $e->getCode(), $e);
+			} catch (\Exception $e) {
 				throw new Exception($e->getMessage(), $e->getCode());
 			}
 		} else {
@@ -171,19 +173,25 @@ abstract class RESTful extends Controller {
 	 * @return bool 
 	 */
 	static function __testType($type, $data){ 
-
 		switch ($type) {
 			case 'mixed':
 				return true;
 				break;
-				
-			case 'int':
-			case 'string':
-			case 'array':
+
 			case 'integer':
-			case 'bool':
+			case 'int':
+				//return ctype_digit($data);
+				return filter_var($data, FILTER_VALIDATE_INT) !== false;
+				break;
+
 			case 'double':
 			case 'float':
+				return filter_var($data, FILTER_VALIDATE_FLOAT) !== false;
+				break;
+
+			case 'string':
+			case 'array':
+			case 'bool':
 			case 'long':
 			case 'null':
 			case 'numeric':

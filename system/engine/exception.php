@@ -26,6 +26,8 @@ class Exception extends \Exception implements \Phacil\Framework\Exception\Throwa
 
 	protected $exceptionFile = self::DEFAULT_EXCEPTION_FILE;
 
+	public $logLevel = 'critical';
+
 	/**
 	 * 
 	 * @param \Exception $object 

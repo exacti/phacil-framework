@@ -282,8 +282,8 @@ abstract class AbstractBaseQuery implements QueryInterface, QueryPartInterface
     public function load() {
         try {
             return $this->getBuilder()->execute($this);
-        } catch (\Throwable $th) {
-            throw new \Phacil\Framework\Exception($th->getMessage());
+        } catch (\Exception $th) {
+            throw new \Phacil\Framework\Exception($th->getMessage(), $th->getCode(), $th);
         }
         return [];
     }

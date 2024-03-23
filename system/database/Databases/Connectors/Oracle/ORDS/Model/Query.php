@@ -9,13 +9,12 @@
 
 namespace Phacil\Framework\Databases\Connectors\Oracle\ORDS\Model;
 
-use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector;
 use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface;
 use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query as QueryApi;
 use Phacil\Framework\Databases\Connectors\Oracle\ORDS\Helper\Data as DataHelper;
 
 class Query implements QueryApi {
-	
+
 	/**
 	 * 
 	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface
