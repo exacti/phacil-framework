@@ -9,7 +9,7 @@
 
 namespace Phacil\Framework\Databases\Conectors\Oracle\ORDS;
 
-class Conector {
+class Connector {
 
 	private $host;
 
