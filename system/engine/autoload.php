@@ -449,9 +449,13 @@
 	 * @return bool 
 	 */
 	private function loadModularFiles() {
+		if(self::isPhacil()) return false;
+
 		$modulesPrepared = array_map(function ($item) {
 			return \Phacil\Framework\Registry::case_insensitive_pattern($item);
 		}, self::$namespace);
+
+		$namespace = self::$namespace;
 
 		$tryMagicOne = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", $modulesPrepared) . ".php";
 
@@ -459,6 +463,7 @@
 
 		try {
 			if (!empty($files) && self::loadClassFile($files[0])) {
+				$this->checkModularDIs($modulesPrepared, $namespace);
 				return true;
 			} 
 		} catch (\Exception $e) {
@@ -476,9 +481,13 @@
 	 * @return bool 
 	 */
 	private function loadModularWithoutNamespacesPrefix() {
+		if (self::isPhacil()) return false;
+
 		$modulesPrepared = array_map(function ($item) {
 			return \Phacil\Framework\Registry::case_insensitive_pattern($item);
 		}, self::$namespaceWithoutPrefix);
+
+		$namespace = self::$namespaceWithoutPrefix;
 
 		$tryMagicOne = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", $modulesPrepared) . ".php";
 
@@ -486,6 +495,7 @@
 
 		try {
 			if (!empty($files) && self::loadClassFile($files[0])) {
+				$this->checkModularDIs($modulesPrepared, $namespace);
 				return true;
 			} 
 		} catch (\Exception $e) {
@@ -577,6 +587,36 @@
 
 	protected function checkIsLoadedClass($class) {
 		return in_array($class, $this->loadedClasses);
+	}
+
+	/**
+	 * Search for dynamic injectors
+	 * @param array $modulesPrepared 
+	 * @param array $namespace 
+	 * @return void 
+	 * @throws \Phacil\Framework\Exception 
+	 */
+	protected function checkModularDIs($modulesPrepared, $namespace) {
+		$files = [];
+
+		if(count($modulesPrepared) > 2 && !\Phacil\Framework\Registry::isDIrouteChecked(implode("/", array_slice($namespace, 0, 2)))) {
+			$vendorModule = array_slice($modulesPrepared, 0, 2);
+			$tryMagicTwo = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", $vendorModule) . "/etc/preferences.json";
+			$files = glob($tryMagicTwo, GLOB_NOSORT);
+			\Phacil\Framework\Registry::addDIrouteChecked(implode("/", array_slice($namespace, 0, 2)));
+		}
+		
+		if (!\Phacil\Framework\Registry::isDIrouteChecked(implode("/", array_slice($namespace, 0, 1)))) {
+			$vendorModule = array_slice($modulesPrepared, 0, 1);
+			$tryMagicOne = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", $vendorModule) . "/etc/preferences.json";
+
+			$files = is_array($files) && !empty($files) ? array_merge($files, glob($tryMagicOne, GLOB_NOSORT)) : glob($tryMagicOne, GLOB_NOSORT);
+			\Phacil\Framework\Registry::addDIrouteChecked(implode("/", array_slice($namespace, 0, 1)));
+		}
+
+		foreach($files as $file){
+			\Phacil\Framework\Registry::addPreference($file);
+		}
 	}
 
 	/**

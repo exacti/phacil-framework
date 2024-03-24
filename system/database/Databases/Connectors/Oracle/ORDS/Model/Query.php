@@ -101,7 +101,6 @@ class Query implements QueryApi {
 
 			if($resultSet) {
 				$this->num_rows = $resultSet["count"];
-
 				$this->items = $resultSet["items"];
 			} elseif (isset($resultEnd["result"])) {
 				$this->num_rows = $resultEnd["result"];

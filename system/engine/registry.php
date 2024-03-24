@@ -63,6 +63,8 @@ final class Registry {
 	 */
 	static private $preferences = [];
 
+	static private $diCheckedRoutes = [];
+
 	/**
 	 * Magic method to return engine instances
 	 * 
@@ -216,6 +218,7 @@ final class Registry {
 			if($i >= count($routeArray)) break;
 
 			$routeGlue = implode("/", array_slice($routeArray, 0, $i));
+			self::addDIrouteChecked($routeGlue);
 			$directory = \Phacil\Framework\Config::DIR_APP_MODULAR() . self::case_insensitive_pattern($routeGlue) . '/etc/preferences.json';
 			$files = glob($directory, GLOB_MARK);
 			if(!empty($files)) break;
@@ -229,6 +232,25 @@ final class Registry {
 		if (file_exists($jsonFilePath)) {
 			self::addPreference($jsonFilePath);
 		}
+	}
+
+	/**
+	 * checks if a route has already had the DI checked
+	 * @param string $route 
+	 * @return bool 
+	 */
+	static public function isDIrouteChecked($route){
+		return isset(self::$diCheckedRoutes[$route]);
+	}
+
+	/**
+	 * Add has check DI route
+	 * @param string $route 
+	 * @return true 
+	 */
+	static public function addDIrouteChecked($route){
+		self::$diCheckedRoutes[$route] = true;
+		return self::$diCheckedRoutes[$route];
 	}
 
 	/**
