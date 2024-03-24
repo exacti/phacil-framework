@@ -396,7 +396,12 @@ final class Registry {
 							if (preg_match($pattern, $declaringClass, $matches)) {
 								$classFactoryName = $matches[1];
 
-								if (substr($classFactoryName, -(strlen(self::FACTORY_WORD_KEY))) === self::FACTORY_WORD_KEY) {
+								$classAttr = self::checkPreference($classFactoryName);
+
+								if (class_exists($classAttr)) {
+									$argsToInject[$param->getPosition()] = $this->injectionClass($classFactoryName);
+									continue;
+								} elseif (substr($classFactoryName, -(strlen(self::FACTORY_WORD_KEY))) === self::FACTORY_WORD_KEY && substr($classFactoryName, - (strlen(self::FACTORY_WORD_KEY)+1)) != "\\".self::FACTORY_WORD_KEY) {
 									$factoredRefClass = substr($classFactoryName, 0, -(strlen(self::FACTORY_WORD_KEY)));
 
 									if (!class_exists($classFactoryName) && $classFactoryName != self::FACTORY_CLASS) {
@@ -429,7 +434,7 @@ final class Registry {
 								if (class_exists($classAttr)) {
 									$argsToInject[$param->getPosition()] = $this->injectionClass($injectionClass);
 									continue;
-								} elseif (substr($injectionClass, -(strlen(self::FACTORY_WORD_KEY))) === self::FACTORY_WORD_KEY) {
+								} elseif (substr($injectionClass, -(strlen(self::FACTORY_WORD_KEY))) === self::FACTORY_WORD_KEY && substr($injectionClass, - (strlen(self::FACTORY_WORD_KEY) + 1)) != "\\" . self::FACTORY_WORD_KEY) {
 									// Create a factored instance
 									$factoredRefClass = substr($injectionClass, 0, -(strlen(self::FACTORY_WORD_KEY)));
 									$argsToInject[$param->getPosition()] = ($this->getInstance($injectionClass, [], true)) ?: self::setAutoInstance($this->create(self::FACTORY_CLASS, [$factoredRefClass]), $injectionClass);
