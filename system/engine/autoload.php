@@ -455,7 +455,7 @@
 			return \Phacil\Framework\Registry::case_insensitive_pattern($item);
 		}, self::$namespace);
 
-		$namespace = self::$namespace;
+		$namespace = self::$namespaceWithoutPrefix;
 
 		$tryMagicOne = \Phacil\Framework\Config::DIR_APP_MODULAR() . implode("/", $modulesPrepared) . ".php";
 
