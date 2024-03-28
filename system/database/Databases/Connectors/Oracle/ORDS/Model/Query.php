@@ -151,9 +151,11 @@ class Query implements QueryApi {
 	 * {@inheritdoc}
 	 */
 	public function close() {
-		$this->handle->close();
+		if($this->handle){
+			$this->handle->close();
 
-		unset($this->handle);
+			unset($this->handle);
+		}
 		//$this->handle = \Phacil\Framework\Registry::getInstance()->create(HandleInterface::class);
 	}
 
