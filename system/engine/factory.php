@@ -39,11 +39,11 @@ class Factory {
 	 * Sets the name of the class to be instantiated by the factory.
 	 *
 	 * @param string $class The name of the class.
-	 * @return void 
+	 * @return $this 
 	 */
 	public function setClass($class) {
 		$this->class = $class;
-		$this;
+		return $this;
 	}
 
 	/** 
