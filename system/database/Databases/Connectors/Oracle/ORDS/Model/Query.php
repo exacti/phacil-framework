@@ -58,15 +58,17 @@ class Query implements QueryApi {
 	private $handleFactory;
 
 	/**
-	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector $conector 
-	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface $handle 
+	 * 
+	 * @param \Phacil\Framework\Factory $Factory 
+	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Helper\Data $helper 
 	 * @return $this 
 	 */
 	public function __construct(
-		\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterfaceFactory $handle,
+		\Phacil\Framework\Factory $Factory,
 		DataHelper $helper
 	) {
-		$this->handleFactory = $handle;
+		$this->handleFactory = $Factory;
+		$this->handleFactory->setClass(HandleInterface::class);
 		$this->helper = $helper;
 
 		return $this;

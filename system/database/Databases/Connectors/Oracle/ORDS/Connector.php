@@ -44,9 +44,6 @@ class Connector {
 
 		$this->pass = $pass;
 
-		/** @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query */
-		//$this->queryExecutor = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query::class);
-
 		return $this;
 	}
 
