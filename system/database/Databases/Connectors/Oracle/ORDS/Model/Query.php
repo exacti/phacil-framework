@@ -46,17 +46,38 @@ class Query implements QueryApi {
 	private $helper;
 
 	/**
+	 * 
+	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector
+	 */
+	private $connector;
+
+	/**
+	 * 
+	 * @var \Phacil\Framework\Factory
+	 */
+	private $handleFactory;
+
+	/**
 	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector $conector 
 	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface $handle 
 	 * @return $this 
 	 */
 	public function __construct(
-		HandleInterface $handle,
+		\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterfaceFactory $handle,
 		DataHelper $helper
 	) {
-		$this->handle = $handle;
+		$this->handleFactory = $handle;
 		$this->helper = $helper;
 
+		return $this;
+	}
+
+	/**
+	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector $connector 
+	 * @return $this 
+	 */
+	public function setConnector(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector $connector){
+		$this->connector = $connector;
 		return $this;
 	}
 
@@ -89,6 +110,8 @@ class Query implements QueryApi {
 		if(empty($this->sql)){
 			throw new \Phacil\Framework\Exception\RuntimeException('Query is empty');
 		}
+
+		$this->handle = $this->handleFactory->create([$this->connector]);
 
 		$executed = $this->handle->execute($this->sql);
 
@@ -129,7 +152,7 @@ class Query implements QueryApi {
 		$this->handle->close();
 
 		unset($this->handle);
-		$this->handle = \Phacil\Framework\Registry::getInstance()->create(HandleInterface::class);
+		//$this->handle = \Phacil\Framework\Registry::getInstance()->create(HandleInterface::class);
 	}
 
 	/** @inheritdoc  */

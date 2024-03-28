@@ -42,4 +42,10 @@ interface Query {
 
 	/** @return string  */
 	public function getError();
+
+	/**
+	 * @param \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector $connector 
+	 * @return $this 
+	 */
+	public function setConnector(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Connector $connector);
 }

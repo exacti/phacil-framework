@@ -23,6 +23,18 @@ class Connector {
 
 	private $pass;
 
+	/**
+	 * 
+	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query
+	 */
+	private $queryExecutor;
+
+	/**
+	 * 
+	 * @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\HandleInterface
+	 */
+	private $queryHandler;
+
 	public function __construct($url = 'localhost', $port = 8181, $user = null, $pass = null){
 		$this->host = $url;
 
@@ -31,6 +43,9 @@ class Connector {
 		$this->user = $user;
 
 		$this->pass = $pass;
+
+		/** @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query */
+		//$this->queryExecutor = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query::class);
 
 		return $this;
 	}
@@ -49,5 +64,22 @@ class Connector {
 
 	public function getPass(){
 		return $this->pass;
+	}
+
+	/**
+	 * @return \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query 
+	 * @throws \Phacil\Framework\Exception 
+	 * @throws \Phacil\Framework\Exception\ReflectionException 
+	 */
+	public function createStatement(){
+		/** @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query */
+		$this->queryExecutor = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query::class);
+
+		return $this->queryExecutor->setConnector($this);
+	}
+
+	/** @return \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query  */
+	public function getStatement() {
+		return $this->queryExecutor;
 	}
 }

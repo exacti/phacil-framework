@@ -79,7 +79,7 @@ class OracleORDS implements DriverInterface
 		$this->rowCount = 0;
 
 		/** @var \Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query */
-		$this->statement = \Phacil\Framework\Registry::getInstance()->create(\Phacil\Framework\Databases\Connectors\Oracle\ORDS\Api\Query::class);
+		$this->statement = $this->connection->createStatement();
 	}
 
 	/** {@inheritdoc} */
